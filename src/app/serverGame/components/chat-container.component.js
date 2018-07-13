@@ -1,6 +1,7 @@
 import React,{Component} from 'react';
 import ConversationArea from './conversationArea.component';
 import ChatInput from './chatInput.component';
+import './chat-container.component.css';
 
 export default class ChatContainer extends Component {
     render() {
