@@ -1,12 +1,35 @@
 // These are just for documentation and are not used as part of the logic
 
 interface User {
+    cookie: string;
     name: string;
+    playingInGame: string, null;
+    startedPlaying: boolean;
 
 }
 
 interface Game {
     name: string;
+    owner: User;
+    numOfPlayers: number;
+    botPlayerEnabled: boolean;
+    state: State;
+    history: [State];
+    player1: User, undefined;
+    player2: User, Bot, undefined;
+    player3: User, Bot, undefined, null;
+    player4: User, Bot, undefined, null;
+    hasStarted: boolean;
+
+
+}
+
+interface NewPlayer {
+    user: User;
+    name: User.name;
+    isActive: boolean;
+    isBotEnabled: boolean;
+    pile: Pile;
 
 }
 

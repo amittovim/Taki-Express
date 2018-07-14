@@ -13,6 +13,9 @@ export default class ServerGame extends Component {
                             loginErrorHandler={this.handleErrorLogin} />
             )
         }
+        else if (this.state.gameStarted){
+            return this.renderGameRoom();
+        }
         return this.renderLobbyRoom();
 
     }
@@ -23,7 +26,9 @@ export default class ServerGame extends Component {
             showLogin: true,
             currentUser: {
                 name: ''
-            }
+            },
+            gameStarted: false,
+            chosenGame: '',
         };
 
         this.handleSuccessfulLogin = this.handleSuccessfulLogin.bind(this);
@@ -54,7 +59,16 @@ export default class ServerGame extends Component {
             </div>
         )
     }
-
+    renderGameRoom(){
+        return (
+            <div className='game-room-component'>
+                <GameRoom isBotEnabled = {true}
+                    numberOfPlayersInGame = {2}
+                    gameName = {'firstGame'}
+                    numOfPlayersWaitingFor = {0} />
+            </div>
+        );
+    }
     getUserName(){
     this.fetchUserInfo()
         .then(userInfo => {
