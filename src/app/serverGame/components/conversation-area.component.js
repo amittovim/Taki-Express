@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 
-export default class conversationAreaComponent extends Component {
+export default class ConversationArea extends Component {
     render() {
         return(
             <div className="conversation-area-component">

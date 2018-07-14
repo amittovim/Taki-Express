@@ -3,6 +3,7 @@ import ModalFrame from "../../shared/components/modal/modal.component";
 import Button from "../../shared/components/button/button.component";
 import LoginModal from './login-modal.component';
 import ChatContainer from './chat-container.component';
+import UsersContainer from "./users-container.component";
 
 export default class ServerGame extends Component {
 
@@ -55,7 +56,8 @@ export default class ServerGame extends Component {
                     Hello {this.state.currentUser.name}
                     <Button className="logout btn" label={'Logout'} onClick={this.handleLogout} isDisabled={false} />
                 </div>
-                <ChatContainer/>
+                <UsersContainer />
+                <ChatContainer />
             </div>
         )
     }

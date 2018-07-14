@@ -31,6 +31,11 @@ lobbyManagement.appendUserLogoutMessage = function(userInfo) {
     chatContent.push({user: userInfo, text: `user had logout`});
 };
 
+lobbyManagement.get('/users', auth.userAuthentication, function (req, res) {
+    res.json(auth.usersList);
+});
+
+
 // define the about route
 lobbyManagement.get('/about', function (req, res) {
     res.send('About Lobby');
