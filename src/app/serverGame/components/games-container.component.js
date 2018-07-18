@@ -4,17 +4,12 @@ import ChatInput from './chatInput.component';
 import './chat-container.component.css';
 import UsersArea from "./users-area.component";
 
-export default class UsersContainer extends Component {
+export default class GamesContainer extends Component {
     render() {
         return (
-            <div className="users-container-component">
-                <p>users currently online : </p>
-                <UsersArea/>
-{/*
-
-                <ConversationArea/>
-                <ChatInput/>
-*/}
+            <div className="games-container-component">
+                <p>currently available games  : </p>
+                <GamesArea/>
             </div>
         )
     };

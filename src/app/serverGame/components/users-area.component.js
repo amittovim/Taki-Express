@@ -1,16 +1,19 @@
 import React, {Component} from 'react';
-import _ from 'lodash';
 
 export default class UsersArea extends Component {
     render() {
-        let usersList = _.map(this.state.usersList, (user) => {
-            return (user.name);
-        });
-        return(
-            <div className="users-area-component">
-                <div><ul>{usersList}</ul></div>
-            </div>
-        )
+            if (this.state.usersList) {
+                return (
+                    <div className="users-area-component">
+                        <ul>
+                            {this.state.usersList.map((userName) => (
+                                <li key={userName}>{ userName}</li>
+                            ))}
+                        </ul>
+                    </div>
+                )
+            }
+            return;
     }
 
     constructor(props) {
@@ -20,11 +23,11 @@ export default class UsersArea extends Component {
             usersList: []
         };
 
-        this.getUsersList = this.getUsersList.bind(this);
+        this.getOnlineUsersList = this.getOnlineUsersList.bind(this);
     }
 
     componentDidMount() {
-        this.getUsersList();
+        this.getOnlineUsersList();
     }
 
     componentWillUnmount() {
@@ -34,13 +37,13 @@ export default class UsersArea extends Component {
     }
 
 
-    getUsersList() {
-        return fetch('/lobby/users/', {method: 'GET', credentials: 'include'})
+    getOnlineUsersList() {
+        return fetch('/users/allUsers/', {method: 'GET', credentials: 'include'})
             .then((response) => {
                 if (!response.ok){
                     throw response;
                 }
-                this.timeoutId = setTimeout(this.getUsersList, 700);
+                this.timeoutId = setTimeout(this.getOnlineUsersList, 700);
                 return response.json();
             })
             .then(usersList => {

@@ -20,9 +20,8 @@ userManagement.get('/', auth.userAuthentication, (req, res) => {
 });
 
 userManagement.get('/allUsers', auth.userAuthentication, (req, res) => {
-    const usersList = _.cloneDeep(auth.usersList);
-
-    res.json(usersList);
+    const onlineUsersList = auth.getAllOnlineUserNames();
+    res.json(onlineUsersList);
     /*
         // TODO: somewhere show the list of users currently online like this :
         _.map(auth.usersList, user => {

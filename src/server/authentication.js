@@ -37,4 +37,14 @@ function removeUserFromAuthList(req, res, next) {
 function getUserInfo(id)  {
     return {name: usersList[id]};
 }
-module.exports = {userAuthentication, addUserToAuthList, removeUserFromAuthList, getUserInfo, usersList}
+
+function getAllOnlineUserNames()  {
+    const userNamesArray  = [];
+    for (const idProperty in usersList) {
+        userNamesArray.push(usersList[idProperty]);
+    }
+    console.log(userNamesArray);
+    return userNamesArray;
+}
+
+module.exports = {userAuthentication, addUserToAuthList, removeUserFromAuthList, getUserInfo, getAllOnlineUserNames}

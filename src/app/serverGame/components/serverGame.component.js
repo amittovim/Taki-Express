@@ -12,10 +12,15 @@ export default class ServerGame extends Component {
             return (
                 <LoginModal loginSuccessHandler={this.handleSuccessfulLogin}
                             loginErrorHandler={this.handleErrorLogin} />
-            )
+            );
         }
         else if (this.state.gameStarted){
             return this.renderGameRoom();
+        }
+        else if (this.state.isCreatingNewGame){
+            return (
+                <CreateGameModal />
+            );
         }
         return this.renderLobbyRoom();
 
@@ -30,6 +35,7 @@ export default class ServerGame extends Component {
             },
             gameStarted: false,
             chosenGame: '',
+            isCreatingNewGame: false
         };
 
         this.handleSuccessfulLogin = this.handleSuccessfulLogin.bind(this);
@@ -56,7 +62,9 @@ export default class ServerGame extends Component {
                     Hello {this.state.currentUser.name}
                     <Button className="logout btn" label={'Logout'} onClick={this.handleLogout} isDisabled={false} />
                 </div>
+                <Button className="create-new-game btn" label={'CREATE NEW GAME'} onClick={this.handleCreateNewGame} isDisabled={false} />
                 <UsersContainer />
+                <GamesContainer />
                 <ChatContainer />
             </div>
         )
@@ -71,6 +79,7 @@ export default class ServerGame extends Component {
             </div>
         );
     }
+
     getUserName(){
     this.fetchUserInfo()
         .then(userInfo => {
@@ -105,6 +114,10 @@ export default class ServerGame extends Component {
             })
     }
 
+    handleCreateNewGame() {
+
+        this.setState( () => ( {isCreatingNewGame: true } ));
+    }
 
 }
 

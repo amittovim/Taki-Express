@@ -13,7 +13,7 @@ interface Game {
     owner: User;
     numOfPlayers: number;
     botPlayerEnabled: boolean;
-    state: State;
+    currentState: State;
     history: [State];
     player1: User, undefined;
     player2: User, Bot, undefined;
