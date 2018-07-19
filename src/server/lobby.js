@@ -31,10 +31,23 @@ lobbyManagement.appendUserLogoutMessage = function(userInfo) {
     chatContent.push({user: userInfo, text: `user had logout`});
 };
 
-lobbyManagement.get('/users', auth.userAuthentication, function (req, res) {
-    res.json(auth.usersList);
+lobbyManagement.get('/allUsers', auth.userAuthentication, (req, res) => {
+    const onlineUsersList = auth.getAllOnlineUserNames();
+    res.json(onlineUsersList);
 });
 
+lobbyManagement.route('/games')
+    //.get(auth.userAuthentication,  function (req, res) {
+        // TODO: add here a response that returns all existing games
+        // const body = req.body;
+        // console.log(body);
+        // res.json(auth.usersList);
+    //});
+    .post(auth.userAuthentication,  function (req, res) {
+        const body = req.body;
+        console.log(body);
+        res.json(auth.usersList);
+    });
 
 // define the about route
 lobbyManagement.get('/about', function (req, res) {

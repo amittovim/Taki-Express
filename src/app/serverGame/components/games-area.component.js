@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 
 export default class GamesArea extends Component {
     render() {
+        debugger;
         if (this.state.usersList) {
             return (
                 <div className="games-area-component">
@@ -20,7 +21,9 @@ export default class GamesArea extends Component {
                 </div>
             )
         }
-        return;
+        return (
+            <div></div>
+        );
     }
 
     constructor(props) {

@@ -38,7 +38,7 @@ export default class UsersArea extends Component {
 
 
     getOnlineUsersList() {
-        return fetch('/users/allUsers/', {method: 'GET', credentials: 'include'})
+        return fetch('/lobby/allUsers/', {method: 'GET', credentials: 'include'})
             .then((response) => {
                 if (!response.ok){
                     throw response;
