@@ -3,11 +3,10 @@ import './create-game-modal.component.css';
 // <PROPS>
 // createGameSuccessHandler: function
 // createGameErrorHandler  : function
-//
+// abortHandler             : function
 
 export default class CreateGameModal extends Component {
     render() {
-        debugger;
         return (
             <div className="create-game-modal-component">
                 <h1> Creating new network TAKI game </h1>
@@ -28,14 +27,15 @@ export default class CreateGameModal extends Component {
                             </td>
                         </tr>
                         <tr>
-                            <td> <label className="bot-player-enabled-label" htmlFor="botPlayerEnabled"> Should one of the players be played by the computer ? </label> </td>
+                            <td> <label className="bot-player-enabled-label" htmlFor="botPlayerEnabled"> Enable BOT player in game ? </label> </td>
                             <td>
-                                <input className="bot-player-enabled-input" type="radio" name="botPlayerEnabled" value="Yes"/>Yes
-                                <input className="bot-player-enabled-input" type="radio" name="botPlayerEnabled" value="No"/>No
+                                <input className="bot-player-enabled-input" type="radio" name="isBotPlayerEnabled" value="Yes"/>Yes
+                                <input className="bot-player-enabled-input" type="radio" name="isBotPlayerEnabled" value="No"/>No
                             </td>
                         </tr>
                         <tr>
                             <td> <input className="submit-btn btn" type="submit" value="Create Game"/> </td>
+                            <td> <input className="abort-btn btn" type="button" value="Cancel" onClick="handleAbort()"/> </td>
                         </tr>
                     </tbody>
                     </table>
@@ -52,11 +52,11 @@ export default class CreateGameModal extends Component {
         }
 
         this.handleCreateGame = this.handleCreateGame.bind(this);
+        this.handleAbort = this.handleAbort.bind(this);
     }
 
 
     renderErrorMessage() {
-        debugger;
         if (this.state.errMessage) {
             return (
                 <div className="create-game-error-message">
@@ -67,10 +67,13 @@ export default class CreateGameModal extends Component {
         return null;
     }
 
-    handleCreateGame(e) {
-        debugger;
-        e.preventDefault();
-        const game = e.target.elements.userName.value;
+    handleCreateGame(event) {
+        event.preventDefault();
+        const game = {} ;
+        game.name               = event.target.elements.gameName.value;
+        game.numOfPLayers       = event.target.elements.numOfPLayers.value;
+        game.isBotPlayerEnabled = event.target.elements.isBotPlayerEnabled.value;
+
         fetch('/lobby/Games', {method:'POST', body: game, credentials: 'include'})
             .then(response=> {
                 if (response.ok){
@@ -84,5 +87,9 @@ export default class CreateGameModal extends Component {
                 }
             });
         return false;
+    }
+
+    handleAbort() {
+        this.props.abortHandler();
     }
 }

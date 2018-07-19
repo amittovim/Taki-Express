@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 
 export default class GamesArea extends Component {
     render() {
-        debugger;
         if (this.state.usersList) {
             return (
                 <div className="games-area-component">
@@ -12,7 +11,7 @@ export default class GamesArea extends Component {
                                 Game Name: {game.name} \br
                                 Game Owner: {game.owner} \br
                                 Number of players in game: {game.numOfPlayers} \br
-                                BOT player enabled: {game.botPlayerEnabled} \br
+                                BOT player enabled: {game.isbotPlayerEnabled} \br
                                 Game status: { game.hasStarted ? 'AVAILABLE' : 'CURRENTLY-RUNNING' }
 
                             </li>

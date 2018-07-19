@@ -2,11 +2,16 @@ const express = require('express');
 const lobbyManagement = express.Router();
 const bodyParser = require('body-parser');
 const auth = require('./authentication');
-
+const dbTmp = require('./database');
 const chatContent = [];
-
+/*
 //bodyParser middleware
 lobbyManagement.use(bodyParser.text());
+*/
+//bodyParser middleware-parse application/x-www-form-urlencoded
+lobbyManagement.use(bodyParser.urlencoded({ extended: false }))
+//bodyParser middleware-parse application/json
+lobbyManagement.use(bodyParser.json())
 
 // middleware that is specific to this router
 lobbyManagement.use(function log (req, res, next) {
@@ -43,10 +48,26 @@ lobbyManagement.route('/games')
         // console.log(body);
         // res.json(auth.usersList);
     //});
-    .post(auth.userAuthentication,  function (req, res) {
-        const body = req.body;
+    .post( auth.userAuthentication, (req, res) => {
+        if (!req.body) return res.sendStatus(400);
+
+        // const body = req.body;
         console.log(body);
-        res.json(auth.usersList);
+        //todo: continue from here
+        const newGame = {};
+        newGame.name = '1stGame';
+        newGame.owner= auth.getUserInfo(req.session.id);
+        newGame.numOfPlayers = 2;
+        newGame.botPlayerEnabled = true;
+        newGame.currentState= {};
+        newGame.history= [];
+        newGame.player1=auth.getUserInfo(req.session.id);
+        newGame.player2='BOT';
+        newGame.player3= null;
+        newGame.player4= null;
+        newGame.hasStarted= false;
+        const body = newGame;
+
     });
 
 // define the about route

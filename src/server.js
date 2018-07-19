@@ -1,3 +1,4 @@
+const port = 3000;
 const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser')
@@ -24,6 +25,6 @@ app.use('/users',  userManagement);
 app.use('/lobby', lobbyManagement);
 app.use('/game' ,  gameManagement);
 
-app.listen (3010, () => {
-    console.log('TAKI server ON. Listening on port 3010!');
+app.listen (port, () => {
+    console.log(`TAKI server ON. Listening on port ${port}!`);
 });

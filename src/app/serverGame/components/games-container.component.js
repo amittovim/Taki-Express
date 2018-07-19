@@ -4,7 +4,6 @@ import GamesArea from "./games-area.component";
 
 export default class GamesContainer extends Component {
     render() {
-        debugger;
         return (
             <div className="games-container-component">
                 <p>currently available games  : </p>
