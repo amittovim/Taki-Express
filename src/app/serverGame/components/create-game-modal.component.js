@@ -74,7 +74,7 @@ export default class CreateGameModal extends Component {
         game.numOfPLayers       = event.target.elements.numOfPLayers.value;
         game.isBotPlayerEnabled = event.target.elements.isBotPlayerEnabled.value;
 
-        fetch('/lobby/Games', {method:'POST', body: game, credentials: 'include'})
+        fetch('/lobby/games', {method:'POST', body: game, credentials: 'include'})
             .then(response=> {
                 if (response.ok){
                     this.setState(()=> ({errMessage: ""}));
