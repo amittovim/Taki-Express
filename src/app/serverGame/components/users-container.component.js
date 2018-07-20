@@ -10,11 +10,6 @@ export default class UsersContainer extends Component {
             <div className="users-container-component">
                 <p>users currently online : </p>
                 <UsersArea/>
-{/*
-
-                <ConversationArea/>
-                <ChatInput/>
-*/}
             </div>
         )
     };

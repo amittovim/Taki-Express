@@ -26,6 +26,7 @@ lobbyManagement.route('/')
         res.json(chatContent);
     })
     .post(auth.userAuthentication, (req, res) => {
+        debugger;
         const body = req.body;
         const userInfo =  auth.getUserInfo(req.session.id);
         chatContent.push({user: userInfo, text: body});
@@ -50,15 +51,9 @@ lobbyManagement.route('/games')
     //});
     .post( auth.userAuthentication, (req, res) => {
         if (!req.body) return res.sendStatus(400);
-
-        // const body = req.body;
-        console.log(body);
-        //todo: continue from here
-        const newGame = {};
-        newGame.name = '1stGame';
+        let newGame = JSON.parse(req.body);
+        console.log(newGame);
         newGame.owner= auth.getUserInfo(req.session.id);
-        newGame.numOfPlayers = 2;
-        newGame.botPlayerEnabled = true;
         newGame.currentState= {};
         newGame.history= [];
         newGame.player1=auth.getUserInfo(req.session.id);
@@ -66,8 +61,7 @@ lobbyManagement.route('/games')
         newGame.player3= null;
         newGame.player4= null;
         newGame.hasStarted= false;
-        const body = newGame;
-
+        // todo : next step - creating a game in gamesList
     });
 
 // define the about route

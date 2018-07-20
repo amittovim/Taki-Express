@@ -27,15 +27,11 @@ export default class CreateGameModal extends Component {
                             </td>
                         </tr>
                         <tr>
-                            <td> <label className="bot-player-enabled-label" htmlFor="botPlayerEnabled"> Enable BOT player in game ? </label> </td>
-                            <td>
-                                <input className="bot-player-enabled-input" type="radio" name="isBotPlayerEnabled" value="Yes"/>Yes
-                                <input className="bot-player-enabled-input" type="radio" name="isBotPlayerEnabled" value="No"/>No
-                            </td>
+                            <td> <input type="checkbox" name="botEnabled" value="BOT Player enabled"/>BOT Player enabled</td>
                         </tr>
                         <tr>
                             <td> <input className="submit-btn btn" type="submit" value="Create Game"/> </td>
-                            <td> <input className="abort-btn btn" type="button" value="Cancel" onClick="handleAbort()"/> </td>
+                            <td> <input className="abort-btn btn" type="button" value="Cancel" onClick={this.handleAbortGameCreation}/> </td>
                         </tr>
                     </tbody>
                     </table>
@@ -52,7 +48,7 @@ export default class CreateGameModal extends Component {
         }
 
         this.handleCreateGame = this.handleCreateGame.bind(this);
-        this.handleAbort = this.handleAbort.bind(this);
+        this.handleAbortGameCreation = this.handleAbortGameCreation.bind(this);
     }
 
 
@@ -72,9 +68,9 @@ export default class CreateGameModal extends Component {
         const game = {} ;
         game.name               = event.target.elements.gameName.value;
         game.numOfPLayers       = event.target.elements.numOfPLayers.value;
-        game.isBotPlayerEnabled = event.target.elements.isBotPlayerEnabled.value;
+        event.target.elements.botEnabled.checked === true ? game.botPlayerEnabled = true : game.botPlayerEnabled = false;
 
-        fetch('/lobby/games', {method:'POST', body: game, credentials: 'include'})
+        fetch('/lobby/games', {method:'POST', body: JSON.stringify(game), credentials: 'include'})
             .then(response=> {
                 if (response.ok){
                     this.setState(()=> ({errMessage: ""}));
@@ -89,7 +85,7 @@ export default class CreateGameModal extends Component {
         return false;
     }
 
-    handleAbort() {
+    handleAbortGameCreation() {
         this.props.abortHandler();
     }
 }

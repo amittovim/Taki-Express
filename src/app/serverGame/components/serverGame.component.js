@@ -23,7 +23,7 @@ export default class ServerGame extends Component {
             return (
                 <CreateGameModal createGameSuccessHandler={this.handleSuccessfulGameCreation}
                                  createGameErrorHandler={this.handleErrorGameCreation}
-                                 abortHandler={this.handleAbort} />
+                                 abortHandler={this.handleAbortGameCreation} />
             );
         }
         return this.renderLobbyRoom();
@@ -49,7 +49,7 @@ export default class ServerGame extends Component {
         this.handleCreateNewGame    = this.handleCreateNewGame.bind(this);
         this.handleSuccessfulGameCreation = this.handleSuccessfulGameCreation.bind(this);
         this.handleErrorGameCreation= this.handleErrorGameCreation.bind(this);
-        this.handleAbort            = this.handleAbort.bind(this);
+        this.handleAbortGameCreation= this.handleAbortGameCreation.bind(this);
         this.getUserName();
     }
 
@@ -125,7 +125,7 @@ export default class ServerGame extends Component {
         this.setState( () => ( {isCreatingNewGame: true } ));
     }
 
-    handleAbort(){
+    handleAbortGameCreation(){
         this.setState( () => ( {isCreatingNewGame: false } ));
     }
 
