@@ -4,23 +4,21 @@ import GameListItem from './game-list-item.component';
 export default class GameList extends Component {
     render() {
         if (this.state.gameList.length > 0) {
-            const gameItems = this.state.gameList.map((game) => {
-                debugger;
-                return (
-                    <GameListItem key={game.id + game.name}
-                                  game={game}
-
-                    />
-                );
-            });
             return (
-                <ul className="gameList-component">
-                    {gameItems}
-                </ul>
-            );
+                <div className="game-list-component">
+                    <ul>
+                        {this.state.gameList.map((game) => (
+                            <li key={game.id + game.name}>
+                                        game name : {game.name} <br/>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
         }
-        else return (<div></div>);
-    }
+        return (
+            <div></div>
+        );    }
         constructor(props)
         {
             super(...props);
