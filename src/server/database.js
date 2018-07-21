@@ -15,8 +15,7 @@ function addGameToGameList(req, res, next) {
         res.status(403).send('game name already exist');
     } else {
         newGame.owner = auth.getUserInfo(req.session.id);
-        newGame.numOfExpectedPlayers = 0;
-        newGame.numOfEnlistedPlayers = 0;
+        newGame.botPlayerEnabled === true ? newGame.numOfEnlistedPlayers = 1 : newGame.numOfEnlistedPlayers = 0 ;
         newGame.currentState = {};
         newGame.history = [];
         newGame.player1 = auth.getUserInfo(req.session.id);

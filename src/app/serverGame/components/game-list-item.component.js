@@ -17,10 +17,10 @@ export default class GameListItem extends Component {
                         game is for {this.props.game.numOfExpectedPlayers} players <br/>
                         {this.props.game.botPlayerEnabled === true
                             ? (<div>player {this.props.game.numOfExpectedPlayers} will be played by computer</div>)
-                            : (<div/>) }
-                        <div> {this.props.game.botPlayerEnabled === true
-                            ?  this.props.game.numOfEnlistedPlayers+1
-                            :  this.props.game.numOfEnlistedPlayers } players already enlisted </div>
+                            : (<div/>)}
+                        <div>{this.props.game.numOfEnlistedPlayers} players already enlisted </div>
+                        <div>{this.props.game.numOfExpectedPlayers - this.props.game.numOfEnlistedPlayers} players are needed for the game to start </div>
+
                     </div>
                 </div>
             </li>
