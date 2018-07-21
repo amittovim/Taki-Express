@@ -53,7 +53,7 @@ lobbyManagement.get('/allUsers', auth.userAuthentication, (req, res) => {
 
 lobbyManagement.route('/games')
     .get(auth.userAuthentication, function (req, res) {
-        const allGames = dbTmp.getAllGameNames();
+        const allGames = dbTmp.getAllGames();
         res.json(allGames);
     })
     .post(auth.userAuthentication, dbTmp.addGameToGameList, (req, res) => {

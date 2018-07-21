@@ -19,9 +19,9 @@ export default class CreateGameModal extends Component {
                                        name="gameName" /></td>
                         </tr>
                         <tr>
-                            <td><label className="number-of-players-label" htmlFor="numOfPLayers"> Number of players in
+                            <td><label className="number-of-players-label" htmlFor="numOfExpectedPlayers"> Number of players in
                                 game : </label></td>
-                            <td><select className="number-of-players-input" name="numOfPLayers">
+                            <td><select className="number-of-players-input" name="numOfExpectedPlayers">
                                 <option>2</option>
                                 <option>3</option>
                                 <option>4</option>
@@ -71,7 +71,7 @@ export default class CreateGameModal extends Component {
         event.preventDefault();
         const newGame = {};
         newGame.name = event.target.elements.gameName.value;
-        newGame.numOfPLayers = event.target.elements.numOfPLayers.value;
+        newGame.numOfExpectedPlayers = event.target.elements.numOfExpectedPlayers.value;
         event.target.elements.botEnabled.checked === true ? newGame.botPlayerEnabled = true : newGame.botPlayerEnabled = false;
 
         fetch('/lobby/games', {method: 'POST', body: JSON.stringify(newGame), credentials: 'include'})
@@ -81,7 +81,7 @@ export default class CreateGameModal extends Component {
                     this.props.createGameSuccessHandler();
                 } else {
                     if (response.status === 403) {
-                        this.setState(() => ({errMessage: "User name already exist, please try another one"}));
+                        this.setState(() => ({errMessage: "game name already exist, please try another one"}));
                     }
                     this.props.createGameErrorHandler();
                 }

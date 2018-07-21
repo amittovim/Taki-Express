@@ -10,7 +10,8 @@ interface User {
 interface Game {
     name: string;
     owner: User;
-    numOfPlayers: number;
+    numOfExpectedPlayers: number;
+    numOfEnlistedPlayers: number;
     botPlayerEnabled: boolean;
     currentState: State;
     history: [State];

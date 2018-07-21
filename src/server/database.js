@@ -1,7 +1,7 @@
 const auth = require('./authentication');
 let gameId = 0;
 const gameList = [];
-
+const _ = require('lodash');
 function findGame(req, res, next) {
 }
 
@@ -15,6 +15,7 @@ function addGameToGameList(req, res, next) {
         res.status(403).send('game name already exist');
     } else {
         newGame.owner = auth.getUserInfo(req.session.id);
+        newGame.numOfExpectedPlayers = 0;
         newGame.currentState = {};
         newGame.history = [];
         newGame.player1 = auth.getUserInfo(req.session.id);
@@ -48,4 +49,10 @@ function getAllGameNames() {
     return gameNamesArray;
 }
 
-module.exports = {findGame, addGameToGameList, removeGameFromGameList, getGameInfo, getAllGameNames}
+function getAllGames() {
+    const gamesArray = _.cloneDeep(gameList);
+    console.log(gamesArray);
+    return gamesArray;
+}
+
+module.exports = {findGame, addGameToGameList, removeGameFromGameList, getGameInfo, getAllGameNames, getAllGames}

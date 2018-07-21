@@ -1,13 +1,13 @@
 import React,{Component} from 'react';
 import './games-container.component.css';
-import GamesArea from "./games-area.component";
+import GameList from "./game-list.component";
 
 export default class GamesContainer extends Component {
     render() {
         return (
             <div className="games-container-component">
                 <p>currently available games  : </p>
-                <GamesArea/>
+                <GameList/>
             </div>
         )
     };
