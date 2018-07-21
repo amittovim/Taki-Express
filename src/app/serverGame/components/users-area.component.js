@@ -44,7 +44,6 @@ export default class UsersArea extends Component {
                     throw response;
                 }
                 this.timeoutId = setTimeout(this.getOnlineUsersList, 700);
-                debugger;
                 return response.json();
             })
             .then(usersList => {

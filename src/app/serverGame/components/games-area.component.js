@@ -2,18 +2,13 @@ import React, {Component} from 'react';
 
 export default class GamesArea extends Component {
     render() {
-        if (this.state.usersList) {
+        if (this.state.gameList.length > 0) {
             return (
                 <div className="games-area-component">
                     <ul>
-                        {this.state.gamesList.map((game) => (
-                            <li key={game.name}>
-                                Game Name: {game.name} \br
-                                Game Owner: {game.owner} \br
-                                Number of players in game: {game.numOfPlayers} \br
-                                BOT player enabled: {game.isbotPlayerEnabled} \br
-                                Game status: { game.hasStarted ? 'AVAILABLE' : 'CURRENTLY-RUNNING' }
-
+                        {this.state.gameList.map((gameName) => (
+                            <li key={gameName}>
+                                {gameName}
                             </li>
                         ))}
                     </ul>
@@ -29,14 +24,14 @@ export default class GamesArea extends Component {
         super(...props);
 
         this.state = {
-            gamesList: []
+            gameList: []
         };
 
-        this.getGamesList = this.getGamesList .bind(this);
+        this.getGameList = this.getGameList.bind(this);
     }
 
     componentDidMount() {
-        this.getGamesList ();
+        this.getGameList();
     }
 
     componentWillUnmount() {
@@ -46,18 +41,20 @@ export default class GamesArea extends Component {
     }
 
 
-    getGamesList () {
+    getGameList() {
         return fetch('/lobby/games/', {method: 'GET', credentials: 'include'})
             .then((response) => {
-                if (!response.ok){
+                if (!response.ok) {
                     throw response;
                 }
                 this.timeoutId = setTimeout(this.getOnlineUsersList, 1000);
                 return response.json();
             })
-            .then(gamesList => {
-                this.setState(()=>({gamesList}));
+            .then(gameList => {
+                this.setState(() => ({gameList: gameList}));
             })
-            .catch(err => {throw err});
+            .catch(err => {
+                throw err
+            });
     }
 }

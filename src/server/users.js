@@ -1,13 +1,11 @@
 const express = require('express');
 const userManagement = express.Router();
-const auth =require('./authentication');
+const auth = require('./authentication');
 const lobbyManagement = require('./lobby');
 const _ = require('lodash');
 
-
-
 // middleware that is specific to this router
-userManagement.use(function log (req, res, next) {
+userManagement.use(function log(req, res, next) {
     console.log(`log: ${req.originalUrl}`);
     next()
 });
@@ -16,7 +14,7 @@ userManagement.use(function log (req, res, next) {
 // define the home page route
 userManagement.get('/', auth.userAuthentication, (req, res) => {
     const userName = auth.getUserInfo(req.session.id).name;
-    res.json({name:userName});
+    res.json({name: userName});
 });
 
 userManagement.get('/allUsers', auth.userAuthentication, (req, res) => {

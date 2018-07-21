@@ -5,7 +5,6 @@ interface User {
     name: string;
     playingInGame: string, null;
     startedPlaying: boolean;
-
 }
 
 interface Game {

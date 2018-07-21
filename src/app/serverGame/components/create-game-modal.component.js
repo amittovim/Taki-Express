@@ -14,26 +14,30 @@ export default class CreateGameModal extends Component {
                     <table>
                         <tbody>
                         <tr>
-                            <td> <label className="game-name-label" htmlFor="gameName"> Game name: </label> </td>
-                            <td> <input className="game-name-input" type="text" placeholder="Game Name" name="gameName"/></td>
+                            <td><label className="game-name-label" htmlFor="gameName"> Game name: </label></td>
+                            <td><input className="game-name-input" type="text" placeholder="Game Name"
+                                       name="gameName" /></td>
                         </tr>
                         <tr>
-                            <td> <label className="number-of-players-label" htmlFor="numOfPLayers"> Number of players in game : </label> </td>
-                            <td> <select className="number-of-players-input" name="numOfPLayers">
+                            <td><label className="number-of-players-label" htmlFor="numOfPLayers"> Number of players in
+                                game : </label></td>
+                            <td><select className="number-of-players-input" name="numOfPLayers">
                                 <option>2</option>
                                 <option>3</option>
                                 <option>4</option>
-                                </select>
+                            </select>
                             </td>
                         </tr>
                         <tr>
-                            <td> <input type="checkbox" name="botEnabled" value="BOT Player enabled"/>BOT Player enabled</td>
+                            <td><input type="checkbox" name="botEnabled" value="BOT Player enabled" />BOT Player enabled
+                            </td>
                         </tr>
                         <tr>
-                            <td> <input className="submit-btn btn" type="submit" value="Create Game"/> </td>
-                            <td> <input className="abort-btn btn" type="button" value="Cancel" onClick={this.handleAbortGameCreation}/> </td>
+                            <td><input className="submit-btn btn" type="submit" value="Create Game" /></td>
+                            <td><input className="abort-btn btn" type="button" value="Cancel"
+                                       onClick={this.handleAbortGameCreation} /></td>
                         </tr>
-                    </tbody>
+                        </tbody>
                     </table>
                 </form>
                 {this.renderErrorMessage()}
@@ -43,7 +47,7 @@ export default class CreateGameModal extends Component {
 
     constructor(props) {
         super(props);
-        this.state ={
+        this.state = {
             errMessage: ''
         }
 
@@ -65,19 +69,19 @@ export default class CreateGameModal extends Component {
 
     handleCreateGame(event) {
         event.preventDefault();
-        const game = {} ;
-        game.name               = event.target.elements.gameName.value;
-        game.numOfPLayers       = event.target.elements.numOfPLayers.value;
-        event.target.elements.botEnabled.checked === true ? game.botPlayerEnabled = true : game.botPlayerEnabled = false;
+        const newGame = {};
+        newGame.name = event.target.elements.gameName.value;
+        newGame.numOfPLayers = event.target.elements.numOfPLayers.value;
+        event.target.elements.botEnabled.checked === true ? newGame.botPlayerEnabled = true : newGame.botPlayerEnabled = false;
 
-        fetch('/lobby/games', {method:'POST', body: JSON.stringify(game), credentials: 'include'})
-            .then(response=> {
-                if (response.ok){
-                    this.setState(()=> ({errMessage: ""}));
+        fetch('/lobby/games', {method: 'POST', body: JSON.stringify(newGame), credentials: 'include'})
+            .then(response => {
+                if (response.ok) {
+                    this.setState(() => ({errMessage: ""}));
                     this.props.createGameSuccessHandler();
                 } else {
                     if (response.status === 403) {
-                        this.setState(()=> ({errMessage: "User name already exist, please try another one"}));
+                        this.setState(() => ({errMessage: "User name already exist, please try another one"}));
                     }
                     this.props.createGameErrorHandler();
                 }
