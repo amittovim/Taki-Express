@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-
+import './game-list-item.component.css';
 // props:
 //  game : game
 
@@ -7,7 +7,7 @@ export default class GameListItem extends Component {
     render() {
     debugger;
         return (
-            <li  className="list-group-item ">
+            <li onClick={ () => window.alert(this.props.game.name)} className="list-group-item ">
                 <div className="game-list-info">
                     <div className="info-left">
                         game name : {this.props.game.name} <br/>
