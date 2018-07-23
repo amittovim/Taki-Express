@@ -35,6 +35,7 @@ function addGameToGameList(req, res, next) {
         newGame.player4 = null;
         newGame.hasStarted = false;
         newGame.id = gameId++;
+
         gameList.push(newGame);
         console.log(gameList);
         next();
@@ -91,6 +92,7 @@ function removeGame(gameId) {
     index === -1 ? gameFound = false : gameFound = true ;
     if (gameFound) {
         const deletedGame = gameList.splice(index , 1);
+        debugger;
         return (deletedGame.id === gameId);
     } else
         return false;

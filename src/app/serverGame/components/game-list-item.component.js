@@ -5,13 +5,14 @@ import Button from "../../shared/components/button/button.component";
 // props:
 // key :
 // game : game
-// successfulGameChoosingHandler : fuction
-// deleteGameHandler
+// successfulGameChoosingHandler : function
+// deleteGameHandler : function
 
 export default class GameListItem extends Component {
     render() {
         return (
-            <li onClick={() => this.onClickHandler() /*window.alert(this.props.game.name)*/}
+            <li
+                /*onClick={() => this.onClickHandler() }*/
                 className="list-group-item ">
                 <div className="game-list-info">
                     <div className="info-left">
@@ -39,6 +40,7 @@ export default class GameListItem extends Component {
         super(...props);
 
         this.onClickHandler = this.onClickHandler.bind(this);
+        this.deleteGameHandler = this.deleteGameHandler.bind(this);
     }
 
     onClickHandler() {
