@@ -58,6 +58,10 @@ lobbyManagement.route('/games')
     })
     .post(auth.userAuthentication, dbTmp.addGameToGameList, (req, res) => {
         res.sendStatus(200);
+    })
+    .put(auth.userAuthentication, dbTmp.addUserToGame, (req, res) => {
+        res.status(200).send('user does not exist');
+        res.sendStatus(200);
     });
 
 // define the about route

@@ -8,6 +8,7 @@ interface User {
 }
 
 interface Game {
+    id: number;
     name: string;
     owner: User;
     numOfExpectedPlayers: number;
@@ -15,6 +16,7 @@ interface Game {
     botPlayerEnabled: boolean;
     currentState: State;
     history: [State];
+    players: [User];
     player1: User, undefined;
     player2: User, Bot, undefined;
     player3: User, Bot, undefined, null;

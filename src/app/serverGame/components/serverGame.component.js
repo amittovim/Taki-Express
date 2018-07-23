@@ -7,6 +7,7 @@ import UsersContainer from "./users-container.component";
 import GamesContainer from "./games-container.component";
 import CreateGameModal from "./create-game-modal.component";
 import {ViewsEnum} from "../../enums/views-enum";
+import Game from "../../game/game.component";
 
 export default class ServerGame extends Component {
 
@@ -15,7 +16,7 @@ export default class ServerGame extends Component {
             case ViewsEnum.Login: {
                 return (
                     <LoginModal loginSuccessHandler={this.handleSuccessfulLogin}
-                                loginErrorHandler={this.handleErrorLogin} />
+                                loginErrorHandler={this.handleErrorLogin}/>
                 );
             }
             case ViewsEnum.Lobby: {
@@ -24,7 +25,7 @@ export default class ServerGame extends Component {
             case ViewsEnum.GameCreation: {
                 return (<CreateGameModal createGameSuccessHandler={this.handleSuccessfulGameCreation}
                                          createGameErrorHandler={this.handleErrorGameCreation}
-                                         abortHandler={this.handleAbortGameCreation} />
+                                         abortHandler={this.handleAbortGameCreation}/>
                 );
             }
             case ViewsEnum.Game: {
@@ -40,8 +41,7 @@ export default class ServerGame extends Component {
                 name: ''
             },
             activeView: ViewsEnum.Login,
-            gameStarted: false,
-            chosenGame: '',
+            currentGame: null,
         };
 
         this.handleSuccessfulLogin = this.handleSuccessfulLogin.bind(this);
@@ -52,6 +52,7 @@ export default class ServerGame extends Component {
         this.handleSuccessfulGameCreation = this.handleSuccessfulGameCreation.bind(this);
         this.handleErrorGameCreation = this.handleErrorGameCreation.bind(this);
         this.handleAbortGameCreation = this.handleAbortGameCreation.bind(this);
+        this.handleSuccessfulGameChoosing = this.handleSuccessfulGameChoosing.bind(this);
         this.getUserName();
     }
 
@@ -69,13 +70,13 @@ export default class ServerGame extends Component {
             <div className='lobby-room-component'>
                 <div className="user-info-area">
                     Hello {this.state.currentUser.name}
-                    <Button className="logout btn" label={'Logout'} onClick={this.handleLogout} isDisabled={false} />
+                    <Button className="logout btn" label={'Logout'} onClick={this.handleLogout} isDisabled={false}/>
                 </div>
                 <Button className="create-new-game btn" label={'CREATE NEW GAME'} onClick={this.handleCreateNewGame}
-                        isDisabled={false} />
-                <UsersContainer />
-                <GamesContainer />
-                <ChatContainer />
+                        isDisabled={false}/>
+                <UsersContainer/>
+                <GamesContainer successfulGameChoosingHandler={this.handleSuccessfulGameChoosing}/>
+                <ChatContainer/>
             </div>
         )
     }
@@ -83,13 +84,14 @@ export default class ServerGame extends Component {
     renderGameRoom() {
         return (
             <div className='game-room-component'>
-                <GameRoom isBotEnabled={true}
+                <Game chosenGame={this.state.currentGame}
+                          isBotEnabled={true}
                           numberOfPlayersInGame={2}
                           gameName={'firstGame'}
-                          numOfPlayersWaitingFor={0} />
+                          numOfPlayersWaitingFor={0}/>
             </div>
         );
-    }
+    }aaa
 
     getUserName() {
         this.fetchUserInfo()
@@ -109,6 +111,7 @@ export default class ServerGame extends Component {
         return fetch('/users', {method: 'GET', credentials: 'include'})
             .then(response => {
                 if (!response.ok) {
+                    console.log(`'Failed to retrieve user information !`);
                     throw response;
                 }
                 return response.json();
@@ -119,7 +122,7 @@ export default class ServerGame extends Component {
         fetch('/users/logout', {method: 'GET', credentials: 'include'})
             .then(response => {
                 if (!response.ok) {
-                    console.log(`'Failed to logout user ${this.state.currentUser.name} `, response)
+                    console.log(`Failed to logout user ${this.state.currentUser.name}. response content is : `, response)
                 }
                 this.setState(() => ({currentUser: {name: ''}, activeView: ViewsEnum.Login}));
             })
@@ -141,5 +144,37 @@ export default class ServerGame extends Component {
     handleErrorGameCreation() {
 
     }
+
+    handleSuccessfulGameChoosing(game) {
+        debugger;
+        const data = {
+            user: this.state.currentUser.name,
+            game
+        };
+        fetch('/lobby/games', { method: 'PUT', body: JSON.stringify(data), credentials: 'include'
+        })
+            .then(response => {
+                if (!response.ok) {
+                    console.log(`'Failed to register ${this.state.currentUser.name} to the game named ${game.name} ! response content is: `, response);
+                }
+                else {
+                    debugger;
+                    console.log(response.json);
+                    this.setState(() => ({
+                        currentGame: '1',
+                        activeView: ViewsEnum.Game
+                    }));
+                }
+            })
+            .catch(err => {
+                if (err.status === 401) { // in case we're getting 'unAuthorized' as response
+                    this.setState(() => ({activeView: ViewsEnum.Login}));
+                } else {
+                    throw err; // in case we're getting an error
+                }
+            });
+    }
+
+
 }
 

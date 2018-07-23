@@ -1,6 +1,9 @@
 import React, {Component} from 'react';
 import GameListItem from './game-list-item.component';
 
+// Props :
+// successfulGameChoosingHandler
+
 export default class GameList extends Component {
     render() {
         if (this.state.gameList.length > 0) {
@@ -9,7 +12,7 @@ export default class GameList extends Component {
                 return (
                     <GameListItem key={game.id + game.name}
                                   game={game}
-
+                                  successfulGameChoosingHandler={this.props.successfulGameChoosingHandler}
                     />
                 );
             });

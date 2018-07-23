@@ -1,13 +1,15 @@
 import React, {Component} from 'react';
 import './game-list-item.component.css';
 // props:
-//  game : game
+// key :
+// game : game
+// successfulGameChoosingHandler : fuction
 
 export default class GameListItem extends Component {
     render() {
     debugger;
         return (
-            <li onClick={ () => window.alert(this.props.game.name)} className="list-group-item ">
+            <li onClick={ () => this.onClickHandler() /*window.alert(this.props.game.name)*/} className="list-group-item ">
                 <div className="game-list-info">
                     <div className="info-left">
                         game name : {this.props.game.name} <br/>
@@ -29,6 +31,18 @@ export default class GameListItem extends Component {
 
     constructor(props) {
         super(...props);
+
+        this.onClickHandler = this.onClickHandler.bind(this);
+    }
+
+    onClickHandler() {
+        debugger;
+        if (this.props.game.hasStarted) {
+            return null;
+        } else {
+            this.props.successfulGameChoosingHandler(this.props.game);
+        }
+
     }
 }
 
