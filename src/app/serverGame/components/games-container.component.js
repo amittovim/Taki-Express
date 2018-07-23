@@ -17,6 +17,7 @@ export default class GamesContainer extends Component {
 
     constructor(props) {
         super(...props);
+
     };
 
 }

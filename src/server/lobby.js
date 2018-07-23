@@ -4,14 +4,10 @@ const bodyParser = require('body-parser');
 const auth = require('./authentication');
 const dbTmp = require('./database');
 const chatContent = [];
-/*
-//bodyParser middleware
-lobbyManagement.use(bodyParser.text());
-*/
-//bodyParser middleware-parse application/x-www-form-urlencoded
-lobbyManagement.use(bodyParser.urlencoded({extended: false}))
-//bodyParser middleware-parse application/json
-lobbyManagement.use(bodyParser.json())
+
+//bodyParser middleware-parse
+lobbyManagement.use(bodyParser.json());
+lobbyManagement.use(bodyParser.urlencoded({extended: false}));
 
 // middleware that is specific to this router
 lobbyManagement.use(function log(req, res, next) {
@@ -63,6 +59,16 @@ lobbyManagement.route('/games')
         res.status(200).send('user does not exist');
         res.sendStatus(200);
     });
+
+lobbyManagement.delete('/games/delete/:id', auth.userAuthentication,(req,res) => {
+    console.log(req.params.id);
+    const gameDeleted = dbTmp.removeGame(req.params.id);
+    if (!gameDeleted ) {
+        res.status(403).send('error deleting game');
+    }else {
+        res.json(dbTmp.getAllGames());
+    }
+});
 
 // define the about route
 lobbyManagement.get('/about', function (req, res) {

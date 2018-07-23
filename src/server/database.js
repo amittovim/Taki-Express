@@ -13,7 +13,6 @@ function addGameToGameList(req, res, next) {
     console.log(newGame);
 
     const nameAlreadyExists = gameList.some((game) => game.name === newGame.name);
-    debugger;
     if (nameAlreadyExists) {
         res.status(403).send('game name already exist');
     } else {
@@ -43,7 +42,6 @@ function addGameToGameList(req, res, next) {
 }
 
 function addUserToGame(req, res, next) {
-    debugger;
     req.xData = JSON.parse(req.body);
     console.log(req.xData);
 
@@ -52,7 +50,6 @@ function addUserToGame(req, res, next) {
     if (emptyPlayerSeat === 'unassigned' ) {
         currentGame.players[emptyPlayerSeat] = auth.getUserInfo().name;
         currentGame.numOfEnlistedPlayers++;
-        debugger;
         // res.game = currentGame;
         res.status(200).send('game registered successfully');
     } else {
@@ -87,4 +84,16 @@ function getAllGames() {
     return gamesArray;
 }
 
-module.exports = {addGameToGameList, getAllGames, addUserToGame}
+function removeGame(gameId) {
+    let gameFound;
+
+    const index = gameList.findIndex( (game) => { return game.id === gameId; } ) ;
+    index === -1 ? gameFound = false : gameFound = true ;
+    if (gameFound) {
+        const deletedGame = gameList.splice(index , 1);
+        return (deletedGame.id === gameId);
+    } else
+        return false;
+}
+
+module.exports = {addGameToGameList, getAllGames, addUserToGame, removeGame}

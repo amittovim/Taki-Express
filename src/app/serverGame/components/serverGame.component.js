@@ -76,6 +76,7 @@ export default class ServerGame extends Component {
                         isDisabled={false}/>
                 <UsersContainer/>
                 <GamesContainer successfulGameChoosingHandler={this.handleSuccessfulGameChoosing}/>
+
                 <ChatContainer/>
             </div>
         )
@@ -85,13 +86,13 @@ export default class ServerGame extends Component {
         return (
             <div className='game-room-component'>
                 <Game chosenGame={this.state.currentGame}
-                          isBotEnabled={true}
-                          numberOfPlayersInGame={2}
-                          gameName={'firstGame'}
-                          numOfPlayersWaitingFor={0}/>
+                      isBotEnabled={true}
+                      numberOfPlayersInGame={2}
+                      gameName={'firstGame'}
+                      numOfPlayersWaitingFor={0}/>
             </div>
         );
-    }aaa
+    }
 
     getUserName() {
         this.fetchUserInfo()
@@ -146,20 +147,19 @@ export default class ServerGame extends Component {
     }
 
     handleSuccessfulGameChoosing(game) {
-        debugger;
         const data = {
             user: this.state.currentUser.name,
             game
         };
-        fetch('/lobby/games', { method: 'PUT', body: JSON.stringify(data), credentials: 'include'
+        fetch('/lobby/games', {
+            method: 'PUT', body: JSON.stringify(data), credentials: 'include'
         })
-            .then(response => {
-                if (!response.ok) {
+            .then(res => {
+                if (!res.ok) {
                     console.log(`'Failed to register ${this.state.currentUser.name} to the game named ${game.name} ! response content is: `, response);
                 }
                 else {
-                    debugger;
-                    console.log(response.json);
+                    console.log(res.json);
                     this.setState(() => ({
                         currentGame: '1',
                         activeView: ViewsEnum.Game
