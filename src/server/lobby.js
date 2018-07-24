@@ -62,7 +62,7 @@ lobbyManagement.route('/games')
 
 lobbyManagement.delete('/games/delete/:id', auth.userAuthentication,(req,res) => {
     console.log(req.params.id);
-    const gameDeleted = dbTmp.removeGame(req.params.id);
+    const gameDeleted = dbTmp.removeGame(Number(req.params.id));
     if (!gameDeleted ) {
         res.status(403).send('error deleting game');
     }else {

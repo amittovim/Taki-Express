@@ -71,7 +71,6 @@ export default class GameList extends Component {
     handleDeleteGame(gameId) {
         const confirmation = confirm('are you sure?');
         if (confirmation) {
-            debugger;
             return fetch('/lobby/games/delete/' + gameId, {method: 'DELETE', credentials: 'include'})
                 .then((res) => {
                     if (!res.ok) {
@@ -80,7 +79,6 @@ export default class GameList extends Component {
                     return res.json();
                 })
                 .then((gameList) => {
-                    debugger;
                     this.setState(() => ({gameList}));
                 })
                 .catch((err) => {

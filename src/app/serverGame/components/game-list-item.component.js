@@ -12,7 +12,7 @@ export default class GameListItem extends Component {
     render() {
         return (
             <li
-                onClick={() => this.onClickHandler() }
+                // onClick={() => this.onClickHandler() }
                 className="list-group-item ">
                 <div className="game-list-info">
                     <div className="info-left">

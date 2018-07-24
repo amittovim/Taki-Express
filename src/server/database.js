@@ -88,11 +88,10 @@ function getAllGames() {
 function removeGame(gameId) {
     let gameFound;
 
-    const index = gameList.findIndex( (game) => { return game.id === gameId; } ) ;
+    const index = gameList.findIndex( (game) => { return game.id === gameId } ) ;
     index === -1 ? gameFound = false : gameFound = true ;
     if (gameFound) {
-        const deletedGame = gameList.splice(index , 1);
-        debugger;
+        const deletedGame = gameList.splice(index , 1)[0];
         return (deletedGame.id === gameId);
     } else
         return false;
