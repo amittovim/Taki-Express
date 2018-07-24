@@ -17,7 +17,7 @@ export default class GameList extends Component {
                 );
             });
             return (
-                <ul className="gameList-component">
+                <ul className="game-list-component">
                     {gameItems}
                 </ul>
             );

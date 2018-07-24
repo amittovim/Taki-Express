@@ -1,7 +1,11 @@
-.list-group-item {
+.game-list-item {
     cursor: pointer;
 }
 
-.list-group-item:hover {
+.game-list-item:hover {
     background: #eee;
+}
+
+.game-list-item Botton {
+    z-index: 5;
 }

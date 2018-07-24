@@ -12,8 +12,8 @@ export default class GameListItem extends Component {
     render() {
         return (
             <li
-                // onClick={() => this.onClickHandler() }
-                className="list-group-item ">
+                onClick={() => this.onClickHandler() }
+                className="game-list-item ">
                 <div className="game-list-info">
                     <div className="info-left">
                         game name : {this.props.game.name} <br/>
