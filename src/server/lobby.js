@@ -56,16 +56,18 @@ lobbyManagement.route('/games')
         res.sendStatus(200);
     })
     .put(auth.userAuthentication, dbTmp.addUserToGame, (req, res) => {
+/*
         res.status(200).send('user does not exist');
         res.sendStatus(200);
+*/
     });
 
-lobbyManagement.delete('/games/delete/:id', auth.userAuthentication,(req,res) => {
-    console.log(req.params.id);
+
+lobbyManagement.delete('/games/delete/:id', auth.userAuthentication, (req, res) => {
     const gameDeleted = dbTmp.removeGame(Number(req.params.id));
-    if (!gameDeleted ) {
+    if (!gameDeleted) {
         res.status(403).send('error deleting game');
-    }else {
+    } else {
         res.json(dbTmp.getAllGames());
     }
 });

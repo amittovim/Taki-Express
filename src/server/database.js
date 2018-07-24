@@ -27,7 +27,7 @@ function addGameToGameList(req, res, next) {
             newGame.numOfEnlistedPlayers = 0;
         }
         newGame.currentState = {};
-        newGame.history = [];
+        newGame.stateHistory = [];
         newGame.gameStatus = 'AwaitingPlayers';
         newGame.player1 = 'unassigned';
         newGame.player2 = 'BOT';
@@ -35,7 +35,7 @@ function addGameToGameList(req, res, next) {
         newGame.player4 = null;
         newGame.hasStarted = false;
         newGame.id = gameId++;
-
+        newGame.StateId = 0;
         gameList.push(newGame);
         console.log(gameList);
         next();

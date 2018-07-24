@@ -75,7 +75,12 @@ class GameRoom extends Component {
             },
             isLoading: false,
             isGameOver: false
+
+
         };
+        this.stateStack = [];
+
+
         this.updateSelectedCard = this.updateSelectedCard.bind(this);
         this.handlePlayMove = this.handlePlayMove.bind(this);
         this.openColorPicker = this.openColorPicker.bind(this);
@@ -89,11 +94,61 @@ class GameRoom extends Component {
         this.handleGetGameHistory = this.handleGetGameHistory.bind(this);
         this.startGame = this.startGame.bind(this);
         this.processStateChanges = this.processStateChanges.bind(this);
+
+
+        this.fetchGameContent = this.fetchGameContent.bind(this);
+        this.getGameContent = this.getGameContent.bind(this);
+
     }
 
     componentWillMount() {
         this.startGame();
     }
+
+    componentDidMount() {
+        this.getGameInfo()
+    }
+
+    componentWillUnmount() {
+        if (this.timeoutId) {
+            clearTimeout(this.timeoutId);
+        }
+    }
+    getGameContent(gameId) {
+        this.fetchGameContent(gameId)
+            .then(contentFromServer => {
+                const clientStateInfo = this.translateContent2Server(contentFromServer);
+                if (clientStateInfo.id === this.state.id+1) {
+                    stateStack.push(clientStateInfo);
+                }
+                this.setState(()=>({content}));
+            })
+            .catch(err => {throw err});
+    }
+
+    fetchGameContent(gameId) {
+        return fetch('/game/' + gameId, {method: 'GET', credentials: 'include'})
+            .then((res) => {
+                if (!res.ok) {
+                    throw res;
+                }
+                this.timeoutId = setTimeout(this.getChatContent, 200);
+                return res.json();
+            });
+    }
+
+    translateContent2Server(contentFromServer) {
+
+    }
+}
+
+
+
+
+
+
+
+
 
     startGame() {
         this.handleCloseModal();
