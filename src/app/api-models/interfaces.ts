@@ -3,27 +3,57 @@
 interface User {
     cookie: string;
     name: string;
-    playingInGame: string, null;
-    startedPlaying: boolean;
+    isPlayer: boolean;
+    playerData: Player;
+}
+
+interface Card {
+
+}
+
+interface Pile {
+
+}
+
+enum PlayerStatusEnum {
+    Idle = 'idle', // מחכה לשחקנים שיתחברו
+    Playing = 'playing',
+    FinishedPlaying = 'finishedPlaying', // ניצח, סיים את הקלפים בידו או הפסיד
+    Observer = 'observer' // צופה מן הצד (רואה את כל הקלפים)
+}
+
+
+players.every(player => player.playerStatus === PlayerStatusEnum.FinishedPlaying);
+
+interface Player {
+    pile: Pile;
+    isBot: boolean;
+    playerStatus: PlayerStatusEnum;
+}
+
+interface GameState {
+    id: number;
+    players: Player[];
+    currentPlayer: Player;
+    drawPile: Pile;
+    discardPile: Pile;
+    leadingCard: Card;
+    action: CardActionEnum // TODO: find a better name for actionState
+    turnNumber: number; // ?
+    movesCounter: number; //?
+    twoPlusCounter: number;
+    consoleMessage: string;
 }
 
 interface Game {
     id: number;
     name: string;
     owner: User;
-    numOfExpectedPlayers: number;
-    numOfEnlistedPlayers: number;
-    botPlayerEnabled: boolean;
+    playersCapacity : number;
+    playersEnrolled: number;
+    isBotEnabled: boolean;
     currentState: State;
-    history: [State];
-    players: [User];
-    player1: User, undefined;
-    player2: User, Bot, undefined;
-    player3: User, Bot, undefined, null;
-    player4: User, Bot, undefined, null;
-    hasStarted: boolean;
-
-
+    gameStatus: GameStatusEnum
 }
 
 interface NewPlayer {
@@ -111,9 +141,11 @@ enum PlayerEnum {
 }
 
 enum GameStatusEnum {
-    GameInit = 'GameInit',
-    SettingStartingCard = 'SettingStartingCard',
-    RestockingDeckOfCard = 'RestockingDeckOfCard',
-    GameStateChanged = 'GameStateChanged'
+    AwaitingPlayers = 'AwaitingPlayers',
+    InitializingGame = 'InitializingGame',
+    Ongoing = 'Ongoing', // TODO: used to be GameStateChanged
+    Ended = 'Ended',
+    // TODO: when we get there
+    // RestockingDeckOfCard = 'RestockingDeckOfCard',
 }
 

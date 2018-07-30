@@ -1,8 +1,14 @@
+import initDiscardPile from "../logic/init/discard-pile.init";
+import initDrawPile from "../logic/init/draw-pile.init";
+import {saveGameState} from "../logic/history/state-history";
+import * as dealer from "../logic/dealer/dealer";
+
 const express = require('express');
 const gameManagement = express.Router();
 const bodyParser = require('body-parser');
 const auth = require('./authentication');
 const dbTmp = require('./database');
+const gameServer = require('./gameServer');
 
 //bodyParser middleware-parse
 gameManagement.use(bodyParser.json());
@@ -22,7 +28,17 @@ gameManagement.get('/', auth.userAuthentication, (req, res) => {
 });
 
 gameManagement.get('/:id', auth.userAuthentication, (req, res) => {
-    const serverState = dbTmp.getGameInfo(req.params.id);
+    const gameId = req.params.id;
+    const serverState = dbTmp.getGameInfo(gameId);
+
+    if (serverState.gameStatus === 'GameInit') {
+        gameServer.initDrawPile(gameId);
+        gameServer.initDiscardPile(gameId);
+        gameServer.dealCards(gameId);
+
+
+    }
+
     dbTmp.updateLastStateIdRecievedBy(auth.getUserInfo());
     res.json(serverState);
     res.send('Game Main page');

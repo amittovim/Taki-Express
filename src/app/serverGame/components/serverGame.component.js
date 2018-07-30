@@ -14,6 +14,7 @@ export default class ServerGame extends Component {
     render() {
         switch (this.state.activeView) {
             case ViewsEnum.Login: {
+                debugger;
                 return (
                     <LoginModal loginSuccessHandler={this.handleSuccessfulLogin}
                                 loginErrorHandler={this.handleErrorLogin}/>

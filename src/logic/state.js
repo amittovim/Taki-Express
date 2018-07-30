@@ -7,7 +7,7 @@ export const innerGameState = {
     Bot: null,
     leadingCard: null,
     currentPlayer: null,
-    selectedCard: null,
+    selectedCard: null, // UI
     actionState: null,
     turnNumber: 0,
     movesCounter: 0,
