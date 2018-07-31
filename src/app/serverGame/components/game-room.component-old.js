@@ -14,7 +14,7 @@ import Console from "../../game/console/console.component";
 import Overlay from "../../shared/components/overlay/overlay.component";
 import {getPlayerPile} from "../../../logic/utils/game.utils";
 
-class GameRoom extends Component {
+class GameRoomOld extends Component {
     render() {
         return (
             <div className="game-room-component">
@@ -320,4 +320,4 @@ class GameRoom extends Component {
     }
 }
 
-export default GameRoom;
+export default GameRoomOld;
