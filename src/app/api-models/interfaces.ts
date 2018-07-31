@@ -63,7 +63,6 @@ interface Game {
     isBotEnabled: boolean;
     currentState: GameState;
     gameStatus: GameStatusEnum;
-    isActive: boolean;
 }
 
 interface Card {
