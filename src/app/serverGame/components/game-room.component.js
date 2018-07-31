@@ -21,7 +21,7 @@ class GameRoom extends Component {
             <div className="game-room-component">
                 <div>current counter value: {this.state.counterValue}</div>
                 <div>last updater : {this.state.lastUpdater} </div>
-                <Button label="increment"
+                <Button label="increment counter"
                         onClick={this.props.handleClick} />
             </div>
         );
