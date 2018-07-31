@@ -37,16 +37,17 @@ function addUserToGame(req, res, next) {
     let emptyPlayerSeatIndex = currentGame.gameState.players.findIndex((player) => {
         return player === 'unassigned';
     });
+    let nameObject =auth.getUserInfo(req.session.id);
     if (emptyPlayerSeatIndex !== -1) {
-        currentGame.players[emptyPlayerSeatIndex] = {
+        currentGame.gameState.players[emptyPlayerSeatIndex] = {
             isBot: false,
-            user: auth.getUserInfo(),
-            name: auth.getUserInfo().name,
+            user: nameObject,
+            name: nameObject.name,
             pile: {
                 type: Enums.PileTypeEnum.HumanPile,
                 cards: [],
                 isHand: true,
-                ownerName: auth.getUserInfo().name,
+                ownerName: nameObject.name,
                 singleCardCounter: 0
             },
             playerStatus: Enums.PlayerStatusEnum.Idle
@@ -115,7 +116,7 @@ function createNewGame(newGameInfo) {
         playersCapacity: newGameInfo.playersCapacity,
         playersEnrolled: 0,
         isBotEnabled: newGameInfo.isBotEnabled,
-        gameStatus: Enums.GameStatusEnum.AwaitingPlayers,
+        isActive: false
     };
 
     const newGamePlayers = [];
@@ -157,6 +158,7 @@ function createNewGame(newGameInfo) {
         movesCounter: 0, //?
         twoPlusCounter: 0,
         consoleMessage: '',
+        gameStatus: Enums.GameStatusEnum.AwaitingPlayers
     };
     newGame.gameStatus = 'AwaitingPlayers';
 

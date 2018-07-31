@@ -1,19 +1,8 @@
 import React, {Component} from 'react';
-import './game.component.css';
-import * as GameService from '../../game/game.service';
-import * as GameApiService from '../../game/game-api.service';
-import Board from "../../game/board/board.component";
-import {GameStatusEnum} from "../../../logic/game-status.enum";
-import {CardActionEnum} from "../../enums/card-action-enum";
-import {ModalTypeEnum} from "../../game/modal/modal-type.enum";
-import Modal from "../../game/modal/modal.component";
-import {PlayerEnum} from "../../enums/player.enum";
-import Navbar from "../../game/navbar/navbar.component";
-import Loader from "../../shared/components/loader/loader.component";
-import Console from "../../game/console/console.component";
-import Overlay from "../../shared/components/overlay/overlay.component";
-import {getPlayerPile} from "../../../logic/utils/game.utils";
 import Button from "../../shared/components/button/button.component";
+
+// props:
+// ChosenGame : Game
 
 class GameRoom extends Component {
     render() {
@@ -22,7 +11,7 @@ class GameRoom extends Component {
                 <div>current counter value: {this.state.counterValue}</div>
                 <div>last updater : {this.state.lastUpdater} </div>
                 <Button label="increment counter"
-                        onClick={this.props.handleClick} />
+                        onClick={fetch('/game/' + this.gameId, {method: 'PUT', credentials: 'include'})} />
             </div>
         );
     }
@@ -34,10 +23,12 @@ class GameRoom extends Component {
             lastUpdater: null
         };
         this.stateStack = [];
+        this.gameId = this.props.chosenGame.id;
 
         this.fetchGameContent = this.fetchGameContent.bind(this);
         this.getGameContent = this.getGameContent.bind(this);
 
+        this.getGameContent(this.gameId);
 
     }
 
@@ -55,8 +46,8 @@ class GameRoom extends Component {
     }
     getGameContent(gameId) {
         this.fetchGameContent(gameId)
-            .then(contentFromServer => {
-                const clientStateInfo = this.translateContent2Server(contentFromServer);
+            .then(content => {
+                const clientStateInfo = content;
                 if (clientStateInfo.id === this.state.id+1) {
                     stateStack.push(clientStateInfo);
                 }
@@ -71,7 +62,7 @@ class GameRoom extends Component {
                 if (!res.ok) {
                     throw res;
                 }
-                this.timeoutId = setTimeout(this.getChatContent, 200);
+                this.timeoutId = setTimeout(this.getGameContent, 200);
                 return res.json();
             });
     }

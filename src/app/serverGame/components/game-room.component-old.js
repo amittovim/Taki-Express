@@ -121,7 +121,7 @@ class GameRoomOld extends Component {
                 if (clientStateInfo.id === this.state.id+1) {
                     stateStack.push(clientStateInfo);
                 }
-                this.setState(()=>({content}));
+                this.setState(()=>({contentFromServer}));
             })
             .catch(err => {throw err});
     }

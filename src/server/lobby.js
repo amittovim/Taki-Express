@@ -1,4 +1,4 @@
-const Enums = require('./enums-node/enums-node');
+const Enums = require('../server/enums-node/enums-node');
 const express = require('express');
 const lobbyManagement = express.Router();
 const bodyParser = require('body-parser');
@@ -15,17 +15,6 @@ lobbyManagement.use(function log(req, res, next) {
     console.log(`log: ${req.originalUrl}`);
     next()
 });
-
-// lobbyManagement.use('/games', checkEmptyBody);
-
-// function checkEmptyBody(req, res, next) {
-//     debugger;
-//     if (!req.body) {
-//         return res.sendStatus(400);
-//     } else {
-//         next();
-//     }
-// }
 
 // define the home page route
 lobbyManagement.route('/')
@@ -54,21 +43,25 @@ lobbyManagement.route('/games')
         res.json(allGames);
     })
     .post(auth.userAuthentication, dbTmp.addGameToGameList, (req, res) => {
+        res.sendStatus(200);
+    })
+    .put(auth.userAuthentication, dbTmp.addUserToGame, (req, res) => {
         const currentGame = req.xGame;
         // check if game playersCapacity === playersEnrolled
         if (currentGame.playersCapacity === currentGame.playersEnrolled) {
             currentGame.gameStatus = Enums.GameStatusEnum.InitializingGame;
         }
+
+        // return ACK and than the client needs to start polling GET requests .
+
+
+        // check if game is ready to start if so,
+        // change game status to init and init game
+        debugger;
         res.status(req.xStatus).send({
-            currentGame: req.xGame,     // we might not need to send this here
+            currentGame: currentGame,     // we might not need to send this here
             sendMessage: req.xSendMessage
         });
-    })
-    .put(auth.userAuthentication, dbTmp.addUserToGame, (req, res) => {
-/*
-        res.status(200).send('user does not exist');
-        res.sendStatus(200);
-*/
     });
 
 

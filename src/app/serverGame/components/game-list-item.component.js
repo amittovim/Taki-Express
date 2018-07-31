@@ -25,7 +25,7 @@ export default class GameListItem extends Component {
                             ? (<div>player {this.props.game.playersCapacity} will be played by computer</div>)
                             : (<div/>)}
                         <div>{this.props.game.playersEnrolled} players already enlisted</div>
-                        {this.props.game.gameStatus !== Enums.GameStatusEnum.AwaitingPlayers
+                        {this.props.game.isActive === true
                             ? (<div>Game has started and is Active </div>)
                             : (<div>Game is
                                 awaiting {this.props.game.playersCapacity - this.props.game.playersEnrolled} players to
@@ -45,7 +45,7 @@ export default class GameListItem extends Component {
     }
 
     onClickHandler() {
-        if (this.props.game.hasStarted) {
+        if (this.props.game.isActive === true) {
             return null;
         } else {
             this.props.successfulGameChoosingHandler(this.props.game);

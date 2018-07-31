@@ -13,6 +13,7 @@ userManagement.use(function log(req, res, next) {
 
 // define the home page route
 userManagement.get('/', auth.userAuthentication, (req, res) => {
+
     const userName = auth.getUserInfo(req.session.id).name;
     res.json({name: userName});
 });

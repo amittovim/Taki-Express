@@ -8,6 +8,7 @@ import GamesContainer from "./games-container.component";
 import CreateGameModal from "./create-game-modal.component";
 import {ViewsEnum} from "../../enums/views-enum";
 import Game from "../../game/game.component";
+import GameRoom from "./game-room.component";
 
 export default class ServerGame extends Component {
 
@@ -53,6 +54,7 @@ export default class ServerGame extends Component {
         this.handleErrorGameCreation = this.handleErrorGameCreation.bind(this);
         this.handleAbortGameCreation = this.handleAbortGameCreation.bind(this);
         this.handleSuccessfulGameChoosing = this.handleSuccessfulGameChoosing.bind(this);
+
         this.getUserName();
     }
 
@@ -85,11 +87,7 @@ export default class ServerGame extends Component {
     renderGameRoom() {
         return (
             <div className='game-room-component'>
-                <Game chosenGame={this.state.currentGame}
-                      isBotEnabled={true}
-                      numberOfPlayersInGame={2}
-                      gameName={'firstGame'}
-                      numOfPlayersWaitingFor={0}/>
+                <GameRoom chosenGame={this.state.currentGame}/>
             </div>
         );
     }
@@ -155,16 +153,21 @@ export default class ServerGame extends Component {
             method: 'PUT', body: JSON.stringify(data), credentials: 'include'
         })
             .then(res => {
+                debugger;
                 if (!res.ok) {
                     console.log(`'Failed to register ${this.state.currentUser.name} to the game named ${game.name} ! response content is: `, response);
                 }
                 else {
-                    console.log(res.json);
-                    this.setState(() => ({
-                        currentGame: '1',
-                        activeView: ViewsEnum.Game
-                    }));
+                    return res.json();
                 }
+            })
+            .then(content => {
+                debugger;
+                this.setState(() => ({
+                    activeView: ViewsEnum.Game,
+                    currentGame: content.currentGame,
+
+                }));
             })
             .catch(err => {
                 if (err.status === 401) { // in case we're getting 'unAuthorized' as response

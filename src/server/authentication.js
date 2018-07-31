@@ -12,7 +12,11 @@ function addUserToAuthList(req, res, next) {
     if (usersList[req.session.id] !== undefined) {
         res.status(403).send('user already exist');
     } else {
-        usersList[req.session.id] = req.body;
+        usersList[req.session.id] = {cookie: req.session.id,
+            name: req.body,
+            isPlayer: false,
+            playerData: null
+        };
         next();
     }
 }
@@ -27,13 +31,13 @@ function removeUserFromAuthList(req, res, next) {
 }
 
 function getUserInfo(id) {
-    return {name: usersList[id]};
+    return {name: usersList[id].name};
 }
 
 function getAllOnlineUserNames() {
     const userNamesArray = [];
     for (const idProperty in usersList) {
-        userNamesArray.push(usersList[idProperty]);
+        userNamesArray.push(usersList[idProperty].name);
     }
     console.log(userNamesArray);
     return userNamesArray;

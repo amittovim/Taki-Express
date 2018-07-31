@@ -5,6 +5,11 @@ const auth = require('./authentication');
 const dbTmp = require('./database');
 const gameUtils = require('./gameUtils');
 
+let gameContent = {
+    counterValue : 0,
+    lastUpdater: null
+};
+
 //bodyParser middleware-parse
 gameManagement.use(bodyParser.json());
 gameManagement.use(bodyParser.urlencoded({extended: false}));
@@ -15,29 +20,40 @@ gameManagement.use(function log(req, res, next) {
     next()
 });
 
-
-
 // define the home page route
 gameManagement.get('/', auth.userAuthentication, (req, res) => {
     res.send('Game Main page');
 });
 
-gameManagement.get('/:id', auth.userAuthentication, (req, res) => {
-    const gameId = req.params.id;
-    const serverState = dbTmp.getGameInfo(gameId);
+gameManagement.route('/:id')
+    .get(auth.userAuthentication, (req, res) => {
+        debugger;
+        const gameId = req.params.id;
+        //אם המשתמש מצורף כבר למשחק שלח לו STATE
 
-    if (serverState.gameStatus === 'GameInit') {
+        res.json(gameContent);
+    })
+    .put(auth.userAuthentication, (req, res) => {
+        debugger;
+        gameContent.counterValue++;
+        gameContent.lastUpdater = auth.getUserInfo(req.session.id).name;
+        res.redirect(303,'/:id');
+
+    });
+/*
+    const gameInfoFrmServer = dbTmp.getGameInfo(gameId);
+    translateContent2Client(gameInfoFrmServer,auth.getUserInfo());
+
+    if (dbTmp.gameStateFrmServer.gameStatus === 'GameInit') {
         gameUtils.initDrawPile(gameId);
         gameUtils.initDiscardPile(gameId);
         gameUtils.dealCards(gameId);
-
-
     }
-
     dbTmp.updateLastStateIdRecievedBy(auth.getUserInfo());
-    res.json(serverState);
+    res.json(gameStateFrmServer);
     res.send('Game Main page');
-});
+*/
+
 
 
 

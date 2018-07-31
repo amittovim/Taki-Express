@@ -52,6 +52,7 @@ interface GameState {
     movesCounter: number; //?
     twoPlusCounter: number;
     consoleMessage: string;
+    gameStatus: GameStatusEnum;
 }
 
 interface Game {
@@ -62,7 +63,8 @@ interface Game {
     playersEnrolled: number;
     isBotEnabled: boolean;
     currentState: GameState;
-    gameStatus: GameStatusEnum;
+    isActive : boolean; // has the game started
+
 }
 
 interface Card {
