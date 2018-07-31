@@ -1,3 +1,4 @@
+const Enums = require('./enums-node/enums-node');
 const express = require('express');
 const lobbyManagement = express.Router();
 const bodyParser = require('body-parser');
@@ -53,7 +54,15 @@ lobbyManagement.route('/games')
         res.json(allGames);
     })
     .post(auth.userAuthentication, dbTmp.addGameToGameList, (req, res) => {
-        res.sendStatus(200);
+        const currentGame = req.xGame;
+        // check if game playersCapacity === playersEnrolled
+        if (currentGame.playersCapacity === currentGame.playersEnrolled) {
+            currentGame.gameStatus = Enums.GameStatusEnum.InitializingGame;
+        }
+        res.status(req.xStatus).send({
+            currentGame: req.xGame,     // we might not need to send this here
+            sendMessage: req.xSendMessage
+        });
     })
     .put(auth.userAuthentication, dbTmp.addUserToGame, (req, res) => {
 /*

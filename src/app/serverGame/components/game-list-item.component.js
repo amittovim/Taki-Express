@@ -12,7 +12,7 @@ export default class GameListItem extends Component {
     render() {
         return (
             <li
-                onClick={() => this.onClickHandler() }
+                onClick={() => this.onClickHandler()}
                 className="game-list-item ">
                 <div className="game-list-info">
                     <div className="info-left">
@@ -20,15 +20,16 @@ export default class GameListItem extends Component {
                         game owner: {this.props.game.owner.name} <br/>
                     </div>
                     <div className="info-right">
-                        game is for {this.props.game.numOfExpectedPlayers} players <br/>
-                        {this.props.game.botPlayerEnabled === true
-                            ? (<div>player {this.props.game.numOfExpectedPlayers} will be played by computer</div>)
+                        game is for {this.props.game.playersCapacity} players <br/>
+                        {this.props.game.isBotEnabled === true
+                            ? (<div>player {this.props.game.playersCapacity} will be played by computer</div>)
                             : (<div/>)}
-                        <div>{this.props.game.numOfEnlistedPlayers} players already enlisted</div>
-                        <div>{this.props.game.numOfExpectedPlayers - this.props.game.numOfEnlistedPlayers} players are
-                            needed for the game to start
-                        </div>
-
+                        <div>{this.props.game.playersEnrolled} players already enlisted</div>
+                        {this.props.game.gameStatus !== Enums.GameStatusEnum.AwaitingPlayers
+                            ? (<div>Game has started and is Active </div>)
+                            : (<div>Game is
+                                awaiting {this.props.game.playersCapacity - this.props.game.playersEnrolled} players to
+                                started </div>)}
                     </div>
                 </div>
                 <Button label='Delete' onClick={this.deleteGameHandler}/>

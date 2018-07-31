@@ -19,9 +19,9 @@ export default class CreateGameModal extends Component {
                                        name="gameName" /></td>
                         </tr>
                         <tr>
-                            <td><label className="number-of-players-label" htmlFor="numOfExpectedPlayers"> Number of players in
+                            <td><label className="number-of-players-label" htmlFor="playersCapacity"> Number of players in
                                 game : </label></td>
-                            <td><select className="number-of-players-input" name="numOfExpectedPlayers">
+                            <td><select className="number-of-players-input" name="playersCapacity">
                                 <option>2</option>
                                 <option>3</option>
                                 <option>4</option>
@@ -29,7 +29,7 @@ export default class CreateGameModal extends Component {
                             </td>
                         </tr>
                         <tr>
-                            <td><input type="checkbox" name="botEnabled" value="BOT Player enabled" />BOT Player enabled
+                            <td><input type="checkbox" name="isBotEnabled" value="BOT Player enabled" />BOT Player enabled
                             </td>
                         </tr>
                         <tr>
@@ -71,8 +71,9 @@ export default class CreateGameModal extends Component {
         event.preventDefault();
         const newGame = {};
         newGame.name = event.target.elements.gameName.value;
-        newGame.numOfExpectedPlayers = event.target.elements.numOfExpectedPlayers.value;
-        event.target.elements.botEnabled.checked === true ? newGame.botPlayerEnabled = true : newGame.botPlayerEnabled = false;
+        newGame.playersCapacity = event.target.elements.playersCapacity.value;
+        debugger;
+        event.target.elements.isBotEnabled.checked === true ? newGame.isBotEnabled = true : newGame.isBotEnabled = false;
         fetch('/lobby/games', {method: 'POST', body: JSON.stringify(newGame), credentials: 'include'})
             .then(response => {
                 if (response.ok) {

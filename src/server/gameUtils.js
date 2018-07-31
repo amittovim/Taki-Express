@@ -1,5 +1,11 @@
-function dealHands(){
+function initDrawPile(gameId) {
+
+}
+function initDiscardPile(gameId) {
+
+}
+function dealCards(gameId) {
 
 }
 
-module.exports = { dealHands }
+module.exports = { initDrawPile, initDiscardPile, dealCards}

@@ -12,7 +12,11 @@ interface Card {
 }
 
 interface Pile {
-
+    type: PileTypeEnum;
+    cards: Card[];
+    isHand: boolean;
+    ownerName: User.name; // refers to the player user info
+    singleCardCounter: number;
 }
 
 enum PlayerStatusEnum {
@@ -26,8 +30,10 @@ enum PlayerStatusEnum {
 players.every(player => player.playerStatus === PlayerStatusEnum.FinishedPlaying);
 
 interface Player {
-    pile: Pile;
     isBot: boolean;
+    user: User;
+    name: User.name or 'Bot';
+    pile: Pile;
     playerStatus: PlayerStatusEnum;
 }
 
@@ -37,8 +43,11 @@ interface GameState {
     currentPlayer: Player;
     drawPile: Pile;
     discardPile: Pile;
+    receivingPileOwner: PileTypeEnum;
+    givingPileOwner: PileTypeEnum
+
     leadingCard: Card;
-    action: CardActionEnum // TODO: find a better name for actionState
+    actionInvoked: CardActionEnum // TODO: find a better name for this actionState
     turnNumber: number; // ?
     movesCounter: number; //?
     twoPlusCounter: number;
@@ -52,44 +61,9 @@ interface Game {
     playersCapacity : number;
     playersEnrolled: number;
     isBotEnabled: boolean;
-    currentState: State;
-    gameStatus: GameStatusEnum
-}
-
-interface NewPlayer {
-    user: User;
-    name: User.name;
-    isActive: boolean;
-    isBotEnabled: boolean;
-    pile: Pile;
-
-}
-
-interface Player {
-    playerType: PlayerEnum;
-    pile: Pile;
-}
-
-interface Pile {
-    type: PileTypeEnum;
-    cards: Card[];
-    isHand: boolean;
-    singleCardCounter: number;
-}
-
-interface State {
-    discardPile: Pile;
-    drawPile: Pile;
-    human: Player;
-    bot: Player;
-    leadingCard: Card;
-    currentPlayer: PlayerEnum;
-    selectedCard: Card;
-    actionState: CardActionEnum;
-    turnNumber: number;
-    movesCounter: number;
-    twoPlusCounter: number;
+    currentState: GameState;
     gameStatus: GameStatusEnum;
+    isActive: boolean;
 }
 
 interface Card {
@@ -131,8 +105,10 @@ enum CardActionEnum {
 enum PileTypeEnum {
     DrawPile = 'DrawPile',
     DiscardPile = 'DiscardPile',
-    HumanPile = 'HumanPile',
-    BotPile = 'BotPile'
+    Player1Pile = 'Player1Pile',
+    Player2Pile = 'Player2Pile',
+    Player3Pile = 'Player3Pile',
+    Player4Pile = 'Player4Pile',
 }
 
 enum PlayerEnum {
