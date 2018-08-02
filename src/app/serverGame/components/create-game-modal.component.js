@@ -72,7 +72,6 @@ export default class CreateGameModal extends Component {
         const newGame = {};
         newGame.name = event.target.elements.gameName.value;
         newGame.playersCapacity = event.target.elements.playersCapacity.value;
-        debugger;
         event.target.elements.isBotEnabled.checked === true ? newGame.isBotEnabled = true : newGame.isBotEnabled = false;
         fetch('/lobby/games', {method: 'POST', body: JSON.stringify(newGame), credentials: 'include'})
             .then(response => {

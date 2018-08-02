@@ -12,7 +12,7 @@ lobbyManagement.use(bodyParser.urlencoded({extended: false}));
 
 // middleware that is specific to this router
 lobbyManagement.use(function log(req, res, next) {
-    console.log(`log: ${req.originalUrl}`);
+    console.log(`log: ${req.originalUrl}: ${req.method}`);
     next()
 });
 

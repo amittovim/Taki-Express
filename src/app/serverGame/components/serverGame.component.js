@@ -153,7 +153,6 @@ export default class ServerGame extends Component {
             method: 'PUT', body: JSON.stringify(data), credentials: 'include'
         })
             .then(res => {
-                debugger;
                 if (!res.ok) {
                     console.log(`'Failed to register ${this.state.currentUser.name} to the game named ${game.name} ! response content is: `, response);
                 }

@@ -16,7 +16,7 @@ gameManagement.use(bodyParser.urlencoded({extended: false}));
 
 // middleware that is specific to this router
 gameManagement.use(function log(req, res, next) {
-    console.log(`log: ${req.originalUrl}`);
+    console.log(`log: ${req.originalUrl}: ${req.method}`);
     next()
 });
 
@@ -28,7 +28,7 @@ gameManagement.get('/', auth.userAuthentication, (req, res) => {
 gameManagement.route('/:id')
     .get(auth.userAuthentication, (req, res) => {
         debugger;
-        const gameId = req.params.id;
+        //const gameId = req.params.id;
         //אם המשתמש מצורף כבר למשחק שלח לו STATE
 
         res.json(gameContent);
@@ -37,7 +37,8 @@ gameManagement.route('/:id')
         debugger;
         gameContent.counterValue++;
         gameContent.lastUpdater = auth.getUserInfo(req.session.id).name;
-        res.redirect(303,'/:id');
+        //res.redirect(303,'/:id');
+        res.json(gameContent);
 
     });
 /*

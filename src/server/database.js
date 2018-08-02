@@ -20,7 +20,6 @@ function addGameToGameList(req, res, next) {
         res.status(403).send('game name already exist');
     } else {
         createNewGame(newGameInfo);
-        debugger;
         console.log(gameList);
         next();
     }
@@ -107,7 +106,6 @@ function removeGame(gameId) {
 module.exports = {addGameToGameList, getAllGames, addUserToGame, removeGame}
 
 function createNewGame(newGameInfo) {
-    debugger;
     let newGame;
     newGame = {
         id: gameId++,

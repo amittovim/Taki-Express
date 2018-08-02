@@ -6,7 +6,7 @@ const _ = require('lodash');
 
 // middleware that is specific to this router
 userManagement.use(function log(req, res, next) {
-    console.log(`log: ${req.originalUrl}`);
+    console.log(`log: ${req.originalUrl}: ${req.method}`);
     next()
 });
 

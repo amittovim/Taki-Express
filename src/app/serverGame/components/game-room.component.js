@@ -11,7 +11,7 @@ class GameRoom extends Component {
                 <div>current counter value: {this.state.counterValue}</div>
                 <div>last updater : {this.state.lastUpdater} </div>
                 <Button label="increment counter"
-                        onClick={fetch('/game/' + this.gameId, {method: 'PUT', credentials: 'include'})} />
+                        /*onClick={this.handleUpdateGameContent(this.state.gameId)}*//>
             </div>
         );
     }
@@ -19,16 +19,19 @@ class GameRoom extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            counterValue : 0,
-            lastUpdater: null
+            counterValue: 0,
+            lastUpdater: null,
+            gameId: this.props.chosenGame.id
         };
         this.stateStack = [];
-        this.gameId = this.props.chosenGame.id;
+        // this.gameId = this.props.chosenGame.id;
 
         this.fetchGameContent = this.fetchGameContent.bind(this);
         this.getGameContent = this.getGameContent.bind(this);
+        this.handleUpdateGameContent = this.handleUpdateGameContent.bind(this);
+        debugger;
+        this.getGameContent();
 
-        this.getGameContent(this.gameId);
 
     }
 
@@ -36,6 +39,7 @@ class GameRoom extends Component {
     }
 
     componentDidMount() {
+        debugger;
         this.getGameContent();
     }
 
@@ -44,26 +48,46 @@ class GameRoom extends Component {
             clearTimeout(this.timeoutId);
         }
     }
-    getGameContent(gameId) {
-        this.fetchGameContent(gameId)
+
+    getGameContent() {
+        this.fetchGameContent(this.state.gameId)
             .then(content => {
                 const clientStateInfo = content;
-                if (clientStateInfo.id === this.state.id+1) {
-                    stateStack.push(clientStateInfo);
+                if (clientStateInfo.id === this.state.id + 1) {
+
                 }
-                this.setState(()=>({content}));
+                this.setState(() => ({clientStateInfo}));
             })
-            .catch(err => {throw err});
+            .catch(err => {
+                throw err
+            });
     }
 
     fetchGameContent(gameId) {
+        debugger;
         return fetch('/game/' + gameId, {method: 'GET', credentials: 'include'})
             .then((res) => {
                 if (!res.ok) {
                     throw res;
                 }
-                this.timeoutId = setTimeout(this.getGameContent, 200);
+                debugger;
+                this.timeoutId = setTimeout(this.getGameContent, 2000);
                 return res.json();
+            });
+    }
+
+    handleUpdateGameContent(gameId) {
+        fetch('/game/' + gameId, {method: 'PUT', credentials: 'include'})
+            .then((res) => {
+                debugger;
+                if (!res.ok) {
+                    throw res;
+                }
+                return res.json();
+            })
+            .then(content => {
+                const clientStateInfo = content;
+                this.setState(() => ({clientStateInfo}));
             });
     }
 
@@ -71,14 +95,6 @@ class GameRoom extends Component {
 
     }
 }
-
-
-
-
-
-
-
-
 
 
 export default GameRoom;
