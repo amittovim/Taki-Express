@@ -13,6 +13,9 @@ import Console from "./console/console.component";
 import Overlay from "../shared/components/overlay/overlay.component";
 import {getPlayerPile} from "../../logic/utils/game.utils";
 import AdvancedBoard from "./advanced-board/advanced-board";
+import WaitingMessageComponent from "../serverGame/components/waiting-message-component";
+// <PROPS>
+// game: Game object
 
 class Game extends Component {
     render() {
@@ -25,21 +28,26 @@ class Game extends Component {
                         gameHistoryCallback={this.handleGetGameHistory}
                         restartGameCallback={this.startGame}
                         openModalCallback={this.handleOpenModal}
-                        emitAverageTime={this.updateAverageTime} />
-                <Loader isLoading={this.state.isLoading} />
-                <Overlay isVisible={this.state.isLoading || this.state.modal.isOpen || this.state.isGameOver} />
+                        emitAverageTime={this.updateAverageTime}/>
+                <Loader isLoading={this.state.isLoading}/>
+                <Overlay isVisible={this.state.isLoading || this.state.modal.isOpen || this.state.isGameOver}/>
                 <Modal isOpen={this.state.modal.isOpen}
                        type={this.state.modal.type}
                        callback={this.state.modal.callback}
                        restartGameCallback={this.startGame}
                        data={this.getStats()}
-                       closeModal={this.handleCloseModal} />
-                <AdvancedBoard drawPile={this.state.DrawPile}
-                               discardPile={this.state.DiscardPile}
-                               humanPile={this.state.HumanPile}
-                               botPile={this.state.BotPile}
-                               moveCardDriver={this.humanMoveCardHandler} />
-                <Console message={this.state.consoleMessage} />
+                       closeModal={this.handleCloseModal}/>
+                <div>
+                    {this.props.game.playersCapacity > this.props.game.playersEnrolled
+                        ? (<WaitingMessageComponent numOfNeededPlayers ={(this.props.game.playersCapacity - this.props.game.playersEnrolled)} />)
+                        : ((<AdvancedBoard drawPile={this.state.DrawPile}
+                                           discardPile={this.state.DiscardPile}
+                                           humanPile={this.state.HumanPile}
+                                           botPile={this.state.BotPile}
+                                           moveCardDriver={this.humanMoveCardHandler}/>))
+                    }
+                </div>
+                <Console message={this.state.consoleMessage}/>
             </div>
         );
     }
@@ -47,6 +55,8 @@ class Game extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            gameId: this.props.game.id,
+
             DrawPile: null,
             DiscardPile: null,
             HumanPile: null,
@@ -84,11 +94,63 @@ class Game extends Component {
         this.handleGetGameHistory = this.handleGetGameHistory.bind(this);
         this.startGame = this.startGame.bind(this);
         this.processStateChanges = this.processStateChanges.bind(this);
+
+        this.getGameContent = this.getGameContent.bind(this);
+
+        this.getGameContent();
+    }
+
+    componentWillMount() {
+    }
+
+    componentDidMount() {
+
+    }
+
+    componentWillUpdate() {
+    }
+
+
+    componentDidUpdate() {
     }
 
     componentWillMount() {
         this.startGame();
     }
+
+    componentWillUnmount() {
+        if (this.timeoutId) {
+            clearTimeout(this.timeoutId);
+        }
+    }
+
+    getGameContent() {
+        this.fetchGameContent()
+            .then(contentFromServer => {
+/*
+                if (contentFromServer.id === this.state.id+1) {
+                    stateStack.push(contentFromServer);
+                }
+*/
+                debugger;
+                this.setState(()=> {return contentFromServer;});
+            })
+            .catch(err => {throw err});
+    }
+
+    fetchGameContent() {
+        return fetch('/game/' + this.state.gameId, {method: 'GET', credentials: 'include'})
+            .then((res) => {
+                if (!res.ok) {
+                    throw res;
+                }
+                debugger;
+                this.timeoutId = setTimeout(this.getGameContent, 200);
+                const t = res.json();
+                return t;
+            });
+    }
+
 
     startGame() {
         this.handleCloseModal();

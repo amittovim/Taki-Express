@@ -1,5 +1,4 @@
 import React,{Component} from 'react';
-import './chat-container.component.css';
 import UsersArea from "./users-area.component";
 
 export default class UsersContainer extends Component {

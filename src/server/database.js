@@ -81,11 +81,11 @@ function removeGameFromGameList(req, res, next) {
         next();
     }
 }
-
+*/
 function getGameInfo(gameName) {
     return {game: gameList[gameName]};
 }
-
+/*
 function getAllGameNames() {
     const gameNamesArray = gameList.map(game => game.name);
     console.log(gameNamesArray);
@@ -113,7 +113,7 @@ function removeGame(gameId) {
         return false;
 }
 
-module.exports = {addGameToGameList, getAllGames, addUserToGame, removeGame}
+module.exports = {addGameToGameList, getGameInfo, getAllGames, addUserToGame, removeGame}
 
 function createNewGame(newGameInfo) {
     let newGame;

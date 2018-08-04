@@ -5,10 +5,12 @@ const auth = require('./authentication');
 const dbTmp = require('./database');
 const gameUtils = require('./gameUtils');
 
+/*
 let gameContent = {
     counterValue : 0,
     lastUpdater: null
 };
+*/
 
 //bodyParser middleware-parse
 gameManagement.use(bodyParser.json());
@@ -27,10 +29,15 @@ gameManagement.get('/', auth.userAuthentication, (req, res) => {
 
 gameManagement.route('/:id')
     .get(auth.userAuthentication, (req, res) => {
-        //const gameId = req.params.id;
-        //אם המשתמש מצורף כבר למשחק שלח לו STATE
-
-        res.json(gameContent);
+        const gameId = req.params.id;
+        debugger;
+    //אם המשתמש מצורף כבר למשחק שלח לו STATE
+        let data = dbTmp.getGameInfo(gameId);
+        let data2 = {
+            player1: 'amit',
+            player2: 'dor'
+        }
+        res.json(data2);
     })
     .put(auth.userAuthentication, (req, res) => {
         gameContent.counterValue++;

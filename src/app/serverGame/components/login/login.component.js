@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
-import takiImage from '../../../assets/images/super-taki.jpg';
+import takiImage from '../../../../assets/images/super-taki.jpg';
 import './loginl.component.css';
-import {PlayerEnum} from "../../enums/player.enum";
+import {PlayerEnum} from "../../../enums/player.enum";
 // <PROPS>
 // loginSuccessHandler: function
 // loginErrorHandler  : function

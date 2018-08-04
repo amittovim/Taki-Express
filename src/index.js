@@ -5,8 +5,8 @@ import Game from "./app/game/game.component";
 import ServerGame from './app/serverGame/components/server-game.component.js'
 
 const App = () => {
-    return (<Game />);
-    // return (<ServerGame />);
+    // return (<Game />);
+    return (<ServerGame />);
 };
 
 ReactDOM.render(

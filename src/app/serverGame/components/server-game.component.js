@@ -1,14 +1,14 @@
 import React, {Component} from 'react';
 import ModalFrame from "../../shared/components/modal/modal.component";
 import Button from "../../shared/components/button/button.component";
-import LoginModal from './login.component';
-import ChatContainer from './chat-container.component';
 import UsersContainer from "./users-container.component";
 import GamesContainer from "./games-container.component";
 import CreateGameModal from "./create-game-modal.component";
 import {ViewsEnum} from "../../enums/views-enum";
 import Game from "../../game/game.component";
-import GameRoom from "./game-room.component";
+import WaitingMessageComponent from "./waiting-message-component";
+import LoginModal from "./login/login.component";
+import ChatContainer from "./chat/chat-container.component";
 
 export default class ServerGame extends Component {
 
@@ -86,7 +86,7 @@ export default class ServerGame extends Component {
 
     renderGameRoom() {
         return (
-            <Game />
+            <Game game={this.state.currentGame}/>
         );
     }
 
