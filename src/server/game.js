@@ -27,19 +27,16 @@ gameManagement.get('/', auth.userAuthentication, (req, res) => {
 
 gameManagement.route('/:id')
     .get(auth.userAuthentication, (req, res) => {
-        debugger;
         //const gameId = req.params.id;
         //אם המשתמש מצורף כבר למשחק שלח לו STATE
 
         res.json(gameContent);
     })
     .put(auth.userAuthentication, (req, res) => {
-        debugger;
         gameContent.counterValue++;
         gameContent.lastUpdater = auth.getUserInfo(req.session.id).name;
-        //res.redirect(303,'/:id');
+        // res.redirect(303,'/:id');
         res.json(gameContent);
-
     });
 /*
     const gameInfoFrmServer = dbTmp.getGameInfo(gameId);

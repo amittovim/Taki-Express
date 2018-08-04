@@ -26,40 +26,50 @@ function addGameToGameList(req, res, next) {
 }
 
 function addUserToGame(req, res, next) {
-    debugger;
     req.xData = JSON.parse(req.body);
-    console.log(req.xData);
-
     let currentGame = gameList.find((game) => {
         return game.name === req.xData.game.name;
     });
-    let emptyPlayerSeatIndex = currentGame.gameState.players.findIndex((player) => {
-        return player === 'unassigned';
-    });
-    let nameObject =auth.getUserInfo(req.session.id);
-    if (emptyPlayerSeatIndex !== -1) {
-        currentGame.gameState.players[emptyPlayerSeatIndex] = {
-            isBot: false,
-            user: nameObject,
-            name: nameObject.name,
-            pile: {
-                type: Enums.PileTypeEnum.HumanPile,
-                cards: [],
-                isHand: true,
-                ownerName: nameObject.name,
-                singleCardCounter: 0
-            },
-            playerStatus: Enums.PlayerStatusEnum.Idle
-        };
-        currentGame.playersEnrolled++;
-        req.xGame = currentGame;
-        req.xStatus = 200;
-        req.xSendMessage = 'game registered successfully';
-    } else {
+    if (currentGame.isActive) {
         req.xStatus = 403;
-        req.xSendMessage = 'No available seats in this game';
+        req.xSendMessage = 'Game has already started! cannot enter game';
+        next();
+    } else {
+        let emptyPlayerSeatIndex = currentGame.gameState.players.findIndex((player) => {
+            return player === 'unassigned';
+        });
+        let gameHasSeatAvailable;
+        emptyPlayerSeatIndex === -1 ? gameHasSeatAvailable = false: gameHasSeatAvailable = true;
+        let nameObject = auth.getUserInfo(req.session.id);
+        // if emptyPlayerSeatIndex === -1 it means no empty seats at this game which means this game has
+        // already started and we cannot enter a game which is already started.
+        if (gameHasSeatAvailable) {
+            currentGame.gameState.players[emptyPlayerSeatIndex] = {
+                isBot: false,
+                user: nameObject,
+                name: nameObject.name,
+                pile: {
+                    type: Enums.PileTypeEnum.HumanPile,
+                    cards: [],
+                    isHand: true,
+                    ownerName: nameObject.name,
+                    singleCardCounter: 0
+                },
+                playerStatus: Enums.PlayerStatusEnum.Idle
+            };
+            currentGame.playersEnrolled++;
+            currentGame.playersEnrolled === currentGame.playersCapacity
+                ? currentGame.isActive = true
+                : currentGame.isActive = false;
+            req.xGame = currentGame;
+            req.xStatus = 200;
+            req.xSendMessage = 'game registered successfully';
+        } else {
+            req.xStatus = 403;
+            req.xSendMessage = 'No available seats in this game';
+        }
+        next();
     }
-    next();
 }
 
 /*
@@ -114,6 +124,7 @@ function createNewGame(newGameInfo) {
         playersCapacity: newGameInfo.playersCapacity,
         playersEnrolled: 0,
         isBotEnabled: newGameInfo.isBotEnabled,
+        history: [],
         isActive: false
     };
 
@@ -158,7 +169,6 @@ function createNewGame(newGameInfo) {
         consoleMessage: '',
         gameStatus: Enums.GameStatusEnum.AwaitingPlayers
     };
-    newGame.gameStatus = 'AwaitingPlayers';
 
     gameList.push(newGame);
 }

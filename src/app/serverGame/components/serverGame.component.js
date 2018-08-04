@@ -161,7 +161,6 @@ export default class ServerGame extends Component {
                 }
             })
             .then(content => {
-                debugger;
                 this.setState(() => ({
                     activeView: ViewsEnum.Game,
                     currentGame: content.currentGame,
