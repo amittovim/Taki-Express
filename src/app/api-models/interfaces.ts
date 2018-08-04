@@ -63,6 +63,7 @@ interface Game {
     playersEnrolled: number;
     isBotEnabled: boolean;
     currentState: GameState;
+    history: Array of GameState;
     isActive : boolean; // has the game started
 
 }

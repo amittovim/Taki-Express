@@ -49,7 +49,7 @@ lobbyManagement.route('/games')
         const currentGame = req.xGame;
         // check if game playersCapacity === playersEnrolled
         if (currentGame.playersCapacity === currentGame.playersEnrolled) {
-            currentGame.gameStatus = Enums.GameStatusEnum.InitializingGame;
+            currentGame.gameState.gameStatus = Enums.GameStatusEnum.InitializingGame;
         }
 
         // return ACK and than the client needs to start polling GET requests .
@@ -57,7 +57,6 @@ lobbyManagement.route('/games')
 
         // check if game is ready to start if so,
         // change game status to init and init game
-        debugger;
         res.status(req.xStatus).send({
             currentGame: currentGame,     // we might not need to send this here
             sendMessage: req.xSendMessage

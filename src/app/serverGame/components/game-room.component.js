@@ -11,7 +11,7 @@ class GameRoom extends Component {
                 <div>current counter value: {this.state.counterValue}</div>
                 <div>last updater : {this.state.lastUpdater} </div>
                 <Button label="increment counter"
-                        /*onClick={this.handleUpdateGameContent(this.state.gameId)}*//>
+                        onClick={this.handleUpdateGameContent}/>
             </div>
         );
     }
@@ -29,7 +29,8 @@ class GameRoom extends Component {
         this.fetchGameContent = this.fetchGameContent.bind(this);
         this.getGameContent = this.getGameContent.bind(this);
         this.handleUpdateGameContent = this.handleUpdateGameContent.bind(this);
-        debugger;
+
+
         this.getGameContent();
 
 
@@ -39,8 +40,14 @@ class GameRoom extends Component {
     }
 
     componentDidMount() {
-        debugger;
         this.getGameContent();
+    }
+
+    componentWillUpdate() {
+    }
+
+
+    componentDidUpdate() {
     }
 
     componentWillUnmount() {
@@ -56,7 +63,7 @@ class GameRoom extends Component {
                 if (clientStateInfo.id === this.state.id + 1) {
 
                 }
-                this.setState(() => ({clientStateInfo}));
+                this.setState(() => {return clientStateInfo});
             })
             .catch(err => {
                 throw err
@@ -64,22 +71,19 @@ class GameRoom extends Component {
     }
 
     fetchGameContent(gameId) {
-        debugger;
         return fetch('/game/' + gameId, {method: 'GET', credentials: 'include'})
             .then((res) => {
                 if (!res.ok) {
                     throw res;
                 }
-                debugger;
                 this.timeoutId = setTimeout(this.getGameContent, 2000);
                 return res.json();
             });
     }
 
-    handleUpdateGameContent(gameId) {
-        fetch('/game/' + gameId, {method: 'PUT', credentials: 'include'})
+    handleUpdateGameContent() {
+        fetch('/game/' + this.state.gameId, {method: 'PUT', credentials: 'include'})
             .then((res) => {
-                debugger;
                 if (!res.ok) {
                     throw res;
                 }
@@ -87,7 +91,9 @@ class GameRoom extends Component {
             })
             .then(content => {
                 const clientStateInfo = content;
-                this.setState(() => ({clientStateInfo}));
+                this.setState(() => {
+                    return (clientStateInfo);
+                });
             });
     }
 

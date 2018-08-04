@@ -9,10 +9,17 @@ function userAuthentication(req, res, next) {
 }
 
 function addUserToAuthList(req, res, next) {
-    if (usersList[req.session.id] !== undefined) {
+    let user, userExist;
+    for (user in usersList) {
+        if ( usersList[user].name === req.body) {
+            userExist=true;
+        }
+    }
+    if ( userExist) {
         res.status(403).send('user already exist');
     } else {
-        usersList[req.session.id] = {cookie: req.session.id,
+        usersList[req.session.id] = {
+            cookie: req.session.id,
             name: req.body,
             isPlayer: false,
             playerData: null
