@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import ModalFrame from "../../shared/components/modal/modal.component";
 import Button from "../../shared/components/button/button.component";
-import LoginModal from './login-modal.component';
+import LoginModal from './login.component';
 import ChatContainer from './chat-container.component';
 import UsersContainer from "./users-container.component";
 import GamesContainer from "./games-container.component";
@@ -17,7 +17,7 @@ export default class ServerGame extends Component {
             case ViewsEnum.Login: {
                 return (
                     <LoginModal loginSuccessHandler={this.handleSuccessfulLogin}
-                                loginErrorHandler={this.handleErrorLogin}/>
+                                loginErrorHandler={this.handleErrorLogin} />
                 );
             }
             case ViewsEnum.Lobby: {
@@ -26,7 +26,7 @@ export default class ServerGame extends Component {
             case ViewsEnum.GameCreation: {
                 return (<CreateGameModal createGameSuccessHandler={this.handleSuccessfulGameCreation}
                                          createGameErrorHandler={this.handleErrorGameCreation}
-                                         abortHandler={this.handleAbortGameCreation}/>
+                                         abortHandler={this.handleAbortGameCreation} />
                 );
             }
             case ViewsEnum.Game: {
@@ -72,23 +72,21 @@ export default class ServerGame extends Component {
             <div className='lobby-room-component'>
                 <div className="user-info-area">
                     Hello {this.state.currentUser.name}
-                    <Button className="logout btn" label={'Logout'} onClick={this.handleLogout} isDisabled={false}/>
+                    <Button className="logout btn" label={'Logout'} onClick={this.handleLogout} isDisabled={false} />
                 </div>
                 <Button className="create-new-game btn" label={'CREATE NEW GAME'} onClick={this.handleCreateNewGame}
-                        isDisabled={false}/>
-                <UsersContainer/>
-                <GamesContainer successfulGameChoosingHandler={this.handleSuccessfulGameChoosing}/>
+                        isDisabled={false} />
+                <UsersContainer />
+                <GamesContainer successfulGameChoosingHandler={this.handleSuccessfulGameChoosing} />
 
-                <ChatContainer/>
+                <ChatContainer />
             </div>
         )
     }
 
     renderGameRoom() {
         return (
-            <div className='game-room-component'>
-                <GameRoom chosenGame={this.state.currentGame}/>
-            </div>
+            <Game />
         );
     }
 

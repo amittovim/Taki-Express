@@ -1,6 +1,4 @@
 import React,{Component} from 'react';
-import ConversationArea from './conversation-area.component';
-import ChatInput from './chatInput.component';
 import './chat-container.component.css';
 import UsersArea from "./users-area.component";
 
