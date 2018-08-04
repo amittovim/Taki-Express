@@ -1,0 +1,64 @@
+.advanced-board-component {
+    display: flex;
+    flex-direction: column;
+    flex: 15;
+}
+
+.top-board {
+    display: flex;
+    flex: 1;
+}
+
+.bottom-board {
+    display: flex;
+    flex: 1.5;
+    border: 4px solid limegreen;
+}
+
+.middle-board {
+    display: flex;
+    flex: 2;
+}
+
+.empty-space {
+    background: green;
+    display: flex;
+    flex: 1;
+}
+
+.top-board .hand-component, .bottom-board .hand-component {
+    display: flex;
+    flex: 5;
+}
+
+.middle-board .left-section, .middle-board .right-section {
+    display: flex;
+    flex: 1;
+}
+
+.center-section {
+    flex: 3;
+    background: #339900;
+    overflow: hidden;
+    display: flex;
+}
+
+.center-section .hand-component {
+    height: 100%;
+}
+
+.left-section .card-component {
+    transform: rotate(90deg);
+    margin-top: -45px;
+}
+
+.right-section .card-component {
+    transform: rotate(270deg);
+    margin-top: -45px;
+}
+
+.left-section .hand-component, .right-section .hand-component {
+    flex-direction: column;
+}
+
+

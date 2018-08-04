@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import './game.component.css';
 import * as GameService from './game.service';
 import * as GameApiService from './game-api.service';
-import Board from "./board/board.component";
 import {GameStatusEnum} from "../../logic/game-status.enum";
 import {CardActionEnum} from "../enums/card-action-enum";
 import {ModalTypeEnum} from "./modal/modal-type.enum";
@@ -13,6 +12,7 @@ import Loader from "../shared/components/loader/loader.component";
 import Console from "./console/console.component";
 import Overlay from "../shared/components/overlay/overlay.component";
 import {getPlayerPile} from "../../logic/utils/game.utils";
+import AdvancedBoard from "./advanced-board/advanced-board";
 
 class Game extends Component {
     render() {
@@ -34,12 +34,11 @@ class Game extends Component {
                        restartGameCallback={this.startGame}
                        data={this.getStats()}
                        closeModal={this.handleCloseModal} />
-                <Board drawPile={this.state.DrawPile}
-                       discardPile={this.state.DiscardPile}
-                       humanPile={this.state.HumanPile}
-                       botPile={this.state.BotPile}
-                       moveCardDriver={this.humanMoveCardHandler} // TODO: replace to context
-                />
+                <AdvancedBoard drawPile={this.state.DrawPile}
+                               discardPile={this.state.DiscardPile}
+                               humanPile={this.state.HumanPile}
+                               botPile={this.state.BotPile}
+                               moveCardDriver={this.humanMoveCardHandler} />
                 <Console message={this.state.consoleMessage} />
             </div>
         );
@@ -224,7 +223,9 @@ class Game extends Component {
                 if (GameStatusEnum.GameStateChanged) {
                     this.setState({
                         ...response.body,
-                    }, () => { this.intervalId = setTimeout(this.processStateChanges,1000)});
+                    }, () => {
+                        this.intervalId = setTimeout(this.processStateChanges, 1000)
+                    });
                 }
             });
     }

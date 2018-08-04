@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import takiImage from '../../../assets/images/super-taki.jpg';
-import './login-modal.component.css';
+import './loginl.component.css';
 import {PlayerEnum} from "../../enums/player.enum";
 // <PROPS>
 // loginSuccessHandler: function

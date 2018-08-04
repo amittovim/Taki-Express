@@ -9,7 +9,7 @@
     "start": "node src/server.js",
     "server": "nodemon --inspect src/server.js"
   },
-  "author": "Spivak Ofer",
+  "author": "Amit Tovim & Dor Amar",
   "license": "ISC",
   "devDependencies": {
     "babel-core": "^6.26.0",
