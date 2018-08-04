@@ -82,8 +82,9 @@ function removeGameFromGameList(req, res, next) {
     }
 }
 */
-function getGameInfo(gameName) {
-    return {game: gameList[gameName]};
+function getGameInfo(gameId) {
+    const gameInfoJson = {game: gameList[gameId]};
+    return gameInfoJson.game;
 }
 /*
 function getAllGameNames() {

@@ -31,13 +31,7 @@ gameManagement.route('/:id')
     .get(auth.userAuthentication, (req, res) => {
         const gameId = req.params.id;
         debugger;
-    //אם המשתמש מצורף כבר למשחק שלח לו STATE
-        let data = dbTmp.getGameInfo(gameId);
-        let data2 = {
-            player1: 'amit',
-            player2: 'dor'
-        }
-        res.json(data2);
+        res.json(dbTmp.getGameInfo(gameId));
     })
     .put(auth.userAuthentication, (req, res) => {
         gameContent.counterValue++;

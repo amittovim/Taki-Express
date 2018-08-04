@@ -21,8 +21,8 @@ class Game extends Component {
     render() {
         return (
             <div className="game-component">
-                <Navbar currentPlayer={this.state.currentPlayer}
-                        turnNumber={this.state.turnNumber}
+                <Navbar currentPlayer={this.state.gameState.currentPlayer}
+                        turnNumber={this.state.gameState.turnNumber}
                         isGameOver={this.state.isGameOver}
                         abortGameCallback={this.handleOpenModal}
                         gameHistoryCallback={this.handleGetGameHistory}
@@ -38,8 +38,8 @@ class Game extends Component {
                        data={this.getStats()}
                        closeModal={this.handleCloseModal}/>
                 <div>
-                    {this.props.game.playersCapacity > this.props.game.playersEnrolled
-                        ? (<WaitingMessageComponent numOfNeededPlayers ={(this.props.game.playersCapacity - this.props.game.playersEnrolled)} />)
+                    {this.state.playersCapacity > this.state.playersEnrolled
+                        ? (<WaitingMessageComponent numOfNeededPlayers ={(this.state.playersCapacity - this.state.playersEnrolled)} />)
                         : ((<AdvancedBoard drawPile={this.state.DrawPile}
                                            discardPile={this.state.DiscardPile}
                                            humanPile={this.state.HumanPile}
@@ -56,6 +56,8 @@ class Game extends Component {
         super(props);
         this.state = {
             gameId: this.props.game.id,
+            ...this.props.game,
+
 
             DrawPile: null,
             DiscardPile: null,
@@ -115,6 +117,7 @@ class Game extends Component {
     }
 
     componentWillMount() {
+        debugger;
         this.startGame();
     }
 
@@ -132,8 +135,7 @@ class Game extends Component {
                     stateStack.push(contentFromServer);
                 }
 */
-                debugger;
-                this.setState(()=> {return contentFromServer;});
+                this.setState(()=> { return contentFromServer;} );
             })
             .catch(err => {throw err});
     }
@@ -144,10 +146,8 @@ class Game extends Component {
                 if (!res.ok) {
                     throw res;
                 }
-                debugger;
                 this.timeoutId = setTimeout(this.getGameContent, 200);
-                const t = res.json();
-                return t;
+                return res.json();
             });
     }
 
