@@ -1,19 +1,26 @@
+/*
 import {CardColorEnum} from "../../app/enums/card-color.enum";
 import {PileTypeEnum} from "../../app/enums/pile-type.enum";
+import {CardActionEnum} from "../../app/enums/card-action-enum";
+import {CardNumberEnum} from "../../app/enums/card-number.enum";
+*/
 import PileModel from "../../app/api-models/pile.class";
 import {CardModel} from "../../app/api-models/card.class";
 import {VISIBLE_CARDS} from "../../logic/consts";
-import {CardActionEnum} from "../../app/enums/card-action-enum";
 import * as utils from "../../logic/utils/model.utils";
-import {CardNumberEnum} from "../../app/enums/card-number.enum";
-const dbTmp = require('../database');
 
+const PileModel = require('../../app/api-models/pile.class');
+const CardModel = require('../../app/api-models/card.class');
+const VISIBLE_CARDS = require('../../logic/consts');
+
+const dbTmp = require('../database');
+const Enums = require('../../server/enums-node/enums-node');
 let cardId = 0;
 
 function createDrawPile(gameId) {
     let currentGame = dbTmp.gameList.find((game) => {
         return game.id === gameId;
-        currentGame.GameState.DrawPile = new PileModel(PileTypeEnum.DrawPile);
+        currentGame.GameState.DrawPile = new PileModel(Enums.PileTypeEnum.DrawPile);
     createNumberCards();
     createActionCards();
 
@@ -21,10 +28,10 @@ function createDrawPile(gameId) {
 }
 
 function createNumberCards() {
-    for (const number in CardNumberEnum) {
+    for (const number in Enums.CardNumberEnum) {
         for (let i = 1; i <= 2; i++) {
-            for (let color in CardColorEnum) {
-                let card = new CardModel(cardId++, CardColorEnum[color], CardNumberEnum[number]);
+            for (let color in Enums.CardColorEnum) {
+                let card = new CardModel(cardId++, Enums.CardColorEnum[color], Enums.CardNumberEnum[number]);
                 if (VISIBLE_CARDS) {
                     card.isHidden = false;
                 }
@@ -36,10 +43,10 @@ function createNumberCards() {
 
 function createActionCards() {
     for (const action in CardActionEnum) {
-        if ((CardActionEnum[action] !== CardActionEnum.ChangeColor) &&
-            (CardActionEnum[action] !== CardActionEnum.SuperTaki)) {
+        if ((Enums.CardActionEnum[action] !== Enums.CardActionEnum.ChangeColor) &&
+            (Enums.CardActionEnum[action] !== Enums.CardActionEnum.SuperTaki)) {
             for (let i = 1; i <= 2; i++) {
-                for (let color in CardColorEnum) {
+                for (let color in Enums.CardColorEnum) {
                     if (!VISIBLE_CARDS) {
                         GameState.DrawPile.cards.push(new CardModel(cardId++, CardColorEnum[color], null, CardActionEnum[action]));
                     } else {
