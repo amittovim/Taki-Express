@@ -42,7 +42,7 @@ function addUserToGame(req, res, next) {
             return player === 'unassigned';
         });
         let gameHasSeatAvailable;
-        emptyPlayerSeatIndex === -1 ? gameHasSeatAvailable = false: gameHasSeatAvailable = true;
+        emptyPlayerSeatIndex === -1 ? gameHasSeatAvailable = false : gameHasSeatAvailable = true;
         let nameObject = auth.getUserInfo(req.session.id);
         // if emptyPlayerSeatIndex === -1 it means no empty seats at this game which means this game has
         // already started and we cannot enter a game which is already started.
@@ -92,8 +92,8 @@ function getGameInfo(gameId) {
     let gameIndex = initGameList.findIndex((gameName) => {
         return gameName === gameInfo.name;
     });
-    gameIndex > -1 ? hasGameBeenInitialized=true : hasGameBeenInitialized=false;
-    if ((!hasGameBeenInitialized) && (gameInfo.GameState.gameStatus===Enums.GameStatusEnum.InitializingGame)) {
+    gameIndex > -1 ? hasGameBeenInitialized = true : hasGameBeenInitialized = false;
+    if ((!hasGameBeenInitialized) && (gameInfo.GameState.gameStatus === Enums.GameStatusEnum.InitializingGame)) {
         initGameList.push(gameInfo.name);
 
         serverGameUtils.createDrawPile(gameInfo.id);
@@ -104,6 +104,7 @@ function getGameInfo(gameId) {
     }
     return gameInfo;
 }
+
 /*
 function getAllGameNames() {
     const gameNamesArray = gameList.map(game => game.name);
@@ -131,8 +132,6 @@ function removeGame(gameId) {
     } else
         return false;
 }
-
-module.exports = {addGameToGameList, getGameInfo, getAllGames, addUserToGame, removeGame, gameList}
 
 function createNewGame(newGameInfo) {
     let newGame;
@@ -191,3 +190,11 @@ function createNewGame(newGameInfo) {
 
     gameList.push(newGame);
 }
+module.exports = {
+    addGameToGameList,
+    getGameInfo,
+    getAllGames,
+    addUserToGame,
+    removeGame
+}
+
