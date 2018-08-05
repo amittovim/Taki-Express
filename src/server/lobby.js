@@ -49,7 +49,7 @@ lobbyManagement.route('/games')
         const currentGame = req.xGame;
         // check if game playersCapacity === playersEnrolled
         if (currentGame.playersCapacity === currentGame.playersEnrolled) {
-            currentGame.gameState.gameStatus = Enums.GameStatusEnum.InitializingGame;
+            currentGame.GameState.gameStatus = Enums.GameStatusEnum.InitializingGame;
         }
 
         // return ACK and than the client needs to start polling GET requests .

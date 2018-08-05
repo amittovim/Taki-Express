@@ -1,8 +1,11 @@
 const Enums = require('../server/enums-node/enums-node');
 const auth = require('./authentication');
+
 let gameId = 0;
 const gameList = [];
+const initGameList = [];     // list of games that started initializing state
 const _ = require('lodash');
+const serverGameUtils = require("./logic/server-game-utils");
 
 /*
 function findGame(req, res, next) {
@@ -35,7 +38,7 @@ function addUserToGame(req, res, next) {
         req.xSendMessage = 'Game has already started! cannot enter game';
         next();
     } else {
-        let emptyPlayerSeatIndex = currentGame.gameState.players.findIndex((player) => {
+        let emptyPlayerSeatIndex = currentGame.GameState.players.findIndex((player) => {
             return player === 'unassigned';
         });
         let gameHasSeatAvailable;
@@ -44,7 +47,7 @@ function addUserToGame(req, res, next) {
         // if emptyPlayerSeatIndex === -1 it means no empty seats at this game which means this game has
         // already started and we cannot enter a game which is already started.
         if (gameHasSeatAvailable) {
-            currentGame.gameState.players[emptyPlayerSeatIndex] = {
+            currentGame.GameState.players[emptyPlayerSeatIndex] = {
                 isBot: false,
                 user: nameObject,
                 name: nameObject.name,
@@ -84,7 +87,22 @@ function removeGameFromGameList(req, res, next) {
 */
 function getGameInfo(gameId) {
     const gameInfoJson = {game: gameList[gameId]};
-    return gameInfoJson.game;
+    const gameInfo = gameInfoJson.game;
+    let hasGameBeenInitialized;
+    let gameIndex = initGameList.findIndex((gameName) => {
+        return gameName === gameInfo.name;
+    });
+    gameIndex > -1 ? hasGameBeenInitialized=true : hasGameBeenInitialized=false;
+    if ((!hasGameBeenInitialized) && (gameInfo.GameState.gameStatus===Enums.GameStatusEnum.InitializingGame)) {
+        initGameList.push(gameInfo.name);
+
+        serverGameUtils.createDrawPile(gameInfo.id);
+        serverGameUtils.initDiscardPile(gameInfo.id);
+        serverGameUtils.dealCards(gameInfo.id);
+
+
+    }
+    return gameInfo;
 }
 /*
 function getAllGameNames() {
@@ -114,7 +132,7 @@ function removeGame(gameId) {
         return false;
 }
 
-module.exports = {addGameToGameList, getGameInfo, getAllGames, addUserToGame, removeGame}
+module.exports = {addGameToGameList, getGameInfo, getAllGames, addUserToGame, removeGame, gameList}
 
 function createNewGame(newGameInfo) {
     let newGame;
@@ -153,12 +171,12 @@ function createNewGame(newGameInfo) {
         // define last player in the game as BOT
         newGame.playersEnrolled++;   // increment the number of enrolled players due to BOT existence
     }
-    newGame.gameState = {
+    newGame.GameState = {
         id: 0,
         players: newGamePlayers,
         currentPlayer: null,
-        drawPile: null,
-        discardPile: null,
+        DrawPile: null,
+        DiscardPile: null,
         receivingPileOwner: null,
         givingPileOwner: null,
 

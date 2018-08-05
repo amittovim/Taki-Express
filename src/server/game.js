@@ -3,7 +3,6 @@ const gameManagement = express.Router();
 const bodyParser = require('body-parser');
 const auth = require('./authentication');
 const dbTmp = require('./database');
-const gameUtils = require('./gameUtils');
 
 /*
 let gameContent = {
@@ -43,10 +42,6 @@ gameManagement.route('/:id')
     const gameInfoFrmServer = dbTmp.getGameInfo(gameId);
     translateContent2Client(gameInfoFrmServer,auth.getUserInfo());
 
-    if (dbTmp.gameStateFrmServer.gameStatus === 'GameInit') {
-        gameUtils.initDrawPile(gameId);
-        gameUtils.initDiscardPile(gameId);
-        gameUtils.dealCards(gameId);
     }
     dbTmp.updateLastStateIdRecievedBy(auth.getUserInfo());
     res.json(gameStateFrmServer);
