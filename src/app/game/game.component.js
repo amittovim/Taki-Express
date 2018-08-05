@@ -21,8 +21,8 @@ class Game extends Component {
     render() {
         return (
             <div className="game-component">
-                <Navbar currentPlayer={this.state.gameState.currentPlayer}
-                        turnNumber={this.state.gameState.turnNumber}
+                <Navbar currentPlayer={this.state.GameState.currentPlayer}
+                        turnNumber={this.state.GameState.turnNumber}
                         isGameOver={this.state.isGameOver}
                         abortGameCallback={this.handleOpenModal}
                         gameHistoryCallback={this.handleGetGameHistory}

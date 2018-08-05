@@ -33,10 +33,12 @@ gameManagement.route('/:id')
         res.json(dbTmp.getGameInfo(gameId));
     })
     .put(auth.userAuthentication, (req, res) => {
+/*
         gameContent.counterValue++;
         gameContent.lastUpdater = auth.getUserInfo(req.session.id).name;
         // res.redirect(303,'/:id');
         res.json(gameContent);
+*/
     });
 /*
     const gameInfoFrmServer = dbTmp.getGameInfo(gameId);

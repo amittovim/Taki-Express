@@ -5,7 +5,6 @@ let gameId = 0;
 const gameList = [];
 const initGameList = [];     // list of games that started initializing state
 const _ = require('lodash');
-const serverGameUtils = require("./logic/server-game-utils");
 
 /*
 function findGame(req, res, next) {
@@ -95,12 +94,11 @@ function getGameInfo(gameId) {
     gameIndex > -1 ? hasGameBeenInitialized=true : hasGameBeenInitialized=false;
     if ((!hasGameBeenInitialized) && (gameInfo.GameState.gameStatus===Enums.GameStatusEnum.InitializingGame)) {
         initGameList.push(gameInfo.name);
-
+/*
         serverGameUtils.createDrawPile(gameInfo.id);
         serverGameUtils.initDiscardPile(gameInfo.id);
         serverGameUtils.dealCards(gameInfo.id);
-
-
+*/
     }
     return gameInfo;
 }

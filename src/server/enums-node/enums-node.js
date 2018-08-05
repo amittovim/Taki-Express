@@ -33,13 +33,6 @@ const CardColorEnum = {
     Blue: 'blue'
 };
 
-const PileTypeEnum = {
-    DrawPile: 'DrawPile',
-    DiscardPile: 'DiscardPile',
-    HumanPile: 'HumanPile',
-    BotPile: 'BotPile'
-};
-
 const CardActionEnum = {
     Taki: 'taki',
     SuperTaki: 'super-taki',
