@@ -14,7 +14,7 @@ export function requestCardMove(cardId) {
 
     return new Promise((resolve) => {
         resolve({
-            header: GameStatusEnum.GameStateChanged,
+            header: GameStatusEnum.Ongoing,
             body: stateChange
         });
     });
@@ -25,7 +25,7 @@ export function requestGameStateUpdate() {
     return new Promise((resolve) => {
         setTimeout(() => {
             resolve({
-                header: GameStatusEnum.GameStateChanged,
+                header: GameStatusEnum.Ongoing,
                 body: GameState
             });
         }, 1000);

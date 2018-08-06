@@ -66,7 +66,7 @@ class Game extends Component {
             human: null,
             bot: null,
             currentPlayer: null,
-            actionState: null,
+            actionInvoked: null,
             leadingCard: null,
             selectedCard: null,
             consoleMessage: '',
@@ -117,7 +117,6 @@ class Game extends Component {
     }
 
     componentWillMount() {
-        debugger;
         this.startGame();
     }
 
@@ -213,7 +212,7 @@ class Game extends Component {
     }
 
     handlePlayMove() {
-        const isMoveLegal = GameService.isHumanMoveLegal(this.state.selectedCard, this.state.DrawPile, this.state.actionState, this.state.leadingCard, this.state.HumanPile);
+        const isMoveLegal = GameService.isHumanMoveLegal(this.state.selectedCard, this.state.DrawPile, this.state.actionInvoked, this.state.leadingCard, this.state.HumanPile);
         if (!isMoveLegal) {
             return this.handleIllegalMove();
         } else if (this.state.selectedCard.action === CardActionEnum.ChangeColor &&
@@ -282,7 +281,7 @@ class Game extends Component {
     requestMoveCard() {
         GameApiService.requestMoveCard(this.state.selectedCard.id)
             .then(response => {
-                if (GameStatusEnum.GameStateChanged) {
+                if (GameStatusEnum.Ongoing) {
                     this.setState({
                         ...response.body,
                     }, () => {

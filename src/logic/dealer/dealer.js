@@ -57,52 +57,22 @@ export function getDestinationPileType(sourcePileType) {
     }
 }
 
-export function isCardHidden(sourcePile, destinationPile) {
-    if (!VISIBLE_CARDS) {
-        return ((sourcePile === PileTypeEnum.DrawPile && destinationPile === PileTypeEnum.BotPile) || sourcePile === PileTypeEnum.DiscardPile);
-    } else return false;
-}
 
-export function handleCardMove() {
-    // in case we are in "GameInit" or "SettingStartingCard" gameStatus our source pile is the drawpile top card
-    if (GameState.gameStatus === GameStatusEnum.GameInit || GameState.gameStatus === GameStatusEnum.SettingStartingCard) {
-        GameState.selectedCard = GameState.DrawPile.getTop();
-    }
 
-    // in case twoPlus action state is enabled and we don't have a two plus card
-    if ((GameState.actionState === CardActionEnum.TwoPlus) &&
-        (GameState.selectedCard === GameState.DrawPile.getTop())) {
-        let lastMoveCard;
-        for (GameState.twoPlusCounter; GameState.twoPlusCounter > 0; GameState.twoPlusCounter--) {
-            GameState.selectedCard.parentPileType = getPlayerPile(GameState.currentPlayer).type;
-            GameState.selectedCard.isHidden = isCardHidden(PileTypeEnum.DrawPile, getPlayerPile(GameState.currentPlayer).type);
-            lastMoveCard = moveCard(PileTypeEnum.DrawPile, getPlayerPile(GameState.currentPlayer).type);
-            GameState.selectedCard = GameState.DrawPile.getTop();
-        }
-        GameState.selectedCard = null;
-        return lastMoveCard;
-    }
-
-    // all other cases
-    const sourcePileType = GameState.selectedCard.parentPileType;
-    const destinationPileType = getDestinationPileType(sourcePileType);
-    GameState.selectedCard.parentPileType = destinationPileType;
-    GameState.selectedCard.isHidden = isCardHidden(sourcePileType, destinationPileType);
-    updateLeadingCard(destinationPileType);
-    return moveCard(sourcePileType, destinationPileType);
-}
-
+/*
 function updateLeadingCard(destinationPileType) {
     if (destinationPileType === PileTypeEnum.DiscardPile) {
         GameState.leadingCard = GameState.selectedCard;
     }
 }
+*/
 
+/*
 export function moveCard(sourcePileType, destinationPileType) {
     utils.pullItemFromArray(GameState.selectedCard, GameState[sourcePileType].cards);
     utils.insertToEndOfArray(GameState.selectedCard, GameState[destinationPileType].cards);
 
-    if (GameState.gameStatus === GameStatusEnum.GameStateChanged) {
+    if (GameState.gameStatus === GameStatusEnum.Ongoing) {
         GameUtils.incrementGameMovesCounter();
     }
     GameState.consoleMessage = `${GameState.selectedCard.display} was moved from ${sourcePileType} to ${destinationPileType}`;
@@ -116,6 +86,7 @@ export function moveCard(sourcePileType, destinationPileType) {
         }
     };
 }
+*/
 
 
 

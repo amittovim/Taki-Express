@@ -8,14 +8,21 @@ interface User {
 }
 
 interface Card {
-
+    id: number;
+    color: CardColorEnum;
+    number: CardNumberEnum;
+    action: CardActionEnum;
+    isHidden: boolean;
+    parentPileId: PileIdEnum;
 }
 
+
 interface Pile {
+    id: number;
     type: PileTypeEnum;
     cards: Card[];
     isHand: boolean;
-    ownerName: User.name; // refers to the player user info
+    ownerName:User .name; // refers to the player user info
     singleCardCounter: number;
 }
 
@@ -31,7 +38,7 @@ players.every(player => player.playerStatus === PlayerStatusEnum.FinishedPlaying
 
 interface Player {
     isBot: boolean;
-    user: User;
+    user: User or null;
     name: User.name or 'Bot';
     pile: Pile;
     playerStatus: PlayerStatusEnum;
@@ -40,19 +47,20 @@ interface Player {
 interface GameState {
     id: number;
     players: Player[];
+    piles: Pile[];
     currentPlayer: Player;
-    drawPile: Pile;
-    discardPile: Pile;
     receivingPileOwner: PileTypeEnum;
-    givingPileOwner: PileTypeEnum
+    givingPileOwner: PileTypeEnum;
 
+    selectedCard: Card;
     leadingCard: Card;
-    actionInvoked: CardActionEnum // TODO: find a better name for this actionState
+    actionInvoked: CardActionEnum // TODO: find a better name for this actionInvoked
     turnNumber: number; // ?
     movesCounter: number; //?
     twoPlusCounter: number;
     consoleMessage: string;
     gameStatus: GameStatusEnum;
+    gameDirection: 'Clockwise' or 'CounterClockwise'
 }
 
 interface Game {
@@ -68,14 +76,6 @@ interface Game {
 
 }
 
-interface Card {
-    id: number;
-    color: CardColorEnum;
-    number: CardNumberEnum;
-    action: CardActionEnum;
-    isHidden: boolean;
-    parentPileType: PileTypeEnum;
-}
 
 enum CardColorEnum {
     Green = 'green',
@@ -105,12 +105,9 @@ enum CardActionEnum {
 }
 
 enum PileTypeEnum {
-    DrawPile = 'DrawPile',
+    DrawPile    = 'DrawPile',
     DiscardPile = 'DiscardPile',
-    Player1Pile = 'Player1Pile',
-    Player2Pile = 'Player2Pile',
-    Player3Pile = 'Player3Pile',
-    Player4Pile = 'Player4Pile',
+    PlayerPile = 'PlayerPile',
 }
 
 enum PlayerEnum {
@@ -121,9 +118,17 @@ enum PlayerEnum {
 enum GameStatusEnum {
     AwaitingPlayers = 'AwaitingPlayers',
     InitializingGame = 'InitializingGame',
-    Ongoing = 'Ongoing', // TODO: used to be GameStateChanged
+    Ongoing = 'Ongoing', // TODO: used to be Ongoing
     Ended = 'Ended',
     // TODO: when we get there
     // RestockingDeckOfCard = 'RestockingDeckOfCard',
 }
 
+enum PileIdEnum {
+    DrawPile = 0,
+    DiscardPile = 1,
+    Two = 2,
+    Three = 3,
+    Four = 4,
+    Five = 5
+}

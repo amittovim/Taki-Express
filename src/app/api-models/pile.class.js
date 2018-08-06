@@ -1,3 +1,4 @@
+/*
 export class PileModel {
     constructor(type, isHand = false) {
         this.type = type;
@@ -21,3 +22,4 @@ export class PileModel {
 
 export default PileModel;
 
+*/

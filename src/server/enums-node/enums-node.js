@@ -1,17 +1,17 @@
 const GameStatusEnum = {
     AwaitingPlayers: 'AwaitingPlayers',
-    InitializingGame: 'InitializingGame',
+    InitializingGame: 'InitializingGame',  //used to be 'GameInit'
+    SettingStartingCard: 'SettingStartingCard',
     Ongoing: 'Ongoing', // TODO: used to be GameStateChanged
     Ended: 'Ended',
-    // TODO: when we get there
-    // RestockingDeckOfCard = 'RestockingDeckOfCard',
+    RestockingDeckOfCard: 'RestockingDeckOfCard'
+
 };
 
 const PileTypeEnum = {
     DrawPile: 'DrawPile',
     DiscardPile: 'DiscardPile',
-    HumanPile: 'HumanPile',
-    BotPile: 'BotPile'
+    PlayerPile: 'PlayerPile',  // used to be HumanPile: 'HumanPile', and BotPile: 'BotPile'
 };
 
 const PlayerEnum = {
@@ -21,9 +21,9 @@ const PlayerEnum = {
 
 const PlayerStatusEnum = {
     Idle: 'idle', // מחכה לשחקנים שיתחברו
-    Playing : 'playing',
-    FinishedPlaying : 'finishedPlaying', // ניצח, סיים את הקלפים בידו או הפסיד
-    Observer : 'observer' // צופה מן הצד (רואה את כל הקלפים)
+    Playing: 'playing',
+    FinishedPlaying: 'finishedPlaying', // ניצח, סיים את הקלפים בידו או הפסיד
+    Observer: 'observer' // צופה מן הצד (רואה את כל הקלפים)
 };
 
 const CardColorEnum = {
@@ -53,15 +53,29 @@ const CardNumberEnum = {
     Nine: 9
 };
 
+const GameDirection = {
+    Clockwise: 'Clockwise',
+    CounterClockwise: 'CounterClockwise'
+}
+
+const PileIdEnum = {
+    DrawPile: 0,
+    DiscardPile: 1,
+    Two: 2,
+    Three: 3,
+    Four: 4,
+    Five: 5
+}
 
 
-
-
-
-
-
-
-
-
-module.exports =  { PlayerStatusEnum , PlayerEnum , PileTypeEnum ,GameStatusEnum ,CardNumberEnum,
-    CardActionEnum, CardColorEnum, }
+module.exports = {
+    PlayerStatusEnum,
+    PlayerEnum,
+    PileTypeEnum,
+    GameStatusEnum,
+    CardNumberEnum,
+    CardActionEnum,
+    CardColorEnum,
+    GameDirection,
+    PileIdEnum
+}

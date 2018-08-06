@@ -8,4 +8,5 @@ export class PlayerModel {
         const owner = playerType === PlayerEnum.Human ? PileTypeEnum.HumanPile : PileTypeEnum.BotPile;
         this.pile = new PileModel(owner, true);
     }
+
 }

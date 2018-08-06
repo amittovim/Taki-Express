@@ -47,7 +47,7 @@ interface GameState {
     givingPileOwner: PileTypeEnum
 
     leadingCard: Card;
-    actionInvoked: CardActionEnum // TODO: find a better name for this actionState
+    actionInvoked: CardActionEnum // TODO: find a better name for this actionInvoked
     turnNumber: number; // ?
     movesCounter: number; //?
     twoPlusCounter: number;
@@ -121,7 +121,7 @@ enum PlayerEnum {
 enum GameStatusEnum {
     AwaitingPlayers = 'AwaitingPlayers',
     InitializingGame = 'InitializingGame',
-    Ongoing = 'Ongoing', // TODO: used to be GameStateChanged
+    Ongoing = 'Ongoing', // TODO: used to be Ongoing
     Ended = 'Ended',
     // TODO: when we get there
     // RestockingDeckOfCard = 'RestockingDeckOfCard',

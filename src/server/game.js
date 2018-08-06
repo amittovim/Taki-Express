@@ -29,7 +29,6 @@ gameManagement.get('/', auth.userAuthentication, (req, res) => {
 gameManagement.route('/:id')
     .get(auth.userAuthentication, (req, res) => {
         const gameId = req.params.id;
-        debugger;
         res.json(dbTmp.getGameInfo(gameId));
     })
     .put(auth.userAuthentication, (req, res) => {
