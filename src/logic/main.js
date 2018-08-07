@@ -55,7 +55,7 @@ export function pickNextBotMove() {
 
         } // if twoPlusInvoked and bot doesn't have a two plus - mark the top card of the draw pile as the selectedCard.
         else {
-            selectedCard = GameState.DrawPile.getTop();
+            selectedCard = GameState.piles[Enums.PileIdEnum.DrawPile].getTop();
         }
     } // if actionInvoked is takiInvoked and bot has a card with the same color of the leadingCard - mark it as selectedCard.
     else if ((actionInvoked === `${CardActionEnum.Taki}Invoked`) &&
@@ -106,7 +106,7 @@ export function pickNextBotMove() {
         }
         // 4.10 if none of the conditions above happen - mark the top card of the draw pile as the selectedCard.
         else {
-            selectedCard = GameState.DrawPile.getTop();
+            selectedCard = GameState.piles[Enums.PileIdEnum.DrawPile].getTop();
         }
     }
     return (selectedCard.id);
@@ -154,7 +154,7 @@ function processGameStep(stateChange) {
     let newGameStateInfo = {};
 
     // if drawPile is empty restock it with cards from discardPile
-    if (GameState.DrawPile.isPileEmpty) {
+    if (GameState.piles[Enums.PileIdEnum.DrawPile].isPileEmpty) {
         newGameStateInfo = GameUtils.handleDrawpileRestocking(newGameStateInfo);
     }
 

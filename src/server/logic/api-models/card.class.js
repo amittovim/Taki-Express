@@ -2,13 +2,13 @@
 const Enums = require('../../enums-node/enums-node')
 
 class CardModel {
-    constructor(id, color, number = null, action = null, isHidden = true, parentPileType = Enums.PileTypeEnum.DrawPile) {
+    constructor(id, color, number = null, action = null, isHidden = true, parentPileId = Enums.PileIdEnum.DrawPile) {
         this.id = id;
         this.color = color;
         this.number = number;
         this.action = action;
         this.isHidden = isHidden;
-        this.parentPileType = parentPileType;
+        this.parentPileId = parentPileId;
     }
 
     get display() {

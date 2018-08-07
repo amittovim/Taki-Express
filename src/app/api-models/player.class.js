@@ -1,3 +1,4 @@
+/*
 import PileModel from "./pile.class";
 import {PileTypeEnum} from "../enums/pile-type.enum";
 import {PlayerEnum} from "../enums/player.enum";
@@ -9,3 +10,4 @@ export class PlayerModel {
         this.pile = new PileModel(owner, true);
     }
 }
+*/

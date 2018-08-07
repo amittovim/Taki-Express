@@ -4,13 +4,6 @@ const bodyParser = require('body-parser');
 const auth = require('./authentication');
 const dbTmp = require('./database');
 
-/*
-let gameContent = {
-    counterValue : 0,
-    lastUpdater: null
-};
-*/
-
 //bodyParser middleware-parse
 gameManagement.use(bodyParser.json());
 gameManagement.use(bodyParser.urlencoded({extended: false}));
@@ -21,22 +14,17 @@ gameManagement.use(function log(req, res, next) {
     next()
 });
 
-// define the home page route
-gameManagement.get('/', auth.userAuthentication, (req, res) => {
-    res.send('Game Main page');
-});
 
 gameManagement.route('/:id')
     .get(auth.userAuthentication, (req, res) => {
         const gameId = req.params.id;
         res.json(dbTmp.getGameInfo(gameId));
     })
-    .put(auth.userAuthentication, (req, res) => {
-        gameContent.counterValue++;
-        gameContent.lastUpdater = auth.getUserInfo(req.session.id).name;
-        // res.redirect(303,'/:id');
-        res.json(gameContent);
-    });
+    .put(auth.userAuthentication,
+        dbTmp.handlePlayRequestFromPlayer, (req, res) => {
+            res.json(req.xGameContent)
+        });
+
 /*
     const gameInfoFrmServer = dbTmp.getGameInfo(gameId);
     translateContent2Client(gameInfoFrmServer,auth.getUserInfo());
@@ -47,8 +35,18 @@ gameManagement.route('/:id')
     res.send('Game Main page');
 */
 
+// define the about route
+gameManagement.put('/changeColor/:id', auth.userAuthentication,
+    dbTmp.handleChangeColorRequest, (req, res) => {
+        ((req.xResult))
+            ? res.status(200).send('color changed successfully')
+            : res.status(403).send('request is forbidden! card color is unchangable ');
+    });
 
-
+// define the home page route
+gameManagement.get('/', auth.userAuthentication, (req, res) => {
+    res.send('Game Main page');
+});
 
 // define the about route
 gameManagement.get('/about', function (req, res) {

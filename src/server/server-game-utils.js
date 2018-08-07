@@ -1,26 +1,3 @@
-/*
-import {PileTypeEnum} from "../app/enums/pile-type.enum";
-import {GameState} from "../logic/state";
-import {GameStatusEnum} from "../logic/game-status.enum";
-import {CardActionEnum} from "../app/enums/card-action-enum";
-import {switchPlayers} from "../logic/main";
-import {handleCardMove} from "../logic/dealer/dealer";
-import * as consts from "../logic/consts";
-import * as utils from "../../logic/utils/model.utils";
-import {GameStatusEnum} from "../logic/game-status.enum";
-import {PileTypeEnum} from "../app/enums/pile-type.enum";
-import {getDestinationPileId, isCardHidden, moveCard} from "../logic/dealer/dealer";
-import {getPlayerPile} from "../logic/utils/game.utils";
-import {CardActionEnum} from "../app/enums/card-action-enum";
-import {GameState} from "../logic/state";
-import {VISIBLE_CARDS} from "../logic/consts";
-import * as GameUtils from "../logic/utils/game.utils";
-import * as utils from "../logic/utils/model.utils";
-import {PlayerEnum} from "../app/enums/player.enum";
-import {PlayerEnum} from "../app/enums/player.enum";
-import {GameState} from "../logic/state";
-*/
-
 const dbTmp = require('./database');
 const PileModel = require('./logic/api-models/pile.class');
 const CardModel = require('./logic/api-models/card.class');
@@ -32,14 +9,12 @@ const _ = require('lodash');
 
 let cardId = 0;
 
-function createDrawPile(gameId) {
-    debugger;
+function createCardsInDrawPile(gameId) {
     let currentGame = dbTmp.getGameInfo(gameId);
-    currentGame.GameState.DrawPile = new PileModel(Enums.PileTypeEnum.DrawPile);
     createNumberCards(currentGame);
     createActionCards(currentGame);
 
-    Utils.shuffleArray(currentGame.GameState.DrawPile.cards);
+    Utils.shuffleArray(currentGame.GameState.piles[Enums.PileIdEnum.DrawPile].cards);
 }
 
 function createNumberCards(currentGame) {
@@ -50,7 +25,7 @@ function createNumberCards(currentGame) {
                 if (Consts.VISIBLE_CARDS) {
                     card.isHidden = false;
                 }
-                currentGame.GameState.DrawPile.cards.push(card);
+                currentGame.GameState.piles[Enums.PileIdEnum.DrawPile].cards.push(card);
             }
         }
     }
@@ -63,41 +38,34 @@ function createActionCards(currentGame) {
             for (let i = 1; i <= 2; i++) {
                 for (let color in Enums.CardColorEnum) {
                     if (!Consts.VISIBLE_CARDS) {
-                        currentGame.GameState.DrawPile.cards.push(new CardModel(cardId++, Enums.CardColorEnum[color], null, Enums.CardActionEnum[action]));
+                        currentGame.GameState.piles[Enums.PileIdEnum.DrawPile].cards.push(new CardModel(cardId++, Enums.CardColorEnum[color], null, Enums.CardActionEnum[action]));
                     } else {
-                        currentGame.GameState.DrawPile.cards.push(new CardModel(cardId++, Enums.CardColorEnum[color], null, Enums.CardActionEnum[action], false));
+                        currentGame.GameState.piles[Enums.PileIdEnum.DrawPile].cards.push(new CardModel(cardId++, Enums.CardColorEnum[color], null, Enums.CardActionEnum[action], false));
                     }
                 }
             }
         } else if (Enums.CardActionEnum[action] === Enums.CardActionEnum.ChangeColor) {
             for (let j = 1; j <= 4; j++) {
                 if (!Consts.VISIBLE_CARDS) {
-                    currentGame.GameState.DrawPile.cards.push(new CardModel(cardId++, null, null, Enums.CardActionEnum.ChangeColor));
+                    currentGame.GameState.piles[Enums.PileIdEnum.DrawPile].cards.push(new CardModel(cardId++, null, null, Enums.CardActionEnum.ChangeColor));
                 } else {
-                    currentGame.GameState.DrawPile.cards.push(new CardModel(cardId++, null, null, Enums.CardActionEnum.ChangeColor, false));
+                    currentGame.GameState.piles[Enums.PileIdEnum.DrawPile].cards.push(new CardModel(cardId++, null, null, Enums.CardActionEnum.ChangeColor, false));
                 }
             }
         } else if (Enums.CardActionEnum[action] === Enums.CardActionEnum.SuperTaki) {
             for (let i = 1; i <= 2; i++) {
                 if (!Consts.VISIBLE_CARDS) {
-                    currentGame.GameState.DrawPile.cards.push(new CardModel(cardId++, null, null, Enums.CardActionEnum.SuperTaki));
+                    currentGame.GameState.piles[Enums.PileIdEnum.DrawPile].cards.push(new CardModel(cardId++, null, null, Enums.CardActionEnum.SuperTaki));
                 } else {
-                    currentGame.GameState.DrawPile.cards.push(new CardModel(cardId++, null, null, Enums.CardActionEnum.SuperTaki, false));
+                    currentGame.GameState.piles[Enums.PileIdEnum.DrawPile].cards.push(new CardModel(cardId++, null, null, Enums.CardActionEnum.SuperTaki, false));
                 }
             }
         }
     }
 }
 
-function createDiscardPile(gameId) {
-    let currentGame = dbTmp.getGameInfo(gameId);
-    currentGame.GameState.DiscardPile = new PileModel(Enums.PileTypeEnum.DiscardPile);
-}
-
-
 function dealCards(gameId) {
     let currentGame = dbTmp.getGameInfo(gameId);
-    debugger;
     dealHands(currentGame);
     drawStartingCard(currentGame);
 }
@@ -106,6 +74,7 @@ function dealHands(currentGame) {
     _.times(Consts.NUMBER_OF_STARTING_CARDS_IN_PLAYERS_HAND, () => {
         _.times(currentGame.playersCapacity, () => {
             handleCardMove(currentGame);
+            saveGameState(currentGame.id);
             switchPlayers(currentGame);
         });
     });
@@ -116,6 +85,8 @@ function drawStartingCard(currentGame) {
     do {
         // It draws another card if the card drawn is change-color because you cannot start a taki with this card
         handleCardMove(currentGame);
+        saveGameState(currentGame.id);
+
     } while (currentGame.GameState.selectedCard.action &&
     (currentGame.GameState.selectedCard.action === Enums.CardActionEnum.ChangeColor ||
         currentGame.GameState.selectedCard.action === Enums.CardActionEnum.SuperTaki));
@@ -123,37 +94,43 @@ function drawStartingCard(currentGame) {
 
 function handleCardMove(currentGame) {
     const GameState = currentGame.GameState;
-    // in case we are in "InitializingGame" or "SettingStartingCard" gameStatus than our source pile card is the
-    // draw-pile top card
+    // in case we are in gameStatus "InitializingGame" or "SettingStartingCard" than our
+    // source pile card is the draw-pile top card
     if (GameState.gameStatus === Enums.GameStatusEnum.InitializingGame ||
         GameState.gameStatus === Enums.GameStatusEnum.SettingStartingCard) {
-        debugger;
-        GameState.selectedCard = GameState.DrawPile.getTop();
+        GameState.selectedCard = GameState.piles[Enums.PileIdEnum.DrawPile].getTop();
     }
 
     // in case twoPlus action state is enabled and we don't have a two plus card
     if ((GameState.actionInvoked === Enums.CardActionEnum.TwoPlus) &&
-        (GameState.selectedCard === GameState.DrawPile.getTop())) {
-        let lastMoveCard;
+        (GameState.selectedCard === GameState.piles[Enums.PileIdEnum.DrawPile].getTop())) {
+        let updatedPiles;
         for (GameState.twoPlusCounter; GameState.twoPlusCounter > 0; GameState.twoPlusCounter--) {
-            //          GameState.selectedCard.parentPileType = getPlayerPile(GameState.currentPlayer).type;
-            GameState.selectedCard.isHidden = isCardHidden(PileTypeEnum.DrawPile, getPlayerPile(GameState.currentPlayer).type);
-            lastMoveCard = moveCard(GameState, getPileId(Enums.PileTypeEnum.DrawPile), getPlayerPileId(GameState.currentPlayer.name));
-            GameState.selectedCard = GameState.DrawPile.getTop();
+            GameState.selectedCard.parentPileId = GameState.currentPlayer.pile.id;
+            GameState.selectedCard.isHidden = isCardHidden(Enums.PileIdEnum.DrawPile, GameState.currentPlayer.pile.id);
+            updatedPiles = moveCard(GameState, Enums.PileIdEnum.DrawPile, GameState.currentPlayer.pile.id);
+            GameState.selectedCard = GameState.piles[Enums.PileIdEnum.DrawPile].getTop();
         }
         GameState.selectedCard = null;
-        return lastMoveCard;
+        return updatedPiles;
     }
 
     // all other cases
     const sourcePileId = GameState.selectedCard.parentPileId;
-    const destinationPileId = getDestinationPileId(sourcePileId);
+    const destinationPileId = getDestinationPileId(GameState, sourcePileId);
     GameState.selectedCard.parentPileId = destinationPileId;
     GameState.selectedCard.isHidden = isCardHidden(sourcePileId, destinationPileId);
-    updateLeadingCard(destinationPileId);
+    updateLeadingCard(GameState, destinationPileId);
     return moveCard(GameState, sourcePileId, destinationPileId);
 }
 
+function saveGameState(gameId) {
+    let currentGame = dbTmp.getGameInfo(gameId);
+    currentGame.GameState.id++;
+    currentGame.history.push(_.cloneDeep(currentGame.GameState));
+}
+
+// TODO: need to test this function . not sure we'll need it at all
 // can identify players' names or NONPlayers types such as drawPile and discardPile
 function getPileId(GameStatus, name) {
     switch (name) {
@@ -171,40 +148,38 @@ function getPileId(GameStatus, name) {
         }
     }
 }
-
+// TODO: for Dor:find a way to implement this function correctly - right now it doesnt work right
 function isCardHidden(sourcePileId, destinationPileId) {
     if (!Consts.VISIBLE_CARDS) {
         return ((sourcePileId === Enums.PileIdEnum.DrawPile && destinationPileId === Enums.PileIdEnum.Two) ||
             sourcePileId === Enums.PileIdEnum.DiscardPile);
     } else return false;
 }
-
+// TODO: Implement this new function to replace old console message
 function calculateConsoleMessage(selectedCardDisplay, sourcePileId, destinationPileId) {
 
 }
-
 
 function moveCard(GameState, sourcePileId, destinationPileId) {
     Utils.pullItemFromArray(GameState.selectedCard, GameState.piles[sourcePileId].cards);
     Utils.insertToEndOfArray(GameState.selectedCard, GameState.piles[destinationPileId].cards);
 
-    if (GameState.gameStatus === GameStatusEnum.Ongoing) {
+    if (GameState.gameStatus === Enums.GameStatusEnum.Ongoing) {
         GameUtils.incrementGameMovesCounter();
     }
     // old console message
     GameState.consoleMessage = `${GameState.selectedCard.display} was moved from ${sourcePileId} to ${destinationPileId}`;
     //TODO: replace this with a new calculateConsoleMessage according to task C-3 from trello
     //GameState.consoleMessage = calculateConsoleMessage(GameState.selectedCard.display, sourcePileId, destinationPileId);
-
     return {
-        [piles]: {
+        ['piles']: {
             ...GameState.piles
         }
     };
 }
 
-function updateLeadingCard(destinationPileType) {
-    if (destinationPileType === PileTypeEnum.DiscardPile) {
+function updateLeadingCard(GameState, destinationPileId) {
+    if (destinationPileId === Enums.PileIdEnum.DiscardPile) {
         GameState.leadingCard = GameState.selectedCard;
     }
 }
@@ -230,9 +205,8 @@ function getDestinationPileId(GameState, sourcePileId) {
     }
 }
 
-//#############################################################
+// TODO: not sure i need this function.  not sure its working either!
 function getDestinationPileOwner(GameState, sourcePileOwner) {
-
     switch (sourcePileType) {
         case Enums.PileTypeEnum.DrawPile: {
             if (GameState.gameStatus === Enums.GameStatusEnum.SettingStartingCard) {
@@ -250,25 +224,14 @@ function getDestinationPileOwner(GameState, sourcePileOwner) {
     }
 }
 
-
-
-
-//###################################################
-
-
-function getPlayerPile(playerType) {
-    return GameState[`${playerType}Pile`];
-}
-
-
 function switchPlayers(currentGame) {
     const GameState = currentGame.GameState;
     let numOfPlayers = currentGame.playersCapacity;
     let currentPlayerIndex = GameState.players.findIndex((player) => {
-        return player === GameState.players.currentPlayer
+        return player === GameState.currentPlayer
     });
 
-    if (currentGame.gameDirection === Enums.GameDirection.Clockwise) {
+    if (currentGame.GameState.gameDirection === Enums.GameDirection.Clockwise) {
         currentPlayerIndex++;
         currentPlayerIndex > (numOfPlayers - 1) ? currentPlayerIndex = 0 : null;
     } else {
@@ -280,13 +243,11 @@ function switchPlayers(currentGame) {
 
 
 module.exports = {
-    createDrawPile,
-    createDiscardPile,
+    createCardsInDrawPile,
     dealCards,
     handleCardMove,
     moveCard,
     getDestinationPileType: getDestinationPileId,
-    getPlayerPile,
-    isCardHidden
-
+    isCardHidden,
+    saveGameState
 }

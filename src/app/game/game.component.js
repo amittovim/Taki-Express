@@ -14,6 +14,7 @@ import Overlay from "../shared/components/overlay/overlay.component";
 import {getPlayerPile} from "../../logic/utils/game.utils";
 import AdvancedBoard from "./advanced-board/advanced-board";
 import WaitingMessageComponent from "../serverGame/components/waiting-message-component";
+import {ViewsEnum} from "../enums/views-enum";
 // <PROPS>
 // game: Game object
 
@@ -97,6 +98,9 @@ class Game extends Component {
         this.startGame = this.startGame.bind(this);
         this.processStateChanges = this.processStateChanges.bind(this);
 
+
+        this.requestCardChangeColor = this.requestCardChangeColor.bind(this);
+        this.requestPlayMove2Server = this.requestPlayMove2Server.bind(this);
         this.getGameContent = this.getGameContent.bind(this);
 
         this.getGameContent();
@@ -117,7 +121,7 @@ class Game extends Component {
     }
 
     componentWillMount() {
-        this.startGame();
+      //   this.startGame();
     }
 
     componentWillUnmount() {
@@ -129,6 +133,7 @@ class Game extends Component {
     getGameContent() {
         this.fetchGameContent()
             .then(contentFromServer => {
+                debugger;
 /*
                 if (contentFromServer.id === this.state.id+1) {
                     stateStack.push(contentFromServer);
@@ -147,6 +152,47 @@ class Game extends Component {
                 }
                 this.timeoutId = setTimeout(this.getGameContent, 200);
                 return res.json();
+            });
+    }
+
+    requestPlayMove2Server(gameId,cardId) {
+        const body = { cardId };
+        fetch('/game/' + gameId, {method: 'PUT', body:JSON.stringify(body) , credentials: 'include'})
+            .then(res => {
+                (!res.ok)
+                    ? console.log(`'Failed to move card in game named ${this.state.game.name}! response content is: `, res)
+                    : res.json();
+            })
+            .then(content => {
+                // what ever you want to do with the positive response
+            })
+            .catch(err => {
+                if (err.status === 403) { // in case we're getting 'forbidden' as response
+
+                } else {
+                    throw err; // in case we're getting an error
+                }
+            });
+    }
+
+
+    requestCardChangeColor(gameId,cardId, cardColor) {
+        const body = { cardId, cardColor };
+        fetch('/game/changeColor' + gameId, {method: 'PUT', body:JSON.stringify(body) , credentials: 'include'})
+            .then(res => {
+                (!res.ok)
+                    ? console.log(`'Failed to change card color in the game named ${this.state.game.name}! response content is: `, res)
+                    : res.json();
+                })
+            .then(content => {
+                // what ever you want to do with the positive response
+            })
+            .catch(err => {
+                if (err.status === 403) { // in case we're getting 'forbidden' as response
+
+                } else {
+                    throw err; // in case we're getting an error
+                }
             });
     }
 

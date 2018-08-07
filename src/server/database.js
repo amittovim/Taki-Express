@@ -1,24 +1,32 @@
+/*
+import {CardActionEnum} from "../app/enums/card-action-enum";
+import * as GameService from "../app/game/game.service";
+import {GameStatusEnum} from "../logic/game-status.enum";
+import {PlayerEnum} from "../app/enums/player.enum";
+import {handleCardMove} from "../logic/dealer/dealer";
+import {GameState} from "../logic/state";
+import {PileTypeEnum} from "../app/enums/pile-type.enum";
+import * as Server from "../logic/main";
+*/
 let gameId = 0;
 const gameList = [];
 const initGameList = [];     // list of games that started initializing state
+const PileModel = require('./logic/api-models/pile.class');
+const PlayerModel = require('./logic/api-models/player.class');
+const Enums = require('../server/enums-node/enums-node');
+const auth = require('./authentication');
+const serverGameUtils = require("./server-game-utils");
+const _ = require('lodash');
 
 module.exports = {
     addGameToGameList,
     getGameInfo,
     getAllGames,
     addUserToGame,
-    removeGame
+    removeGame,
+    handlePlayRequestFromPlayer,
+    handleChangeColorRequest,
 }
-
-const Enums = require('../server/enums-node/enums-node');
-const auth = require('./authentication');
-const serverGameUtils = require("./server-game-utils");
-const _ = require('lodash');
-
-/*
-function findGame(req, res, next) {
-}
-*/
 
 function addGameToGameList(req, res, next) {
     let newGameInfo = JSON.parse(req.body);
@@ -55,25 +63,18 @@ function addUserToGame(req, res, next) {
         // if emptyPlayerSeatIndex === -1 it means no empty seats at this game which means this game has
         // already started and we cannot enter a game which is already started.
         if (gameHasSeatAvailable) {
-
-            let newPlayerPile = {
-                id: emptyPlayerSeatIndex,
-                type: Enums.PileTypeEnum.PlayerPile,
-                cards: [],
-                isHand: true,
-                ownerPlayerName: nameObject.name,
-                singleCardCounter: 0
-            };
-            currentGame.GameState.piles.push(newPlayerPile);
-
+            let newPlayerPile =
+                new PileModel(emptyPlayerSeatIndex + 2, Enums.PileTypeEnum.PlayerPile, true, nameObject.name);
+            currentGame.GameState.piles.splice(currentGame.playersEnrolled + 1, 1, (newPlayerPile));
+            // TODO : having a problem using PlayerModel constructor here
             currentGame.GameState.players[emptyPlayerSeatIndex] = {
-                isBot: false,
-                user: nameObject,
                 name: nameObject.name,
-                pile: currentGame.GameState.piles[emptyPlayerSeatIndex+1],
+                pile: currentGame.GameState.piles[emptyPlayerSeatIndex + 2],
+                user: nameObject,
+                isBot: false,
                 playerStatus: Enums.PlayerStatusEnum.Idle
-            };
-            currentGame.GameState.players[emptyPlayerSeatIndex].pile.type = `Player${emptyPlayerSeatIndex + 1}Pile`;
+            }
+
             currentGame.playersEnrolled++;
             currentGame.playersEnrolled === currentGame.playersCapacity
                 ? currentGame.isActive = true
@@ -87,15 +88,6 @@ function addUserToGame(req, res, next) {
         }
         emptyPlayerSeatIndex === 0 ? currentGame.GameState.currentPlayer = currentGame.GameState.players[0] : null;
 
-        if (currentGame.GameState.player1Pile === null) {
-            currentGame.GameState.player1Pile = currentGame.GameState.players[emptyPlayerSeatIndex];
-        } else if (currentGame.GameState.player2Pile === null) {
-            currentGame.GameState.player2Pile = currentGame.GameState.players[emptyPlayerSeatIndex];
-        } else if (currentGame.GameState.player3Pile === null) {
-            currentGame.GameState.player3Pile = currentGame.GameState.players[emptyPlayerSeatIndex];
-        } else if (currentGame.GameState.player4Pile === null) {
-            currentGame.GameState.player4Pile = currentGame.GameState.players[emptyPlayerSeatIndex];
-        }
         next();
     }
 }
@@ -120,11 +112,13 @@ function getGameInfo(gameId) {
     gameIndex > -1 ? hasGameBeenInitialized = true : hasGameBeenInitialized = false;
     if ((!hasGameBeenInitialized) && (gameInfo.GameState.gameStatus === Enums.GameStatusEnum.InitializingGame)) {
         initGameList.push(gameInfo.name);
-        //put Bot player at the end of the piles array ( it was created in the start of the array)
-        gameInfo.GameState.piles.splice(gameInfo.GameState.piles.length,0,(gameInfo.GameState.piles.splice(0,1)[0]));
-        serverGameUtils.createDrawPile(gameInfo.id);
-        serverGameUtils.createDiscardPile(gameInfo.id);
+        /*
+                //put Bot player at the end of the piles array ( it was created in the start of the array)
+                gameInfo.GameState.piles.splice(gameInfo.GameState.piles.length, 0, (gameInfo.GameState.piles.splice(0, 1)[0]));
+        */
+        serverGameUtils.createCardsInDrawPile(gameInfo.id);
         serverGameUtils.dealCards(gameInfo.id);
+        debugger;
 
 
     }
@@ -171,7 +165,7 @@ function createNewGame(newGameInfo) {
         history: [],
         isActive: false
     };
-    // creating PLayers Array
+    // creating Players Array
     const newGamePlayers = [];
     _.times(newGame.playersCapacity, () => {
         newGamePlayers.push('unassigned');
@@ -181,51 +175,33 @@ function createNewGame(newGameInfo) {
     });
     const newGamePiles = [];
     if (newGame.isBotEnabled === true) {
-        newGamePiles.push({
-            id: (newGame.playersCapacity+1),
-            type: Enums.PileTypeEnum.PlayerPile,
-            cards: [],
-            isHand: true,
-            ownerPlayerName: 'Bot',
-            singleCardCounter: 0
-        });
-
+        newGamePiles[newGame.playersCapacity + 1] = new PileModel(
+            newGame.playersCapacity + 1, Enums.PileTypeEnum.PlayerPile, true, 'Bot');
+        // TODO : having a problem using PlayerModel constructor here
         newGamePlayers[newGame.playersCapacity - 1] = {
-            isBot: true,
-            user: null,
             name: Enums.PlayerEnum.Bot,
-            pile: {
-                type: Enums.PileTypeEnum.PlayerPile,
-                cards: [],
-                isHand: true,
-                ownerName: Enums.PlayerEnum.Bot,
-                singleCardCounter: 0
-            },
+            pile: null,
+            user: null,
+            isBot: true,
             playerStatus: Enums.PlayerStatusEnum.Idle
-        }
-        newGamePlayers[newGame.playersCapacity - 1].pile.type = `Player${newGame.playersCapacity}Pile`;
+        };
 
-        // define last player in the game as BOT
         newGame.playersEnrolled++;   // increment the number of enrolled players due to BOT existence
     }
     // creating piles Array for DrawPile and DiscardPile
+    newGamePiles.splice(0, 1, new PileModel(Enums.PileIdEnum.DrawPile, Enums.PileTypeEnum.DrawPile));
 
-    newGamePiles.push({
-        id: 0,
-        type: Enums.PileTypeEnum.DrawPile,
-        cards: [],
-        isHand: false,
-        ownerPlayerName: null,
-        singleCardCounter: 0
-    });
-    newGamePiles.push({
-        id: 1,
-        type: Enums.PileTypeEnum.DiscardPile,
-        cards: [],
-        isHand: false,
-        ownerPlayerName: null,
-        singleCardCounter: 0
-    });
+    newGamePiles.splice(1, 1, new PileModel(Enums.PileIdEnum.DiscardPile, Enums.PileTypeEnum.DiscardPile));
+    /*
+            ({
+            id: 1,
+            type: Enums.PileTypeEnum.DiscardPile,
+            cards: [],
+            isHand: false,
+            ownerPlayerName: null,
+            singleCardCounter: 0
+        }));
+    */
 
     newGame.GameState = {
         id: 0,
@@ -247,7 +223,141 @@ function createNewGame(newGameInfo) {
         gameDirection: Enums.GameDirection.Clockwise
     };
 
+    //update the correct pile for the bot player
+    newGame.GameState.players[newGame.playersCapacity - 1].pile = newGame.GameState.piles[newGame.playersCapacity + 1];
+
     gameList.push(newGame);
 }
 
 
+function handlePlayRequestFromPlayer(req, res, next) {
+    let currentGame = getGameInfo(req.params.id);
+    const cardId = req.body;
+
+    // check if current message is coming from same user who's the currentPlayer
+    if (auth.getUserInfo(req.session.id).name !== currentGame.GameState.currentPlayer.name) {
+        return res.status(403).send('play request is forbidden! Not your turn...');
+    }
+    // verify if move is legal
+    const isMoveLegal = isPlayerMoveLegal(currentGame, cardId);
+    if (!isMoveLegal) {
+        return res.status(403).send('play request is forbidden! move chosen is illegal. try again...');
+    } else {
+        currentGame.GameState.selectedCard = getCardById(cardId);
+
+        // Moving the card
+        let stateChange = serverGameUtils.handleCardMove();
+
+        // side effects
+        if (currentGame.GameState.gameStatus === GameStatusEnum.Ongoing) {
+            stateChange = processGameStep(stateChange);
+        }
+    }
+
+    next();
+}
+
+function getCardById(currentGame, cardId) {
+    const GameState = currentGame.GameState;
+    const gameCards = GameState.pile[Enums.PileIdEnum.DrawPile].cards
+        .concat(GameState.pile[Enums.PileIdEnum.DiscardPile].cards,
+            GameState.pile[Enums.PileIdEnum.Two].cards,
+            GameState.pile[Enums.PileIdEnum.Three].cards);
+    if (GameState.pile[Enums.PileIdEnum.Four] !== null) {
+        gameCards.concat(GameState.pile[Enums.PileIdEnum.Four].cards);
+    }
+    if (GameState.pile[Enums.PileIdEnum.Five] !== null) {
+        gameCards.concat(GameState.pile[Enums.PileIdEnum.Five].cards);
+    }
+    return gameCards.filter((card) => card.id === cardId)[0];
+}
+
+function handleChangeColorRequest(req, res, next){
+    const gameId = req.params.id;
+    const currentGame = getGameInfo(gameId);
+    if (currentGame.GameState.currentPlayer.name !== auth.getUserInfo(req.session.id).name) {
+        res.status(403).send('request is forbidden! this is not your turn ');
+    }
+    let cardId = req.body.cardId;
+    let cardColor = req.body.cardColor;
+
+    req.xResult = changeCardColor(currentGame, cardId, cardColor);
+
+    next();
+}
+
+function changeCardColor(currentGame, cardId, cardColor){
+    let card = getCardById(currentGame, cardId);
+    if (card.action === Enums.CardActionEnum.ChangeColor || card.action === Enums.CardActionEnum.SuperTaki) {
+        card.color = cardColor;
+        return true;
+    } else
+        return false;
+}
+
+function isPlayerMoveLegal(currentGame, cardId ) {
+    let card = getCardById(cardId);
+    let isWithdrawingCard = (card.parentPileId === Enums.PileIdEnum.DrawPile);
+
+    // check move legality if player want to PUT a card on discard pile
+    if (!isWithdrawingCard) {
+        return isPutCardMoveLegal(currentGame, card);
+    } else {
+        // // check move legality if player want to GET (withdrawal) a card from draw pile
+        return isGetCardMoveLegal(currentGame);
+    }
+}
+
+function isPutCardMoveLegal(currentGame, card) {
+    let actionInvoked = currentGame.GameState.actionInvoked;
+    let leadingCard = currentGame.GameState.leadingCard;
+    let isSameColor;
+
+    // if twoPlus is invoked only other twoPlus card is legal
+    if (actionInvoked === Enums.CardActionEnum.TwoPlus) {
+        if (card.action !== Enums.CardActionEnum.TwoPlus) {
+            return false;
+        }
+    } // if taki is invoked only cards with the same color are legal
+    else if (actionInvoked === Enums.CardActionEnum.Taki) {
+        isSameColor = (card.color && leadingCard.color === card.color);
+        if (!isSameColor) {
+            return false;
+        }
+    } else {
+        isSameColor = (card.color && leadingCard.color === card.color);
+        let isSameNumber = (card.number && leadingCard.number === card.number);
+        let isSameAction = (card.action && leadingCard.action === card.action);
+        let isUnColoredActionCard = (card.action && !card.color);
+        if (!(isSameColor || isSameNumber || isSameAction || isUnColoredActionCard)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+function isGetCardMoveLegal(currentGame) {
+    let currentPlayerPile = currentGame.GameState.currentPlayer.pile;
+    let drawPile = currentGame.GameState.piles[Enums.PileIdEnum.DrawPile];
+    let actionInvoked = currentGame.GameState.actionInvoked;
+    let leadingCard = currentGame.GameState.leadingCard;
+
+    // checking if withdrawing Card From DrawPile is a legal move - only if drawPile is not empty and no
+    // other move is available for player
+    if ((!drawPile.isPileEmpty) &&
+        (actionInvoked === CardActionEnum.TwoPlus ||
+            !availableMoveExist(currentGame, currentPlayerPile, actionInvoked, leadingCard))) {
+        return true;
+    } else
+        return false;
+}
+
+function availableMoveExist(currentGame, currentPlayerPile) {
+    let legalCards = [];
+    currentPlayerPile.cards.forEach(function (card, index) {
+        if (isPutCardMoveLegal(currentGame, card)) {
+            legalCards.push(index);
+        }
+    });
+    return (legalCards.length > 0);
+}

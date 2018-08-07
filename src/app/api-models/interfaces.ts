@@ -76,6 +76,13 @@ interface Game {
 
 }
 
+interface MoveReqState {
+    currentPlayer: Player;
+    selectedCard: Card;
+    leadingCard: Card;
+    piles: [DrawPile,{empty},currentPlayerPile] ;
+    actionInvoked: CardActionEnum // TODO: find a better name for this actionInvoked
+}
 
 enum CardColorEnum {
     Green = 'green',

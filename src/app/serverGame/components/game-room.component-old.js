@@ -102,7 +102,7 @@ class GameRoomOld extends Component {
     }
 
     componentWillMount() {
-        this.startGame();
+       // this.startGame();
     }
 
     componentDidMount() {
