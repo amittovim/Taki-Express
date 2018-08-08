@@ -1,4 +1,4 @@
-const Enums = require('../../enums-node/enums-node');
+const Enums = require('../../enums-node');
 
 
 class PlayerModel {

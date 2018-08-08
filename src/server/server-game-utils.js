@@ -8,7 +8,7 @@ const PileModel = require('./logic/api-models/pile.class');
 const CardModel = require('./logic/api-models/card.class');
 const Consts = require('./logic/consts');
 const Utils = require('./logic/Utils/model.utils');
-const Enums = require('./enums-node/enums-node');
+const Enums = require('./enums-node');
 const _ = require('lodash');
 
 let cardId = 0;

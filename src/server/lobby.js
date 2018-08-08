@@ -1,4 +1,4 @@
-const Enums = require('../server/enums-node/enums-node');
+const Enums = require('./enums-node');
 const express = require('express');
 const lobbyManagement = express.Router();
 const bodyParser = require('body-parser');

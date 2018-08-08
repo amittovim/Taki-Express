@@ -1,5 +1,5 @@
 /*import {PileTypeEnum} from "../enums/pile-type.enum";*/
-const Enums = require('../../enums-node/enums-node')
+const Enums = require('../../enums-node')
 
 class CardModel {
     constructor(id, color, number = null, action = null, isHidden = true, parentPileId = Enums.PileIdEnum.DrawPile) {
