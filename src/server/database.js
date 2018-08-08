@@ -92,6 +92,47 @@ function addUserToGame(req, res, next) {
     }
 }
 
+function handlePlayRequestFromPlayer(req, res, next) {
+    let currentGame = getGameInfo(req.params.id);
+    const cardId = req.body;
+    let result;
+    // check if current message is coming from same user who's the currentPlayer
+    if (auth.getUserInfo(req.session.id).name !== currentGame.GameState.currentPlayer.name) {
+        return res.status(403).send('play request is forbidden! Not your turn...');
+    }
+
+    result = serverGameUtils.playGameMove(currentGame, cardId);
+
+    (result===false )
+        ? res.status(403).send('play request is forbidden! move chosen is illegal. try again...')
+        : null;
+
+    // if current player is Bot than play its turn/move
+    while (currentGame.GameState.currentPlayer.name === Enums.PlayerEnum.Bot) {
+        let botCardId = serverGameUtils.pickNextBotMove(currentGame);
+        result = serverGameUtils.playGameMove(currentGame, botCardId);
+
+        (result===false )
+            ? res.status(403).send('play request is forbidden! move chosen is illegal. try again...')
+            : null;
+    }
+    next();
+}
+
+function handleChangeColorRequest(req, res, next) {
+    const gameId = req.params.id;
+    const currentGame = getGameInfo(gameId);
+    if (currentGame.GameState.currentPlayer.name !== auth.getUserInfo(req.session.id).name) {
+        res.status(403).send('request is forbidden! this is not your turn ');
+    }
+    let cardId = req.body.cardId;
+    let cardColor = req.body.cardColor;
+
+    req.xResult = serverGameUtils.changeCardColor(currentGame, cardId, cardColor);
+
+    next();
+}
+
 /*
 function removeGameFromGameList(req, res, next) {
     if (gameList[req.body.gameName] === undefined) {
@@ -102,6 +143,20 @@ function removeGameFromGameList(req, res, next) {
     }
 }
 */
+function removeGame(gameId) {
+    let gameFound;
+
+    const index = gameList.findIndex((game) => {
+        return game.id === gameId
+    });
+    index === -1 ? gameFound = false : gameFound = true;
+    if (gameFound) {
+        const deletedGame = gameList.splice(index, 1)[0];
+        return (deletedGame.id === gameId);
+    } else
+        return false;
+}
+
 function getGameInfo(gameId) {
     const gameInfoJson = {game: gameList[gameId]};
     const gameInfo = gameInfoJson.game;
@@ -139,19 +194,6 @@ function getAllGames() {
     return gamesArray;
 }
 
-function removeGame(gameId) {
-    let gameFound;
-
-    const index = gameList.findIndex((game) => {
-        return game.id === gameId
-    });
-    index === -1 ? gameFound = false : gameFound = true;
-    if (gameFound) {
-        const deletedGame = gameList.splice(index, 1)[0];
-        return (deletedGame.id === gameId);
-    } else
-        return false;
-}
 
 function createNewGame(newGameInfo) {
     let newGame;
@@ -230,134 +272,3 @@ function createNewGame(newGameInfo) {
 }
 
 
-function handlePlayRequestFromPlayer(req, res, next) {
-    let currentGame = getGameInfo(req.params.id);
-    const cardId = req.body;
-
-    // check if current message is coming from same user who's the currentPlayer
-    if (auth.getUserInfo(req.session.id).name !== currentGame.GameState.currentPlayer.name) {
-        return res.status(403).send('play request is forbidden! Not your turn...');
-    }
-    // verify if move is legal
-    const isMoveLegal = isPlayerMoveLegal(currentGame, cardId);
-    if (!isMoveLegal) {
-        return res.status(403).send('play request is forbidden! move chosen is illegal. try again...');
-    } else {
-        currentGame.GameState.selectedCard = getCardById(cardId);
-
-        // Moving the card
-        let stateChange = serverGameUtils.handleCardMove();
-
-        // side effects
-        if (currentGame.GameState.gameStatus === GameStatusEnum.Ongoing) {
-            stateChange = processGameStep(stateChange);
-        }
-    }
-
-    next();
-}
-
-function getCardById(currentGame, cardId) {
-    const GameState = currentGame.GameState;
-    const gameCards = GameState.pile[Enums.PileIdEnum.DrawPile].cards
-        .concat(GameState.pile[Enums.PileIdEnum.DiscardPile].cards,
-            GameState.pile[Enums.PileIdEnum.Two].cards,
-            GameState.pile[Enums.PileIdEnum.Three].cards);
-    if (GameState.pile[Enums.PileIdEnum.Four] !== null) {
-        gameCards.concat(GameState.pile[Enums.PileIdEnum.Four].cards);
-    }
-    if (GameState.pile[Enums.PileIdEnum.Five] !== null) {
-        gameCards.concat(GameState.pile[Enums.PileIdEnum.Five].cards);
-    }
-    return gameCards.filter((card) => card.id === cardId)[0];
-}
-
-function handleChangeColorRequest(req, res, next){
-    const gameId = req.params.id;
-    const currentGame = getGameInfo(gameId);
-    if (currentGame.GameState.currentPlayer.name !== auth.getUserInfo(req.session.id).name) {
-        res.status(403).send('request is forbidden! this is not your turn ');
-    }
-    let cardId = req.body.cardId;
-    let cardColor = req.body.cardColor;
-
-    req.xResult = changeCardColor(currentGame, cardId, cardColor);
-
-    next();
-}
-
-function changeCardColor(currentGame, cardId, cardColor){
-    let card = getCardById(currentGame, cardId);
-    if (card.action === Enums.CardActionEnum.ChangeColor || card.action === Enums.CardActionEnum.SuperTaki) {
-        card.color = cardColor;
-        return true;
-    } else
-        return false;
-}
-
-function isPlayerMoveLegal(currentGame, cardId ) {
-    let card = getCardById(cardId);
-    let isWithdrawingCard = (card.parentPileId === Enums.PileIdEnum.DrawPile);
-
-    // check move legality if player want to PUT a card on discard pile
-    if (!isWithdrawingCard) {
-        return isPutCardMoveLegal(currentGame, card);
-    } else {
-        // // check move legality if player want to GET (withdrawal) a card from draw pile
-        return isGetCardMoveLegal(currentGame);
-    }
-}
-
-function isPutCardMoveLegal(currentGame, card) {
-    let actionInvoked = currentGame.GameState.actionInvoked;
-    let leadingCard = currentGame.GameState.leadingCard;
-    let isSameColor;
-
-    // if twoPlus is invoked only other twoPlus card is legal
-    if (actionInvoked === Enums.CardActionEnum.TwoPlus) {
-        if (card.action !== Enums.CardActionEnum.TwoPlus) {
-            return false;
-        }
-    } // if taki is invoked only cards with the same color are legal
-    else if (actionInvoked === Enums.CardActionEnum.Taki) {
-        isSameColor = (card.color && leadingCard.color === card.color);
-        if (!isSameColor) {
-            return false;
-        }
-    } else {
-        isSameColor = (card.color && leadingCard.color === card.color);
-        let isSameNumber = (card.number && leadingCard.number === card.number);
-        let isSameAction = (card.action && leadingCard.action === card.action);
-        let isUnColoredActionCard = (card.action && !card.color);
-        if (!(isSameColor || isSameNumber || isSameAction || isUnColoredActionCard)) {
-            return false;
-        }
-    }
-    return true;
-}
-
-function isGetCardMoveLegal(currentGame) {
-    let currentPlayerPile = currentGame.GameState.currentPlayer.pile;
-    let drawPile = currentGame.GameState.piles[Enums.PileIdEnum.DrawPile];
-    let actionInvoked = currentGame.GameState.actionInvoked;
-    let leadingCard = currentGame.GameState.leadingCard;
-
-    // checking if withdrawing Card From DrawPile is a legal move - only if drawPile is not empty and no
-    // other move is available for player
-    if ((!drawPile.isPileEmpty) &&
-        (actionInvoked === CardActionEnum.TwoPlus ||
-            !availableMoveExist(currentGame, currentPlayerPile, actionInvoked, leadingCard))) {
-        return true;
-    } else
-        return false;
-}
-
-function availableMoveExist(currentGame, currentPlayerPile) {
-    let legalCards = [];
-    currentPlayerPile.cards.forEach(function (card, index) {
-        if (isPutCardMoveLegal(currentGame, card)) {
-            legalCards.push(index);
-        }
-    });
-    return (legalCards.length > 0);
-}

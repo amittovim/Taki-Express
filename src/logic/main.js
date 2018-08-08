@@ -130,13 +130,6 @@ export function playGameMove(cardId) {
     return stateChange;
 }
 
-function isGameOver() {
-    const currentPlayersPile = getPlayerPile(GameState.currentPlayer);
-    if ((GameState.actionInvoked === null) ||
-        (GameState.actionInvoked === CardActionEnum.Stop)) {
-        return currentPlayersPile.cards.length === 0;
-    }
-}
 
 function getCardById(cardId) {
     const gameCards = GameState.HumanPile.cards
@@ -212,20 +205,6 @@ function processGameStep(stateChange) {
     };
 }
 
-function handleShouldSwitchPlayers() {
-    let shouldSwitchPlayers = true;
-    let currentPlayerPile = getPlayerPile(GameState.currentPlayer);
-
-    // we check all cases when we shouldn't switch player
-    if (((GameState.actionInvoked === GameState.leadingCard.action) && (GameState.leadingCard.action === CardActionEnum.Plus))
-        || ((GameState.actionInvoked === GameState.leadingCard.action) && (GameState.leadingCard.action === CardActionEnum.Stop))
-        || ((GameState.twoPlusCounter !== 0) && (GameState.leadingCard.id !== GameState.selectedCard.id))
-        || (((GameState.actionInvoked === CardActionEnum.Taki) || (GameState.actionInvoked === CardActionEnum.SuperTaki))
-            && (GameUtils.doesPileHaveSameColorCards(currentPlayerPile)))) {
-        shouldSwitchPlayers = false;
-    }
-    return shouldSwitchPlayers;
-}
 
 function handleSwitchPlayer(shouldSwitchPlayer) {
     if (shouldSwitchPlayer) {
