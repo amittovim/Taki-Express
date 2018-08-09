@@ -12,7 +12,6 @@ import {PileIdEnum} from "../../../enums/pile-id.enum";
 class AdvancedBoard extends Component {
     constructor(props) {
         super(props);
-        debugger;
         this.state = {};
 
         // this.getCurrentUserPile = this.getCurrentUserPile.bind(this);

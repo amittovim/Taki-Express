@@ -1,8 +1,3 @@
-// import * as GameUtils from "../logic/utils/game.utils";
-// import {getPlayerPile} from "../logic/utils/game.utils";
-// import {CardActionEnum} from "../app/enums/card-action-enum";
-// import {GameState} from "../logic/state";
-
 const dbTmp = require('./database');
 const PileModel = require('./logic/api-models/pile.class');
 const CardModel = require('./logic/api-models/card.class');
@@ -45,7 +40,6 @@ module.exports = {
 }
 
 function createCardsInDrawPile(gameId) {
-    debugger;
     let currentGame = dbTmp.getGameInfo(gameId);
     createNumberCards(currentGame);
     createActionCards(currentGame);
@@ -203,7 +197,7 @@ function moveCard(GameState, sourcePileId, destinationPileId) {
     Utils.insertToEndOfArray(GameState.selectedCard, GameState.piles[destinationPileId].cards);
 
     if (GameState.gameStatus === Enums.GameStatusEnum.Ongoing) {
-        GameUtils.incrementGameMovesCounter();
+        incrementGameMovesCounter(GameState);
     }
     // old console message
     GameState.consoleMessage = `${GameState.selectedCard.display} was moved from ${sourcePileId} to ${destinationPileId}`;
@@ -287,19 +281,19 @@ function processGameStep(currentGame) {
     }
 
     // updating statistics
-    handleGameStatistics(newGameStateInfo);
+    handleGameStatistics(currentGame);
 
     // check occasions when we need to activate game activeState (if we PUT an action card on discard-pile)
     if ((GameState.leadingCard.action !== null) &&
         (GameState.leadingCard === GameState.selectedCard)) {
-        handleActivatingActionState(newGameStateInfo);
+        handleActivatingActionState(currentGame);
     }
 
     // in case some action state was invoked , act accordingly
-    handleAllActionInvokedCases(newGameStateInfo);
+    handleAllActionInvokedCases(currentGame);
 
     // // Checking if game ended
-    GameState.isGameOver = isGameOver();
+    GameState.isGameOver = isGameOver(currentGame);
 
     // TODO: for debug: can delete later
     let stateChange = _.cloneDeep(GameState);
@@ -308,14 +302,14 @@ function processGameStep(currentGame) {
     saveGameState(currentGame.id);
 
     //  handleSwitchPlayers(newGameStateInfo);
-    const shouldSwitchPlayer = handleShouldSwitchPlayers();
+    const shouldSwitchPlayer = handleShouldSwitchPlayers(currentGame);
 
     //
-    newGameStateInfo = GameUtils.handleDisablingActionState(newGameStateInfo);
+    handleDisablingActionState(currentGame);
 
     //+++++++++++++++   Import : This is the point where one game move has ended +++++++++++++++++++++++++++
     //in charge of switching turns
-    handleSwitchPlayer(shouldSwitchPlayer);
+    handleSwitchPlayer(currentGame, shouldSwitchPlayer);
 
     //+++++++++++++++   Import : here we are either in a new game turn or in a new game move +++++++++++++++++++++++++++
 
@@ -326,9 +320,9 @@ function processGameStep(currentGame) {
 
 function isGameOver(currentGame) {
     const GameState = currentGame.GameState;
-    const currentPlayersPile = getPlayerPile(GameState.currentPlayer);
+    const currentPlayersPile = GameState.currentPlayer.pile;
     if ((GameState.actionInvoked === null) ||
-        (GameState.actionInvoked === CardActionEnum.Stop)) {
+        (GameState.actionInvoked === Enums.CardActionEnum.Stop)) {
         return currentPlayersPile.cards.length === 0;
     }
 }
@@ -337,17 +331,18 @@ function playGameMove(currentGame, cardId) {
     // verify if move is legal
     const isMoveLegal = isPlayerMoveLegal(currentGame, cardId);
     if (!isMoveLegal) {
-        return
+        return false;
     } else {
-        currentGame.GameState.selectedCard = getCardById(cardId);
+        currentGame.GameState.selectedCard = getCardById(currentGame,cardId);
 
         // Moving the card
         handleCardMove(currentGame);
 
         // side effects
-        if (currentGame.GameState.gameStatus === GameStatusEnum.Ongoing) {
+        if (currentGame.GameState.gameStatus === Enums.GameStatusEnum.Ongoing) {
             processGameStep(currentGame);
         }
+        return true;
     }
 }
 
@@ -355,15 +350,15 @@ function playGameMove(currentGame, cardId) {
 function pickNextBotMove(currentGame) {
     const GameState = currentGame.GameState;
 
-    GameState.currentPlayer = PlayerEnum.Bot;
+    // GameState.currentPlayer = Enums.PlayerEnum.Bot;
     let leadingCard = GameState.leadingCard;
     let selectedCard;
     let actionInvoked = GameState.actionInvoked;
-    let botPile = GameState.BotPile;
+    let botPile = GameState.currentPlayer.pile;
     let matchedCard;
     // 4.1 if actionInvoked is twoPlusInvoked and bot has twoPlus Card - mark it as selectedCard.
-    if (actionInvoked === CardActionEnum.TwoPlus) {
-        if (matchedCard = getCardInHand(botPile, [{action: CardActionEnum.TwoPlus}])) {
+    if (actionInvoked === Enums.CardActionEnum.TwoPlus) {
+        if (matchedCard = getCardInHand(botPile, [{action: Enums.CardActionEnum.TwoPlus}])) {
             selectedCard = matchedCard;
 
         } // if twoPlusInvoked and bot doesn't have a two plus - mark the top card of the draw pile as the selectedCard.
@@ -371,50 +366,50 @@ function pickNextBotMove(currentGame) {
             selectedCard = GameState.piles[Enums.PileIdEnum.DrawPile].getTop();
         }
     } // if actionInvoked is takiInvoked and bot has a card with the same color of the leadingCard - mark it as selectedCard.
-    else if ((actionInvoked === `${CardActionEnum.Taki}Invoked`) &&
-        (matchedCard = GameUtils.getCardInHand(botPile, [{color: leadingCard.color}]))) {
+    else if ((actionInvoked === `${Enums.CardActionEnum.Taki}Invoked`) &&
+        (matchedCard = getCardInHand(botPile, [{color: leadingCard.color}]))) {
         selectedCard = matchedCard;
     } // ( if we got here no actionInvoked was invoked)
     else {
         // 4.2 if bot has a twoPlus card  with the same color as the leadingCard
         // or the leadingCard is a non-active twoPlus - mark it as selectedCard.
-        if ((matchedCard = GameUtils.getCardInHand(botPile, [{action: CardActionEnum.TwoPlus}, {color: leadingCard.color}])) ||
-            ((leadingCard.action === CardActionEnum.TwoPlus) && (matchedCard = GameUtils.getCardInHand(botPile, [{action: CardActionEnum.TwoPlus}])))) {
+        if ((matchedCard = getCardInHand(botPile, [{action: Enums.CardActionEnum.TwoPlus}, {color: leadingCard.color}])) ||
+            ((leadingCard.action === Enums.CardActionEnum.TwoPlus) && (matchedCard = getCardInHand(botPile, [{action: Enums.CardActionEnum.TwoPlus}])))) {
             selectedCard = matchedCard;
         }
         // 4.3 if bot has ChangeColor card and you're allowed to put it (actionInvoked is none)- mark it as selectedCard.
-        else if (matchedCard = GameUtils.getCardInHand(botPile, [{action: CardActionEnum.ChangeColor}])) {
+        else if (matchedCard = getCardInHand(botPile, [{action: Enums.CardActionEnum.ChangeColor}])) {
             selectedCard = matchedCard;
         }
         // 4.4 if bot has  a Stop card with the same color as the leadingCard - mark it as selectedCard.
-        else if (matchedCard = GameUtils.getCardInHand(botPile, [{action: CardActionEnum.Stop}, {color: leadingCard.color}])) {
+        else if (matchedCard = getCardInHand(botPile, [{action: Enums.CardActionEnum.Stop}, {color: leadingCard.color}])) {
             selectedCard = matchedCard;
         }
         // 4.5 if bot has a Plus card with the same color as the leadingCard - mark it as selectedCard.
-        else if (matchedCard = GameUtils.getCardInHand(botPile, [{action: CardActionEnum.Plus}, {color: leadingCard.color}])) {
+        else if (matchedCard = getCardInHand(botPile, [{action: Enums.CardActionEnum.Plus}, {color: leadingCard.color}])) {
             selectedCard = matchedCard;
         }
         // 4.6 if bot has a superTaki card - mark it as selectedCard.
-        else if (matchedCard = GameUtils.getCardInHand(botPile, [{action: CardActionEnum.SuperTaki}])) {
+        else if (matchedCard = getCardInHand(botPile, [{action: Enums.CardActionEnum.SuperTaki}])) {
             selectedCard = matchedCard;
         }
         // 4.7 if bot has a taki card with the same color as the leadingCard - mark it as the selectedCard.
-        else if (matchedCard = GameUtils.getCardInHand(botPile, [{action: CardActionEnum.Taki}, {color: leadingCard.color}])) {
+        else if (matchedCard = getCardInHand(botPile, [{action: Enums.CardActionEnum.Taki}, {color: leadingCard.color}])) {
             selectedCard = matchedCard;
         }
         // 4.7.1 if bot has a card with the same action as the leading card - mark it as the selectedCard.
         else if ((leadingCard.action !== null) &&
-            (matchedCard = GameUtils.getCardInHand(botPile, [{action: leadingCard.action}]))) {
+            (matchedCard = getCardInHand(botPile, [{action: leadingCard.action}]))) {
             selectedCard = matchedCard;
         }
         // 4.8 if you have a card with the same color as the leading card - mark it as the selectedCard.
         else if ((leadingCard.color !== null) &&
-            (matchedCard = GameUtils.getCardInHand(botPile, [{color: leadingCard.color}]))) {
+            (matchedCard = getCardInHand(botPile, [{color: leadingCard.color}]))) {
             selectedCard = matchedCard;
         }
         // 4.9 if you have a card with the same number as the leading card - mark it as the selectedCard.
         else if ((leadingCard.number !== null) &&
-            (matchedCard = GameUtils.getCardInHand(botPile, [{number: leadingCard.number}]))) {
+            (matchedCard = getCardInHand(botPile, [{number: leadingCard.number}]))) {
             selectedCard = matchedCard;
         }
         // 4.10 if none of the conditions above happen - mark the top card of the draw pile as the selectedCard.
@@ -426,19 +421,18 @@ function pickNextBotMove(currentGame) {
 }
 
 function getCardById(currentGame, cardId) {
-    debugger;
     const GameState = currentGame.GameState;
-    const gameCards = GameState.pile[Enums.PileIdEnum.DrawPile].cards
-        .concat(GameState.pile[Enums.PileIdEnum.DiscardPile].cards,
-            GameState.pile[Enums.PileIdEnum.Two].cards,
-            GameState.pile[Enums.PileIdEnum.Three].cards);
-    if (GameState.pile[Enums.PileIdEnum.Four] !== null) {
-        gameCards.concat(GameState.pile[Enums.PileIdEnum.Four].cards);
+    let gameCards = GameState.piles[Enums.PileIdEnum.DrawPile].cards
+        .concat(GameState.piles[Enums.PileIdEnum.DiscardPile].cards,
+            GameState.piles[Enums.PileIdEnum.Two].cards,
+            GameState.piles[Enums.PileIdEnum.Three].cards);
+    if (GameState.piles[Enums.PileIdEnum.Four] !== undefined) {
+        gameCards.concat(GameState.piles[Enums.PileIdEnum.Four].cards);
     }
-    if (GameState.pile[Enums.PileIdEnum.Five] !== null) {
-        gameCards.concat(GameState.pile[Enums.PileIdEnum.Five].cards);
+    if (GameState.piles[Enums.PileIdEnum.Five] !== undefined) {
+        gameCards.concat(GameState.piles[Enums.PileIdEnum.Five].cards);
     }
-    return gameCards.filter((card) => card.id === cardId)[0];
+    return gameCards.filter((card) => {return card.id === cardId})[0];
 }
 
 function changeCardColor(currentGame, cardId, cardColor) {
@@ -451,7 +445,7 @@ function changeCardColor(currentGame, cardId, cardColor) {
 }
 
 function isPlayerMoveLegal(currentGame, cardId) {
-    let card = getCardById(cardId);
+    let card = getCardById(currentGame, cardId);
     let isWithdrawingCard = (card.parentPileId === Enums.PileIdEnum.DrawPile);
 
     // check move legality if player want to PUT a card on discard pile
@@ -500,7 +494,7 @@ function isGetCardMoveLegal(currentGame) {
     // checking if withdrawing Card From DrawPile is a legal move - only if drawPile is not empty and no
     // other move is available for player
     if ((!drawPile.isPileEmpty) &&
-        (actionInvoked === CardActionEnum.TwoPlus ||
+        (actionInvoked === Enums.CardActionEnum.TwoPlus ||
             !availableMoveExist(currentGame, currentPlayerPile, actionInvoked, leadingCard))) {
         return true;
     } else
@@ -671,14 +665,13 @@ function handleInvokedTakiState(currentGame) {
     const GameState = currentGame.GameState;
     let currentPlayerPile = GameState.currentPlayer.pile;
 
-    if (!doesPileHaveSameColorCards(currentPlayerPile)) {
+    if (!doesPileHaveSameColorCards(currentGame, currentPlayerPile)) {
         GameState.actionInvoked = null;
     }
 }
 
-function doesPileHaveSameColorCards(currentGame) {
+function doesPileHaveSameColorCards(currentGame, currentPlayerPile) {
     const GameState = currentGame.GameState;
-    let currentPlayerPile = GameState.currentPlayer.pile;
     let foundSameColorCards = false;
 
     currentPlayerPile.cards.forEach(function (handCard) {
@@ -688,8 +681,7 @@ function doesPileHaveSameColorCards(currentGame) {
     return foundSameColorCards;
 }
 
-function incrementGameMovesCounter(currentGame) {
-    const GameState = currentGame.GameState;
+function incrementGameMovesCounter(GameState) {
     GameState.movesCounter++;
 }
 
@@ -701,15 +693,22 @@ function incrementGameTurnNumber(currentGame) {
 function handleShouldSwitchPlayers(currentGame) {
     const GameState = currentGame.GameState;
     let shouldSwitchPlayers = true;
-    let currentPlayerPile = getPlayerPile(GameState.currentPlayer);
+    let currentPlayerPile = GameState.currentPlayer.pile;
 
     // we check all cases when we shouldn't switch player
-    if (((GameState.actionInvoked === GameState.leadingCard.action) && (GameState.leadingCard.action === CardActionEnum.Plus))
-        || ((GameState.actionInvoked === GameState.leadingCard.action) && (GameState.leadingCard.action === CardActionEnum.Stop))
+    if (((GameState.actionInvoked === GameState.leadingCard.action) && (GameState.leadingCard.action === Enums.CardActionEnum.Plus))
+        || ((GameState.actionInvoked === GameState.leadingCard.action) && (GameState.leadingCard.action === Enums.CardActionEnum.Stop))
         || ((GameState.twoPlusCounter !== 0) && (GameState.leadingCard.id !== GameState.selectedCard.id))
-        || (((GameState.actionInvoked === CardActionEnum.Taki) || (GameState.actionInvoked === CardActionEnum.SuperTaki))
-            && (GameUtils.doesPileHaveSameColorCards(currentPlayerPile)))) {
+        || (((GameState.actionInvoked === Enums.CardActionEnum.Taki) || (GameState.actionInvoked === Enums.CardActionEnum.SuperTaki))
+            && (doesPileHaveSameColorCards(currentGame, currentPlayerPile)))) {
         shouldSwitchPlayers = false;
     }
     return shouldSwitchPlayers;
+}
+
+function handleSwitchPlayer(currentGame, shouldSwitchPlayer) {
+    if (shouldSwitchPlayer) {
+        switchPlayers(currentGame);
+        incrementGameTurnNumber(currentGame);
+    }
 }

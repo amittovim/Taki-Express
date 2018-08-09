@@ -66,11 +66,11 @@ class Game extends Component {
                 piles: [],
                 leadingCard: null,
                 actionInvoked: null,
-                turnNumber: null,
-                movesCounter: null,
-                twoPlusCounter: null,
+                turnNumber: 0,
+                movesCounter: 0,
+                twoPlusCounter: 0,
                 consoleMessage: '',
-                gameStatus: null,
+                gameStatus: '',
             },
             history: [],
             isActive: false,
@@ -142,7 +142,6 @@ class Game extends Component {
                                     stateStack.push(contentFromServer);
                                 }
                 */
-                debugger;
                 this.setState(() => {
                     return contentFromServer;
                 });
@@ -164,8 +163,8 @@ class Game extends Component {
     }
 
     requestPlayerMove(cardId) {
-        const body = {cardId};
-        fetch('/game/' + this.state.id, {method: 'PUT', body: JSON.stringify(body), credentials: 'include'})
+        const body = cardId;
+        fetch('/game/' + this.state.id, {method: 'PUT', body: body , credentials: 'include'})
             .then(res => {
                 (!res.ok)
                     ? console.log(`'Failed to move card in game named ${this.state.game.name}! response content is: `, res)

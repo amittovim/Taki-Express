@@ -21,7 +21,7 @@ gameManagement.route('/:id')
         res.json(dbTmp.getGameInfo(gameId));
     })
     .put(auth.userAuthentication,
-        dbTmp.handlePlayRequestFromPlayer, (req, res) => {
+        dbTmp.handleRequestPlayerMove, (req, res) => {
             res.json(req.xGameContent)
         });
 

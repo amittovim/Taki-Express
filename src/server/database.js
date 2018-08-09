@@ -4,7 +4,7 @@ module.exports = {
     getAllGames,
     addUserToGame,
     removeGame,
-    handlePlayRequestFromPlayer,
+    handleRequestPlayerMove,
     handleChangeColorRequest,
 };
 
@@ -53,9 +53,8 @@ function addUserToGame(req, res, next) {
         // if emptyPlayerSeatIndex === -1 it means no empty seats at this game which means this game has
         // already started and we cannot enter a game which is already started.
         if (gameHasSeatAvailable) {
-            let newPlayerPile =
-                new PileModel(emptyPlayerSeatIndex + 2, Enums.PileTypeEnum.PlayerPile, true, nameObject.name);
-            currentGame.GameState.piles.splice(currentGame.playersEnrolled + 1, 1, (newPlayerPile));
+            currentGame.GameState.piles[emptyPlayerSeatIndex + 2].ownerPlayerName = nameObject.name;
+            // currentGame.GameState.piles.splice(currentGame.playersEnrolled + 1, 1, (newPlayerPile));
             // TODO : having a problem using PlayerModel constructor here
             currentGame.GameState.players[emptyPlayerSeatIndex] = {
                 name: nameObject.name,
@@ -82,9 +81,10 @@ function addUserToGame(req, res, next) {
     }
 }
 
-function handlePlayRequestFromPlayer(req, res, next) {
+function handleRequestPlayerMove(req, res, next) {
     let currentGame = getGameInfo(req.params.id);
-    const cardId = req.body;
+    const cardId = parseInt(req.body);
+    debugger;
     let result;
     // check if current message is coming from same user who's the currentPlayer
     if (auth.getUserInfo(req.session.id).name !== currentGame.GameState.currentPlayer.name) {
@@ -106,6 +106,7 @@ function handlePlayRequestFromPlayer(req, res, next) {
             ? res.status(403).send('play request is forbidden! move chosen is illegal. try again...')
             : null;
     }
+    req.xGameContent = currentGame;
     next();
 }
 
@@ -148,7 +149,7 @@ function removeGame(gameId) {
 }
 
 function getGameInfo(gameId) {
-    const gameInfoJson = {game: gameList[gameId]};
+    const gameInfoJson = {game: gameList.find( (game) => {return game.id === parseInt(gameId) })};
     const gameInfo = gameInfoJson.game;
     let hasGameBeenInitialized;
     let gameIndex = initGameList.findIndex((gameName) => {
@@ -162,8 +163,8 @@ function getGameInfo(gameId) {
                 gameInfo.GameState.piles.splice(gameInfo.GameState.piles.length, 0, (gameInfo.GameState.piles.splice(0, 1)[0]));
         */
         serverGameUtils.createCardsInDrawPile(gameInfo.id);
-        debugger;
         serverGameUtils.dealCards(gameInfo.id);
+        gameInfo.GameState.gameStatus = Enums.GameStatusEnum.Ongoing;
 
 
     }
@@ -188,7 +189,7 @@ function getAllGames() {
 function createNewGame(newGameInfo) {
     let newGame;
     newGame = {
-        id: gameId++,
+        id: gameId,
         name: newGameInfo.name,
         owner: newGameInfo.owner,
         playersCapacity: newGameInfo.playersCapacity,
@@ -197,6 +198,7 @@ function createNewGame(newGameInfo) {
         history: [],
         isActive: false
     };
+    gameId++;
     // creating Players Array
     const newGamePlayers = [];
     _.times(newGame.playersCapacity, () => {
@@ -205,10 +207,20 @@ function createNewGame(newGameInfo) {
     _.times((4 - newGame.playersCapacity), () => {
         newGamePlayers.push(null);
     });
+
+
     const newGamePiles = [];
+    // creating piles Array for DrawPile and DiscardPile
+    newGamePiles.push(new PileModel(Enums.PileIdEnum.DrawPile, Enums.PileTypeEnum.DrawPile));
+    newGamePiles.push(new PileModel(Enums.PileIdEnum.DiscardPile, Enums.PileTypeEnum.DiscardPile));
+
+    // creating all players initial piles
+    for (let i=0; i <newGame.playersCapacity ; i++) {
+        newGamePiles.push(new PileModel(i+2, Enums.PileTypeEnum.PlayerPile,true));
+    }
+
     if (newGame.isBotEnabled === true) {
-        newGamePiles[newGame.playersCapacity + 1] = new PileModel(
-            newGame.playersCapacity + 1, Enums.PileTypeEnum.PlayerPile, true, 'Bot');
+        newGamePiles[newGame.playersCapacity + 1].ownerPlayerName = Enums.PlayerEnum.Bot;
         // TODO : having a problem using PlayerModel constructor here
         newGamePlayers[newGame.playersCapacity - 1] = {
             name: Enums.PlayerEnum.Bot,
@@ -220,20 +232,6 @@ function createNewGame(newGameInfo) {
 
         newGame.playersEnrolled++;   // increment the number of enrolled players due to BOT existence
     }
-    // creating piles Array for DrawPile and DiscardPile
-    newGamePiles.splice(0, 1, new PileModel(Enums.PileIdEnum.DrawPile, Enums.PileTypeEnum.DrawPile));
-    debugger;
-    newGamePiles.splice(1, 1, new PileModel(Enums.PileIdEnum.DiscardPile, Enums.PileTypeEnum.DiscardPile));
-    /*
-            ({
-            id: 1,
-            type: Enums.PileTypeEnum.DiscardPile,
-            cards: [],
-            isHand: false,
-            ownerPlayerName: null,
-            singleCardCounter: 0
-        }));
-    */
 
     newGame.GameState = {
         id: 0,
@@ -255,9 +253,10 @@ function createNewGame(newGameInfo) {
         gameDirection: Enums.GameDirection.Clockwise
     };
 
-    //update the correct pile for the bot player
-    newGame.GameState.players[newGame.playersCapacity - 1].pile = newGame.GameState.piles[newGame.playersCapacity + 1];
-
+    //if there is a Bot, update the correct pile in for the bot player field
+    if (newGame.isBotEnabled === true) {
+        newGame.GameState.players[newGame.playersCapacity - 1].pile = newGame.GameState.piles[newGame.playersCapacity + 1];
+    }
     gameList.push(newGame);
 }
 
