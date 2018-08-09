@@ -26,25 +26,25 @@ class Game extends Component {
                         gameHistoryCallback={this.handleGetGameHistory}
                         restartGameCallback={this.startGame}
                         openModalCallback={this.handleOpenModal}
-                        emitAverageTime={this.updateAverageTime} />
-                <Loader isLoading={this.state.isLoading} />
-                <Overlay isVisible={this.state.isLoading || this.state.modal.isOpen || this.state.isGameOver} />
+                        emitAverageTime={this.updateAverageTime}/>
+                <Loader isLoading={this.state.isLoading}/>
+                <Overlay isVisible={this.state.isLoading || this.state.modal.isOpen || this.state.isGameOver}/>
                 <Modal isOpen={this.state.modal.isOpen}
                        type={this.state.modal.type}
                        callback={this.state.modal.callback}
                        restartGameCallback={this.startGame}
                        data={this.getStats()}
-                       closeModal={this.handleCloseModal} />
+                       closeModal={this.handleCloseModal}/>
                 <div>
                     {this.state.playersCapacity > this.state.playersEnrolled
                         ? (<WaitingMessageComponent
-                            numOfNeededPlayers={(this.state.playersCapacity - this.state.playersEnrolled)} />)
+                            numOfNeededPlayers={(this.state.playersCapacity - this.state.playersEnrolled)}/>)
                         : ((<AdvancedBoard userId={this.props.userId}
                                            piles={this.state.GameState.piles}
-                                           moveCardDriver={this.requestPlayerMove} />))
+                                           moveCardDriver={this.requestPlayerMove}/>))
                     }
                 </div>
-                <Console message={this.state.consoleMessage} />
+                <Console message={this.state.consoleMessage}/>
             </div>
         );
     }
@@ -106,6 +106,8 @@ class Game extends Component {
         this.requestCardChangeColor = this.requestCardChangeColor.bind(this);
         this.requestPlayerMove = this.requestPlayerMove.bind(this);
         this.getGameContent = this.getGameContent.bind(this);
+        this.updateGameState = this.updateGameState.bind(this);
+        this.findCardPileByCardId = this.findCardPileByCardId.bind(this);
 
         this.getGameContent();
     }
@@ -137,18 +139,50 @@ class Game extends Component {
         this.fetchGameContent()
             .then(contentFromServer => {
                 console.log(contentFromServer);
-                /*
-                                if (contentFromServer.id === this.state.id+1) {
-                                    stateStack.push(contentFromServer);
-                                }
-                */
-                this.setState(() => {
-                    return contentFromServer;
-                });
+                let historyFromServer = contentFromServer.history;
+                let historyFromServerObject = { 'history':contentFromServer.history};
+                let statesDifference = historyFromServer.length - this.state.history.length;
+                if (statesDifference !== 0)
+                    this.setState(() => {
+                        return historyFromServerObject;
+                    }, () => {
+                        debugger;
+                        let intervalId = setInterval(() => {
+                            this.updateGameState();
+                            if (--statesDifference === 0) {
+                                window.clearInterval(intervalId);
+                            }
+                        }, 500);
+                    });
             })
             .catch(err => {
                 throw err
             });
+    }
+
+    updateGameState() {
+        debugger;
+        let currentGameStateId= this.state.GameState.id;
+        this.setState(() => {
+            let GameState = { 'GameState': this.state.history[currentGameStateId]}
+            return GameState;
+        }, () => {
+            debugger;
+            console.log(this.state.history);
+        });
+
+/*
+        let card = this.history[currentGameStateId].selectedCard;
+        let cardId = card.id;
+        let cardAfterPile = this.history[currentGameStateId].piles[card.parentPileType];
+        let beforePiles = this.history[currentGameStateId-1].piles;
+        let cardBeforePile = findCardPileByCardId(cardId,beforePiles);
+*/
+
+    }
+
+    findCardPileByCardId(cardId,beforePiles) {
+
     }
 
     fetchGameContent() {
@@ -164,7 +198,7 @@ class Game extends Component {
 
     requestPlayerMove(cardId) {
         const body = cardId;
-        fetch('/game/' + this.state.id, {method: 'PUT', body: body , credentials: 'include'})
+        fetch('/game/' + this.state.id, {method: 'PUT', body: body, credentials: 'include'})
             .then(res => {
                 (!res.ok)
                     ? console.log(`'Failed to move card in game named ${this.state.game.name}! response content is: `, res)

@@ -17,6 +17,7 @@ gameManagement.use(function log(req, res, next) {
 
 gameManagement.route('/:id')
     .get(auth.userAuthentication, (req, res) => {
+        debugger;
         const gameId = req.params.id;
         res.json(dbTmp.getGameInfo(gameId));
     })

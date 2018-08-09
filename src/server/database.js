@@ -84,7 +84,6 @@ function addUserToGame(req, res, next) {
 function handleRequestPlayerMove(req, res, next) {
     let currentGame = getGameInfo(req.params.id);
     const cardId = parseInt(req.body);
-    debugger;
     let result;
     // check if current message is coming from same user who's the currentPlayer
     if (auth.getUserInfo(req.session.id).name !== currentGame.GameState.currentPlayer.name) {
@@ -153,6 +152,7 @@ function getGameInfo(gameId) {
     const gameInfo = gameInfoJson.game;
     let hasGameBeenInitialized;
     let gameIndex = initGameList.findIndex((gameName) => {
+        debugger;
         return gameName === gameInfo.name;
     });
     gameIndex > -1 ? hasGameBeenInitialized = true : hasGameBeenInitialized = false;

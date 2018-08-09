@@ -13,7 +13,7 @@ interface Card {
     number: CardNumberEnum;
     action: CardActionEnum;
     isHidden: boolean;
-    parentPileType: PileTypeEnum;
+    parentPileId: PileIdEnum;
 }
 
 interface Pile {
