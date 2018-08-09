@@ -1,7 +1,7 @@
-import * as GameUtils from "../logic/utils/game.utils";
-import {getPlayerPile} from "../logic/utils/game.utils";
-import {CardActionEnum} from "../app/enums/card-action-enum";
-import {GameState} from "../logic/state";
+// import * as GameUtils from "../logic/utils/game.utils";
+// import {getPlayerPile} from "../logic/utils/game.utils";
+// import {CardActionEnum} from "../app/enums/card-action-enum";
+// import {GameState} from "../logic/state";
 
 const dbTmp = require('./database');
 const PileModel = require('./logic/api-models/pile.class');
@@ -33,7 +33,6 @@ module.exports = {
     pullTopOfPile,
     pickRandomColor,
     getCardInHand,
-    handleDrawpileRestocking: handleDrawPileRestocking,
     handleActivatingActionState,
     handleDisablingActionState,
     handleGameStatistics,
@@ -46,6 +45,7 @@ module.exports = {
 }
 
 function createCardsInDrawPile(gameId) {
+    debugger;
     let currentGame = dbTmp.getGameInfo(gameId);
     createNumberCards(currentGame);
     createActionCards(currentGame);
@@ -280,7 +280,7 @@ function switchPlayers(currentGame) {
 }
 
 function processGameStep(currentGame) {
-    const GameState= currentGame.GameState;
+    const GameState = currentGame.GameState;
     // if drawPile is empty restock it with cards from discardPile
     if (GameState.piles[Enums.PileIdEnum.DrawPile].isPileEmpty) {
         restockDrawPile();
@@ -426,6 +426,7 @@ function pickNextBotMove(currentGame) {
 }
 
 function getCardById(currentGame, cardId) {
+    debugger;
     const GameState = currentGame.GameState;
     const gameCards = GameState.pile[Enums.PileIdEnum.DrawPile].cards
         .concat(GameState.pile[Enums.PileIdEnum.DiscardPile].cards,
@@ -598,12 +599,12 @@ function handleGameStatistics(currentGame) {
     }
 }
 
-function incrementSingleCardCounter(currentGame ) {
+function incrementSingleCardCounter(currentGame) {
     const GameState = currentGame.GameState;
     GameState.currentPlayer.pile.singleCardCounter++;
 }
 
-function handleAllActionInvokedCases(currentGame ) {
+function handleAllActionInvokedCases(currentGame) {
     const GameState = currentGame.GameState;
 
 
@@ -635,12 +636,12 @@ function handleAllActionInvokedCases(currentGame ) {
     }
 }
 
-function handleInvokedTwoPlusState(currentGame ) {
+function handleInvokedTwoPlusState(currentGame) {
     const GameState = currentGame.GameState;
     GameState.twoPlusCounter += 2;
 }
 
-function handleExistingTwoPlusState(currentGame ) {
+function handleExistingTwoPlusState(currentGame) {
     const GameState = currentGame.GameState;
     if (GameState.leadingCard.id !== GameState.selectedCard.id &&
         GameState.twoPlusCounter > 0) {
@@ -648,25 +649,25 @@ function handleExistingTwoPlusState(currentGame ) {
     }
 }
 
-function handleInvokedCCStateByBot(currentGame ) {
+function handleInvokedCCStateByBot(currentGame) {
     const GameState = currentGame.GameState;
     if (GameState.leadingCard.id === GameState.selectedCard.id) {
         GameState.leadingCard.color = pickRandomColor();
     }
 }
 
-function handleInvokedStopState(currentGame ) {
+function handleInvokedStopState(currentGame) {
     incrementGameTurnNumber(currentGame);
 }
 
-function handleInvokedSuperTakiState(currentGame ) {
+function handleInvokedSuperTakiState(currentGame) {
     const GameState = currentGame.GameState;
     GameState.leadingCard.color = GameState.piles[Enums.PileIdEnum.DiscardPile].getSecondCardFromTop().color;
     GameState.actionInvoked = Enums.CardActionEnum.Taki;
 
 }
 
-function handleInvokedTakiState(currentGame ) {
+function handleInvokedTakiState(currentGame) {
     const GameState = currentGame.GameState;
     let currentPlayerPile = GameState.currentPlayer.pile;
 
@@ -675,7 +676,7 @@ function handleInvokedTakiState(currentGame ) {
     }
 }
 
-function doesPileHaveSameColorCards(currentGame ) {
+function doesPileHaveSameColorCards(currentGame) {
     const GameState = currentGame.GameState;
     let currentPlayerPile = GameState.currentPlayer.pile;
     let foundSameColorCards = false;

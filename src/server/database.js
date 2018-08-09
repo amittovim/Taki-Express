@@ -1,13 +1,13 @@
-/*
-import {CardActionEnum} from "../app/enums/card-action-enum";
-import * as GameService from "../app/game/game.service";
-import {GameStatusEnum} from "../logic/game-status.enum";
-import {PlayerEnum} from "../app/enums/player.enum";
-import {handleCardMove} from "../logic/dealer/dealer";
-import {GameState} from "../logic/state";
-import {PileTypeEnum} from "../app/enums/pile-type.enum";
-import * as Server from "../logic/main";
-*/
+module.exports = {
+    addGameToGameList,
+    getGameInfo,
+    getAllGames,
+    addUserToGame,
+    removeGame,
+    handlePlayRequestFromPlayer,
+    handleChangeColorRequest,
+};
+
 let gameId = 0;
 const gameList = [];
 const initGameList = [];     // list of games that started initializing state
@@ -17,16 +17,6 @@ const Enums = require('./enums-node');
 const auth = require('./authentication');
 const serverGameUtils = require("./server-game-utils");
 const _ = require('lodash');
-
-module.exports = {
-    addGameToGameList,
-    getGameInfo,
-    getAllGames,
-    addUserToGame,
-    removeGame,
-    handlePlayRequestFromPlayer,
-    handleChangeColorRequest,
-}
 
 function addGameToGameList(req, res, next) {
     let newGameInfo = JSON.parse(req.body);
@@ -103,7 +93,7 @@ function handlePlayRequestFromPlayer(req, res, next) {
 
     result = serverGameUtils.playGameMove(currentGame, cardId);
 
-    (result===false )
+    (result === false)
         ? res.status(403).send('play request is forbidden! move chosen is illegal. try again...')
         : null;
 
@@ -112,7 +102,7 @@ function handlePlayRequestFromPlayer(req, res, next) {
         let botCardId = serverGameUtils.pickNextBotMove(currentGame);
         result = serverGameUtils.playGameMove(currentGame, botCardId);
 
-        (result===false )
+        (result === false)
             ? res.status(403).send('play request is forbidden! move chosen is illegal. try again...')
             : null;
     }
@@ -172,8 +162,8 @@ function getGameInfo(gameId) {
                 gameInfo.GameState.piles.splice(gameInfo.GameState.piles.length, 0, (gameInfo.GameState.piles.splice(0, 1)[0]));
         */
         serverGameUtils.createCardsInDrawPile(gameInfo.id);
-        serverGameUtils.dealCards(gameInfo.id);
         debugger;
+        serverGameUtils.dealCards(gameInfo.id);
 
 
     }
@@ -232,7 +222,7 @@ function createNewGame(newGameInfo) {
     }
     // creating piles Array for DrawPile and DiscardPile
     newGamePiles.splice(0, 1, new PileModel(Enums.PileIdEnum.DrawPile, Enums.PileTypeEnum.DrawPile));
-
+    debugger;
     newGamePiles.splice(1, 1, new PileModel(Enums.PileIdEnum.DiscardPile, Enums.PileTypeEnum.DiscardPile));
     /*
             ({
