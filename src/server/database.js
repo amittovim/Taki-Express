@@ -22,8 +22,6 @@ function addGameToGameList(req, res, next) {
     let newGameInfo = JSON.parse(req.body);
     newGameInfo.owner = auth.getUserInfo(req.session.id);
 
-    console.log(newGameInfo);
-
     const nameAlreadyExists = gameList.some((game) => game.name === newGameInfo.name);
     if (nameAlreadyExists) {
         res.status(403).send('game name already exist');
@@ -89,7 +87,6 @@ function handleRequestPlayerMove(req, res, next) {
     if (auth.getUserInfo(req.session.id).name !== currentGame.GameState.currentPlayer.name) {
         return res.status(403).send('play request is forbidden! Not your turn...');
     }
-
     result = serverGameUtils.playGameMove(currentGame, cardId);
 
     (result === false)
@@ -112,14 +109,14 @@ function handleRequestPlayerMove(req, res, next) {
 function handleChangeColorRequest(req, res, next) {
     const gameId = req.params.id;
     const currentGame = getGameInfo(gameId);
+    const body = JSON.parse(req.body)
     if (currentGame.GameState.currentPlayer.name !== auth.getUserInfo(req.session.id).name) {
         res.status(403).send('request is forbidden! this is not your turn ');
     }
-    let cardId = req.body.cardId;
-    let cardColor = req.body.cardColor;
+    let cardId = body.cardId;
+    let cardColor = body.cardColor;
 
     req.xResult = serverGameUtils.changeCardColor(currentGame, cardId, cardColor);
-
     next();
 }
 
@@ -152,7 +149,6 @@ function getGameInfo(gameId) {
     const gameInfo = gameInfoJson.game;
     let hasGameBeenInitialized;
     let gameIndex = initGameList.findIndex((gameName) => {
-        debugger;
         return gameName === gameInfo.name;
     });
     gameIndex > -1 ? hasGameBeenInitialized = true : hasGameBeenInitialized = false;
@@ -238,10 +234,6 @@ function createNewGame(newGameInfo) {
         players: newGamePlayers,
         piles: newGamePiles,
         currentPlayer: null,
-        // DrawPile: null,
-        // DiscardPile: null,
-        receivingPileOwner: null,
-        givingPileOwner: null,
 
         leadingCard: null,
         actionInvoked: null,

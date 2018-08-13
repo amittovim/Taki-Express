@@ -38,7 +38,7 @@ export default class ConversationArea extends Component {
                 if (!response.ok){
                     throw response;
                 }
-                this.timeoutId = setTimeout(this.getChatContent, 200);
+                this.timeoutId = setTimeout(this.getChatContent, 500);
                 return response.json();
             })
             .then(content => {

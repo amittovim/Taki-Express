@@ -191,8 +191,6 @@ function processGameStep(stateChange) {
 
     //+++++++++++++++   Import : here we are either in a new game turn or in a new game move +++++++++++++++++++++++++++
 
-    // // TODO : delete this line
-    console.log(deepCopy(GameState));
 
     return {
         ...stateChange,

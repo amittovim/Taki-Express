@@ -6,6 +6,7 @@ const Utils = require('./logic/Utils/model.utils');
 const Enums = require('./enums-node');
 const _ = require('lodash');
 
+
 let cardId = 0;
 
 module.exports = {
@@ -310,11 +311,7 @@ function processGameStep(currentGame) {
     //+++++++++++++++   Import : This is the point where one game move has ended +++++++++++++++++++++++++++
     //in charge of switching turns
     handleSwitchPlayer(currentGame, shouldSwitchPlayer);
-
     //+++++++++++++++   Import : here we are either in a new game turn or in a new game move +++++++++++++++++++++++++++
-
-    // TODO : delete this line
-    console.log(_.cloneDeep(GameState));
 
 }
 
@@ -445,15 +442,19 @@ function changeCardColor(currentGame, cardId, cardColor) {
 }
 
 function isPlayerMoveLegal(currentGame, cardId) {
-    let card = getCardById(currentGame, cardId);
-    let isWithdrawingCard = (card.parentPileId === Enums.PileIdEnum.DrawPile);
-
-    // check move legality if player want to PUT a card on discard pile
-    if (!isWithdrawingCard) {
-        return isPutCardMoveLegal(currentGame, card);
+    if (Consts.ALL_MOVES_LEGAL) {
+        return true;
     } else {
-        // // check move legality if player want to GET (withdrawal) a card from draw pile
-        return isGetCardMoveLegal(currentGame);
+        let card = getCardById(currentGame, cardId);
+        let isWithdrawingCard = (card.parentPileId === Enums.PileIdEnum.DrawPile);
+
+        // check move legality if player want to PUT a card on discard pile
+        if (!isWithdrawingCard) {
+            return isPutCardMoveLegal(currentGame, card);
+        } else {
+            // // check move legality if player want to GET (withdrawal) a card from draw pile
+            return isGetCardMoveLegal(currentGame);
+        }
     }
 }
 
@@ -694,11 +695,14 @@ function handleShouldSwitchPlayers(currentGame) {
     const GameState = currentGame.GameState;
     let shouldSwitchPlayers = true;
     let currentPlayerPile = GameState.currentPlayer.pile;
-
     // we check all cases when we shouldn't switch player
-    if (((GameState.actionInvoked === GameState.leadingCard.action) && (GameState.leadingCard.action === Enums.CardActionEnum.Plus))
+    if  //if someone just put a PLUS card
+       (((GameState.actionInvoked === GameState.leadingCard.action) && (GameState.leadingCard.action === Enums.CardActionEnum.Plus))
+        //if someone just put a STOP card
         || ((GameState.actionInvoked === GameState.leadingCard.action) && (GameState.leadingCard.action === Enums.CardActionEnum.Stop))
+        //if someone is taking cards from pile due to a TWOPLUS card he received before it
         || ((GameState.twoPlusCounter !== 0) && (GameState.leadingCard.id !== GameState.selectedCard.id))
+        //if someone just put a TAKI or SUPERTAKI and he has more cards with the same color
         || (((GameState.actionInvoked === Enums.CardActionEnum.Taki) || (GameState.actionInvoked === Enums.CardActionEnum.SuperTaki))
             && (doesPileHaveSameColorCards(currentGame, currentPlayerPile)))) {
         shouldSwitchPlayers = false;

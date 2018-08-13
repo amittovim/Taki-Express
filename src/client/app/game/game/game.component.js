@@ -9,6 +9,9 @@ import AdvancedBoard from "./advanced-board/advanced-board";
 import WaitingMessageComponent from "./waiting-message-component";
 import * as GameApiService from "./game-api.service";
 import {ModalTypeEnum} from "../modal/modal-type.enum";
+import {PileIdEnum} from "../../enums/pile-id.enum";
+import {CardActionEnum} from "../../enums/card-action-enum";
+
 import * as GameService from "./game.service";
 
 // <PROPS>
@@ -41,7 +44,9 @@ class Game extends Component {
                             numOfNeededPlayers={(this.state.playersCapacity - this.state.playersEnrolled)}/>)
                         : ((<AdvancedBoard userId={this.props.userId}
                                            piles={this.state.GameState.piles}
-                                           moveCardDriver={this.requestPlayerMove}/>))
+                                           moveCardDriver={this.handlePlayMove}/>))
+                        /*moveCardDriver={this.requestPlayerMove}/>))*/
+
                     }
                 </div>
                 <Console message={this.state.consoleMessage}/>
@@ -89,10 +94,9 @@ class Game extends Component {
             isLoading: false,
             isGameOver: false
         };
+        this.card= null;
         this.updateSelectedCard = this.updateSelectedCard.bind(this);
-        this.handlePlayMove = this.handlePlayMove.bind(this);
-        this.openColorPicker = this.openColorPicker.bind(this);
-        this.handleChangeColor = this.handleChangeColor.bind(this);
+
         this.requestMoveCard = this.requestMoveCard.bind(this);
         this.handleIllegalMove = this.handleIllegalMove.bind(this);
         this.handleOpenModal = this.handleOpenModal.bind(this);
@@ -100,14 +104,20 @@ class Game extends Component {
         this.humanMoveCardHandler = this.humanMoveCardHandler.bind(this);
         this.updateAverageTime = this.updateAverageTime.bind(this);
         this.handleGetGameHistory = this.handleGetGameHistory.bind(this);
-        this.startGame = this.startGame.bind(this);
+        // this.startGame = this.startGame.bind(this);
         this.processStateChanges = this.processStateChanges.bind(this);
 
+
+        this.handlePlayMove = this.handlePlayMove.bind(this);
         this.requestCardChangeColor = this.requestCardChangeColor.bind(this);
         this.requestPlayerMove = this.requestPlayerMove.bind(this);
         this.getGameContent = this.getGameContent.bind(this);
-        this.updateGameState = this.updateGameState.bind(this);
-        this.findCardPileByCardId = this.findCardPileByCardId.bind(this);
+        this.openColorPicker = this.openColorPicker.bind(this);
+        this.handleChangeColor = this.handleChangeColor.bind(this);
+        this.updateGameStateFromHistory = this.updateGameStateFromHistory.bind(this);
+        //this.findCardPileByCardId = this.findCardPileByCardId.bind(this);
+        //this.getIsMoveLegal = this.getIsMoveLegal.bind(this);
+        this.getCardById = this.getCardById.bind(this);
 
         this.getGameContent();
     }
@@ -138,51 +148,55 @@ class Game extends Component {
     getGameContent() {
         this.fetchGameContent()
             .then(contentFromServer => {
-                console.log(contentFromServer);
+                console.log(contentFromServer.GameState.currentPlayer);
                 let historyFromServer = contentFromServer.history;
-                let historyFromServerObject = { 'history':contentFromServer.history};
+
+                let historyFromServerObject = {'history': contentFromServer.history};
                 let statesDifference = historyFromServer.length - this.state.history.length;
-                if (statesDifference !== 0)
+                if (statesDifference !== 0) {
                     this.setState(() => {
                         return historyFromServerObject;
                     }, () => {
-                        debugger;
                         let intervalId = setInterval(() => {
-                            this.updateGameState();
+                            this.updateGameStateFromHistory();
                             if (--statesDifference === 0) {
                                 window.clearInterval(intervalId);
+                                this.setState(() => {
+                                    return ({isLoading: false});
+                                }, () => {
+                                    this.setState(() => {
+                                        return ({GameState: {
+                                                currentPlayer: contentFromServer.GameState.currentPlayer,
+                                                piles: contentFromServer.GameState.piles
+                                            },
+                                            ...contentFromServer});
+                                    })
+                                });
+
                             }
-                        }, 500);
+                        }, 300);
                     });
+                }
+
             })
             .catch(err => {
                 throw err
             });
     }
 
-    updateGameState() {
-        debugger;
-        let currentGameStateId= this.state.GameState.id;
+    updateGameStateFromHistory() {
+        let isLoadingStateObject;
+        (this.state.isLoading === true)
+            ? isLoadingStateObject = {}
+            : isLoadingStateObject = {'isLoading': true};
+        let currentGameStateId = this.state.GameState.id;
         this.setState(() => {
-            let GameState = { 'GameState': this.state.history[currentGameStateId]}
+            let GameState = {
+                'GameState': this.state.history[currentGameStateId],
+                ...isLoadingStateObject
+            };
             return GameState;
-        }, () => {
-            debugger;
-            console.log(this.state.history);
         });
-
-/*
-        let card = this.history[currentGameStateId].selectedCard;
-        let cardId = card.id;
-        let cardAfterPile = this.history[currentGameStateId].piles[card.parentPileType];
-        let beforePiles = this.history[currentGameStateId-1].piles;
-        let cardBeforePile = findCardPileByCardId(cardId,beforePiles);
-*/
-
-    }
-
-    findCardPileByCardId(cardId,beforePiles) {
-
     }
 
     fetchGameContent() {
@@ -191,8 +205,73 @@ class Game extends Component {
                 if (!res.ok) {
                     throw res;
                 }
-                this.timeoutId = setTimeout(this.getGameContent, 200);
+                this.timeoutId = setTimeout(this.getGameContent, 500);
                 return res.json();
+            });
+    }
+
+    /*
+        handlePlayMove(cardId) {
+            let isMoveLegal = this.getIsMoveLegal(cardId);
+            debugger;
+            const card = this.getCardById(cardId);
+            if (!isMoveLegal) {
+                return this.handleIllegalMove();
+            } else if (card.action === CardActionEnum.ChangeColor &&
+                this.state.piles[card.parentPileId].isHand === true) {
+                this.openColorPicker();
+            } else {
+                this.requestPlayerMove(cardId);
+            }
+        }
+    */
+
+    getCardById(cardId) {
+        const GameState = this.state.GameState;
+        let gameCards = GameState.piles[PileIdEnum.DrawPile].cards
+            .concat(GameState.piles[PileIdEnum.DiscardPile].cards,
+                GameState.piles[PileIdEnum.Two].cards,
+                GameState.piles[PileIdEnum.Three].cards);
+        if (GameState.piles[PileIdEnum.Four] !== undefined) {
+            gameCards.concat(GameState.piles[PileIdEnum.Four].cards);
+        }
+        if (GameState.piles[PileIdEnum.Five] !== undefined) {
+            gameCards.concat(GameState.piles[PileIdEnum.Five].cards);
+        }
+        return gameCards.filter((card) => {
+            return card.id === cardId
+        })[0];
+    }
+
+    handlePlayMove(cardId) {
+        const body = cardId;
+        let answer;
+        return fetch('/game/isMoveLegal/' + this.state.id, {method: 'PUT', body: body, credentials: 'include'})
+            .then((res) => {
+                if (!res.ok) {
+                    throw res;
+                }
+                return res.json();
+            })
+            .then(answerFrmServer => {
+                answer = answerFrmServer;
+                const card = this.getCardById(cardId);
+                if (!answer) {
+                    return this.handleIllegalMove();
+                } else if (card.action === CardActionEnum.ChangeColor &&
+                    this.state.GameState.piles[card.parentPileId].isHand === true) {
+                    this.openColorPicker(card);
+                } else {
+                    this.requestPlayerMove(cardId);
+                }
+                return answer;
+            })
+            .catch(err => {
+                if (err.status === 403) { // in case we're getting 'forbidden' as response
+
+                } else {
+                    throw err; // in case we're getting an error
+                }
             });
     }
 
@@ -200,14 +279,17 @@ class Game extends Component {
         const body = cardId;
         fetch('/game/' + this.state.id, {method: 'PUT', body: body, credentials: 'include'})
             .then(res => {
+                debugger;
                 (!res.ok)
                     ? console.log(`'Failed to move card in game named ${this.state.game.name}! response content is: `, res)
                     : res.json();
             })
             .then(content => {
+                debugger;
                 // what ever you want to do with the positive response
             })
             .catch(err => {
+                debugger;
                 if (err.status === 403) { // in case we're getting 'forbidden' as response
 
                 } else {
@@ -218,14 +300,15 @@ class Game extends Component {
 
     requestCardChangeColor(gameId, cardId, cardColor) {
         const body = {cardId, cardColor};
-        fetch('/game/changeColor' + gameId, {method: 'PUT', body: JSON.stringify(body), credentials: 'include'})
+        fetch('/game/changeColor/' + gameId, {method: 'PUT', body: JSON.stringify(body), credentials: 'include'})
             .then(res => {
                 (!res.ok)
                     ? console.log(`'Failed to change card color in the game named ${this.state.game.name}! response content is: `, res)
                     : res.json();
             })
-            .then(content => {
-                // what ever you want to do with the positive response
+            .then(content => { // what ever you want to do with the positive response
+                debugger;
+                this.requestPlayerMove(cardId);
             })
             .catch(err => {
                 if (err.status === 403) { // in case we're getting 'forbidden' as response
@@ -236,19 +319,33 @@ class Game extends Component {
             });
     }
 
-
-    startGame() {
-        this.handleCloseModal();
-        this.setState(GameApiService.getInitialState(), () => {
-            if (this.state.currentPlayer === PlayerEnum.Bot) {
-                this.requestStateUpdate();
-            }
+    handleChangeColor(selectedColor) {
+        debugger;
+        this.setState((prevState) => {
+            return {
+                modal: {
+                    isOpen: false,
+                    type: null,
+                    callback: null
+                }
+            };
+        }, () => {
+            let cardId = this.card.id;
+            let gameId = this.state.id;
+            debugger;
+            this.requestCardChangeColor(gameId, cardId, selectedColor);
+            debugger;
         });
     }
 
-    openColorPicker() {
+    openColorPicker(card) {
+        this.card= card;
+        debugger;
         this.setState((prevState) => {
             return {
+                gameState: {
+                  selectedCard: card
+                },
                 modal: {
                     isOpen: true,
                     type: ModalTypeEnum.ColorPicker,
@@ -257,6 +354,17 @@ class Game extends Component {
             };
         });
     }
+
+/*
+    startGame() {
+        this.handleCloseModal();
+        this.setState(GameApiService.getInitialState(), () => {
+            if (this.state.currentPlayer === PlayerEnum.Bot) {
+                this.requestStateUpdate();
+            }
+        });
+    }
+*/
 
     // Stats:
 
@@ -295,31 +403,6 @@ class Game extends Component {
         this.setState({selectedCard: card}, () => {
             this.handlePlayMove();
         });
-    }
-
-    handlePlayMove() {
-        const isMoveLegal = GameService.isHumanMoveLegal(this.state.selectedCard, this.state.DrawPile, this.state.actionInvoked, this.state.leadingCard, this.state.HumanPile);
-        if (!isMoveLegal) {
-            return this.handleIllegalMove();
-        } else if (this.state.selectedCard.action === CardActionEnum.ChangeColor &&
-            this.state[this.state.selectedCard.parentPileType].isHand === true) {
-            this.openColorPicker();
-        } else {
-            this.requestMoveCard();
-        }
-    }
-
-    handleChangeColor(selectedColor) {
-        let card = this.state.selectedCard;
-        card.color = selectedColor;
-        this.setState({
-            modal: {
-                isOpen: false
-            },
-            selectedCard: card
-
-        });
-        this.requestMoveCard();
     }
 
     exitToTakiWiki() {

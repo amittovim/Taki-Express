@@ -3,7 +3,7 @@ const gameManagement = express.Router();
 const bodyParser = require('body-parser');
 const auth = require('./authentication');
 const dbTmp = require('./database');
-
+const serverGameUtils = require('./server-game-utils');
 //bodyParser middleware-parse
 gameManagement.use(bodyParser.json());
 gameManagement.use(bodyParser.urlencoded({extended: false}));
@@ -17,7 +17,6 @@ gameManagement.use(function log(req, res, next) {
 
 gameManagement.route('/:id')
     .get(auth.userAuthentication, (req, res) => {
-        debugger;
         const gameId = req.params.id;
         res.json(dbTmp.getGameInfo(gameId));
     })
@@ -26,17 +25,15 @@ gameManagement.route('/:id')
             res.json(req.xGameContent)
         });
 
-/*
-    const gameInfoFrmServer = dbTmp.getGameInfo(gameId);
-    translateContent2Client(gameInfoFrmServer,auth.getUserInfo());
+gameManagement.put('/isMoveLegal/:id', auth.userAuthentication, (req, res) => {
+    let cardId = parseInt(req.body);
+    const gameId = req.params.id;
+    const currentGame = dbTmp.getGameInfo(gameId);
+    let answer = serverGameUtils.isPlayerMoveLegal(currentGame,cardId);
+    res.send(answer);
+});
 
-    }
-    dbTmp.updateLastStateIdRecievedBy(auth.getUserInfo());
-    res.json(gameStateFrmServer);
-    res.send('Game Main page');
-*/
 
-// define the about route
 gameManagement.put('/changeColor/:id', auth.userAuthentication,
     dbTmp.handleChangeColorRequest, (req, res) => {
         ((req.xResult))
