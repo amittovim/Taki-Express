@@ -79,7 +79,7 @@ export default class Taki extends Component {
                 <UsersContainer />
                 <GamesContainer successfulGameChoosingHandler={this.handleSuccessfulGameChoosing} />
 
-                <ChatContainer />
+                {/*<ChatContainer message={''}/>*/}
             </div>
         )
     }

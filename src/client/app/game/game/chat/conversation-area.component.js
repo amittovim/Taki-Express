@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
-
+//props:
+// gameId : number
 export default class ConversationArea extends Component {
     render() {
         return(
@@ -33,12 +34,12 @@ export default class ConversationArea extends Component {
 
 
     getChatContent() {
-        return fetch('/lobby', {method: 'GET', credentials: 'include'})
+        return fetch('/game/chat/' + this.props.gameId , {method: 'GET', credentials: 'include'})
             .then((response) => {
                 if (!response.ok){
                     throw response;
                 }
-                this.timeoutId = setTimeout(this.getChatContent, 500);
+                this.timeoutId = setTimeout(this.getChatContent, 700);
                 return response.json();
             })
             .then(content => {

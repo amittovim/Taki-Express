@@ -1,35 +1,74 @@
-import React,{Component} from 'react';
-
+import React, {Component} from 'react';
+//PROPS
+//consoleMessage: String
+// gameId : Number
 export default class ChatInput extends Component {
     render() {
-        return(
+        return (
             <form className="chat-input-component" onSubmit={this.sendText}>
-                <input disabled={this.state.sendInProgress} placeholder="enter text here" ref={input => this.inputElement = input} />
-                <input type="submit" className="btn" disabled={this.state.sendInProgress} value="Send" />
+                <input disabled={this.state.sendInProgress} placeholder="enter text here"
+                       ref={input => this.inputElement = input}/>
+                <input type="submit" className="btn" disabled={this.state.sendInProgress} value="Send"/>
             </form>
         )
     }
+
     constructor(props) {
         super(...props);
         this.state = {
-            sendInProgress:false
+            sendInProgress: false
         };
 
         this.sendText = this.sendText.bind(this);
+        this.sendConsoleText = this.sendConsoleText.bind(this);
+    }
+
+    componentWillMount() {
+        this.sendConsoleText('hello there');
+    }
+
+    componentWillReceiveProps() {
+        debugger;
+        (this.props.consoleMessage !== '') ? this.sendConsoleText(this.props.consoleMessage) :null;
     }
 
     sendText(e) {
         e.preventDefault();
-        this.setState(()=>({sendInProgress: true}));
+        this.setState(() => ({sendInProgress: true}));
+        const id = 'user';
         const text = this.inputElement.value;
-        fetch('/lobby', { method: 'POST', body: text, credentials: 'include' })
+        const body = {
+            text: text,
+            id: id
+        }
+        fetch('/game/chat/' + this.props.gameId, {method: 'POST', body: JSON.stringify(body), credentials: 'include'})
             .then(response => {
                 if (!response.ok) {
                     throw response;
                 }
-                this.setState(()=>({sendInProgress: false}));
+                this.setState(() => ({sendInProgress: false}));
                 this.inputElement.value = '';
             });
         return false;
     }
+
+    sendConsoleText(txt) {
+        this.setState(() => ({sendInProgress: true}));
+        const id = 'server';
+        const text = txt;
+        const body = {
+            text: text,
+            id: id
+        }
+        fetch('/game/chat/' + this.props.gameId, {method: 'POST', body: JSON.stringify(body), credentials: 'include'})
+            .then(response => {
+                if (!response.ok) {
+                    throw response;
+                }
+                this.setState(() => ({sendInProgress: false}));
+                this.inputElement.value = '';
+            });
+        return false;
+    }
+
 }

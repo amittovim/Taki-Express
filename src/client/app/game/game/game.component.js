@@ -13,6 +13,7 @@ import {PileIdEnum} from "../../enums/pile-id.enum";
 import {CardActionEnum} from "../../enums/card-action-enum";
 
 import * as GameService from "./game.service";
+import ChatContainer from "./chat/chat-container.component";
 
 // <PROPS>
 // game: Game object
@@ -50,6 +51,8 @@ class Game extends Component {
                     }
                 </div>
                 <Console message={this.state.consoleMessage}/>
+                <ChatContainer gameId={this.state.id}
+                               consoleMessage={this.state.GameState.consoleMessage}/>
             </div>
         );
     }
@@ -94,7 +97,10 @@ class Game extends Component {
             isLoading: false,
             isGameOver: false
         };
+
         this.card= null;
+
+
         this.updateSelectedCard = this.updateSelectedCard.bind(this);
 
         this.requestMoveCard = this.requestMoveCard.bind(this);
@@ -148,7 +154,7 @@ class Game extends Component {
     getGameContent() {
         this.fetchGameContent()
             .then(contentFromServer => {
-                console.log(contentFromServer.GameState.currentPlayer);
+                // contentFromServer.GameState.consoleMessage='';
                 let historyFromServer = contentFromServer.history;
 
                 let historyFromServerObject = {'history': contentFromServer.history};
@@ -168,6 +174,7 @@ class Game extends Component {
                                         return ({GameState: {
                                                 currentPlayer: contentFromServer.GameState.currentPlayer,
                                                 piles: contentFromServer.GameState.piles
+
                                             },
                                             ...contentFromServer});
                                     })
@@ -190,13 +197,14 @@ class Game extends Component {
             ? isLoadingStateObject = {}
             : isLoadingStateObject = {'isLoading': true};
         let currentGameStateId = this.state.GameState.id;
+        debugger;
         this.setState(() => {
             let GameState = {
                 'GameState': this.state.history[currentGameStateId],
                 ...isLoadingStateObject
             };
             return GameState;
-        });
+        }, () => {debugger;} );
     }
 
     fetchGameContent() {
@@ -285,11 +293,9 @@ class Game extends Component {
                     : res.json();
             })
             .then(content => {
-                debugger;
                 // what ever you want to do with the positive response
             })
             .catch(err => {
-                debugger;
                 if (err.status === 403) { // in case we're getting 'forbidden' as response
 
                 } else {
@@ -307,7 +313,6 @@ class Game extends Component {
                     : res.json();
             })
             .then(content => { // what ever you want to do with the positive response
-                debugger;
                 this.requestPlayerMove(cardId);
             })
             .catch(err => {
@@ -320,7 +325,6 @@ class Game extends Component {
     }
 
     handleChangeColor(selectedColor) {
-        debugger;
         this.setState((prevState) => {
             return {
                 modal: {
@@ -332,15 +336,12 @@ class Game extends Component {
         }, () => {
             let cardId = this.card.id;
             let gameId = this.state.id;
-            debugger;
             this.requestCardChangeColor(gameId, cardId, selectedColor);
-            debugger;
         });
     }
 
     openColorPicker(card) {
         this.card= card;
-        debugger;
         this.setState((prevState) => {
             return {
                 gameState: {

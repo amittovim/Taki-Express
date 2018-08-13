@@ -15,6 +15,7 @@ gameManagement.use(function log(req, res, next) {
 });
 
 
+
 gameManagement.route('/:id')
     .get(auth.userAuthentication, (req, res) => {
         const gameId = req.params.id;
@@ -50,5 +51,19 @@ gameManagement.get('/', auth.userAuthentication, (req, res) => {
 gameManagement.get('/about', function (req, res) {
     res.send('About Game');
 });
+
+gameManagement.route('/chat/:id')
+    .get(auth.userAuthentication, (req, res) => {
+        const gameId = req.params.id;
+        const currentGame = dbTmp.getGameInfo(gameId);
+        res.json(currentGame.chatContent);
+    })
+    .post(auth.userAuthentication, dbTmp.postingChatInfo, (req, res) => {
+        req.xSourceInfo
+        req.xTextBody
+        req.xCurrentGame.chatContent.push({user: req.xSourceInfo, text: req.xTextBody});
+        res.sendStatus(200);
+    });
+
 
 module.exports = gameManagement;

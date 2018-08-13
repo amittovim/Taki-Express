@@ -6,6 +6,7 @@ module.exports = {
     removeGame,
     handleRequestPlayerMove,
     handleChangeColorRequest,
+    postingChatInfo,
 };
 
 let gameId = 0;
@@ -120,6 +121,20 @@ function handleChangeColorRequest(req, res, next) {
     next();
 }
 
+function postingChatInfo (req, res, next) {
+    const gameId = req.params.id;
+    req.xCurrentGame = getGameInfo(gameId);
+
+    const body = JSON.parse(req.body);
+    req.xTextBody = body.text;
+    const source = body.id;
+    if (source === 'user') {
+        req.xSourceInfo = auth.getUserInfo(req.session.id);
+    } else if (source === 'server') {
+        req.xSourceInfo = { name: 'Console'};
+    }
+    next();
+}
 /*
 function removeGameFromGameList(req, res, next) {
     if (gameList[req.body.gameName] === undefined) {
@@ -167,14 +182,6 @@ function getGameInfo(gameId) {
     return gameInfo;
 }
 
-/*
-function getAllGameNames() {
-    const gameNamesArray = gameList.map(game => game.name);
-    console.log(gameNamesArray);
-    return gameNamesArray;
-}
-*/
-
 function getAllGames() {
     const gamesArray = _.cloneDeep(gameList);
     console.log(gamesArray);
@@ -192,6 +199,7 @@ function createNewGame(newGameInfo) {
         playersEnrolled: 0,
         isBotEnabled: newGameInfo.isBotEnabled,
         history: [],
+        chatContent: [] ,
         isActive: false
     };
     gameId++;
