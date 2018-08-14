@@ -7,7 +7,7 @@ import {PileIdEnum} from "../../../enums/pile-id.enum";
 
 // <PROPS>
 // piles: Pile[]
-// userId: string
+// userName: string
 // playersCapacity: Number
 
 class AdvancedBoard extends Component {
@@ -21,23 +21,25 @@ class AdvancedBoard extends Component {
     }
 
     render() {
+        debugger;
         let userPileId = this.props.piles.find((pile) => {
-            return pile.ownerName === this.props.userName
+            return pile.ownerPlayerName === this.props.userName;
         }).id;
         let mainPlayerAreaPileId = userPileId;
         let secondPlayerAreaPileId, thirdPlayerAreaPileId, forthPlayerAreaPileId;
         userPileId++;
         userPileId = this.checkUserOverFlow(userPileId);
         secondPlayerAreaPileId = userPileId++;
-        if (GameState.playersCapacity > 2) {
-            thirdPlayerAreaPileId = userPileId = checkUserOverFlow(userPileId++);
-            if (GameState.playersCapacity > 3) {
-                forthPlayerAreaPileId = userPileId = checkUserOverFlow(userPileId++);
+        if (this.props.playersCapacity > 2) {
+            thirdPlayerAreaPileId = userPileId = this.checkUserOverFlow(userPileId++);
+            if (this.props.playersCapacity > 3) {
+                forthPlayerAreaPileId = userPileId = this.checkUserOverFlow(userPileId++);
             } else {
                 forthPlayerAreaPileId = null;
             }
         } else {
             thirdPlayerAreaPileId = null;
+            forthPlayerAreaPileId = null;
         }
 
 
@@ -45,8 +47,8 @@ class AdvancedBoard extends Component {
             <div className="advanced-board-component">
                 <div className='top-board'>
                     <div className='empty-space'></div>
-                    <Hand owner={PlayerEnum.Bot}
-                          pile={this.props.piles[3]}
+                    <Hand owner={this.props.piles[secondPlayerAreaPileId].ownerPlayerName}
+                          pile={this.props.piles[secondPlayerAreaPileId]}
                           moveCardDriver1={this.moveCardDriver_1}
                     />
                     <div className='empty-space'></div>
@@ -73,18 +75,14 @@ class AdvancedBoard extends Component {
                     </div>
                 </div>
                 <div className='bottom-board'>
-                    <Hand owner={PlayerEnum.Bot}
-                          pile={this.props.piles[2]}
+                    <Hand owner={this.props.piles[mainPlayerAreaPileId].ownerPlayerName}
+                          pile={this.props.piles[mainPlayerAreaPileId]}
                           moveCardDriver1={this.moveCardDriver_1}
                     />
                 </div>
             </div>
         );
     }
-
-    // getCurrentUserPile() {
-    //     return this.props.piles.find(pile => pile.ownerPlayerName === this.props.userId);
-    // }
 
     moveCardDriver_1(cardId) {
         this.props.moveCardDriver(cardId);

@@ -20,7 +20,7 @@ interface Pile {
     type: PileIdEnum; // TODO: is this in user?
     cards: Card[];
     isHand: boolean;
-    ownerName: User.name; // refers to the player user info // TODO: string or ref?
+    ownerPlayerName: User.name; // refers to the player user info // TODO: string or ref?
     singleCardCounter: number;
 }
 

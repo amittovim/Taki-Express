@@ -173,7 +173,7 @@ function getPileId(GameStatus, name) {
         }
         default: {
             let chosenPile = GameState.piles.find((pile) => {
-                return name === pile.ownerName;
+                return name === pile.ownerPlayerName;
             });
             return chosenPile.id;
         }
