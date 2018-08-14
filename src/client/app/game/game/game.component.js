@@ -17,7 +17,7 @@ import ChatContainer from "./chat/chat-container.component";
 
 // <PROPS>
 // game: Game object
-// userId: string
+// userName: string
 
 class Game extends Component {
     render() {
@@ -43,8 +43,9 @@ class Game extends Component {
                     {this.state.playersCapacity > this.state.playersEnrolled
                         ? (<WaitingMessageComponent
                             numOfNeededPlayers={(this.state.playersCapacity - this.state.playersEnrolled)}/>)
-                        : ((<AdvancedBoard userId={this.props.userId}
+                        : ((<AdvancedBoard userName={this.props.userId}
                                            piles={this.state.GameState.piles}
+                                           playersCapacity={this.state.playersCapacity}
                                            moveCardDriver={this.handlePlayMove}/>))
                         /*moveCardDriver={this.requestPlayerMove}/>))*/
 

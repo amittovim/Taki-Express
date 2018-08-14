@@ -8,6 +8,7 @@ import {PileIdEnum} from "../../../enums/pile-id.enum";
 // <PROPS>
 // piles: Pile[]
 // userId: string
+// playersCapacity: Number
 
 class AdvancedBoard extends Component {
     constructor(props) {
@@ -16,9 +17,30 @@ class AdvancedBoard extends Component {
 
         // this.getCurrentUserPile = this.getCurrentUserPile.bind(this);
         this.moveCardDriver_1 = this.moveCardDriver_1.bind(this);
+        this.checkUserOverFlow = this.checkUserOverFlow.bind(this);
     }
 
     render() {
+        let userPileId = this.props.piles.find((pile) => {
+            return pile.ownerName === this.props.userName
+        }).id;
+        let mainPlayerAreaPileId = userPileId;
+        let secondPlayerAreaPileId, thirdPlayerAreaPileId, forthPlayerAreaPileId;
+        userPileId++;
+        userPileId = this.checkUserOverFlow(userPileId);
+        secondPlayerAreaPileId = userPileId++;
+        if (GameState.playersCapacity > 2) {
+            thirdPlayerAreaPileId = userPileId = checkUserOverFlow(userPileId++);
+            if (GameState.playersCapacity > 3) {
+                forthPlayerAreaPileId = userPileId = checkUserOverFlow(userPileId++);
+            } else {
+                forthPlayerAreaPileId = null;
+            }
+        } else {
+            thirdPlayerAreaPileId = null;
+        }
+
+
         return (
             <div className="advanced-board-component">
                 <div className='top-board'>
@@ -67,7 +89,16 @@ class AdvancedBoard extends Component {
     moveCardDriver_1(cardId) {
         this.props.moveCardDriver(cardId);
     }
+
+    checkUserOverFlow(userPileId) {
+        if (userPileId > this.props.playersCapacity + 1) {
+            userPileId = 2;
+        }
+        return userPileId;
+    }
+
 }
 
 export default AdvancedBoard;
+
 

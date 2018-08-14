@@ -17,7 +17,7 @@ interface Card {
 }
 
 interface Pile {
-    type: PileTypeEnum; // TODO: is this in user?
+    type: PileIdEnum; // TODO: is this in user?
     cards: Card[];
     isHand: boolean;
     ownerName: User.name; // refers to the player user info // TODO: string or ref?
