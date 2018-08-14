@@ -38,7 +38,8 @@ const CardActionEnum = {
     Stop: 'stop',
     ChangeColor: 'change-color',
     Plus: 'plus',
-    TwoPlus: 'two-plus'
+    TwoPlus: 'two-plus',
+    ChangeDirection: 'change-direction'
 };
 
 const CardNumberEnum = {

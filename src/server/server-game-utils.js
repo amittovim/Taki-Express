@@ -93,6 +93,7 @@ function createActionCards(currentGame) {
             }
         }
     }
+    debugger;
 }
 
 function dealCards(gameId) {
@@ -277,6 +278,14 @@ function calculateConsoleMessage(GameState, sourcePileId, destinationPileId) {
     }
 
     function switchPlayers(currentGame) {
+        debugger;
+        const GameState = currentGame.GameState;
+        do {
+            switchPlayersHelper(currentGame);
+        }while (GameState.currentPlayer.playerStatus !== Enums.PlayerStatusEnum.Playing)
+    }
+
+    function switchPlayersHelper(currentGame) {
         const GameState = currentGame.GameState;
         let numOfPlayers = currentGame.playersCapacity;
         let currentPlayerIndex = GameState.players.findIndex((player) => {
@@ -292,6 +301,7 @@ function calculateConsoleMessage(GameState, sourcePileId, destinationPileId) {
         }
         GameState.currentPlayer = GameState.players[currentPlayerIndex];
     }
+
 
     function processGameStep(currentGame) {
         const GameState = currentGame.GameState;

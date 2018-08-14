@@ -162,6 +162,7 @@ function removeGame(gameId) {
 function getGameInfo(gameId) {
     const gameInfoJson = {game: gameList.find( (game) => {return game.id === parseInt(gameId) })};
     const gameInfo = gameInfoJson.game;
+    debugger;
     let hasGameBeenInitialized;
     let gameIndex = initGameList.findIndex((gameName) => {
         return gameName === gameInfo.name;
@@ -173,6 +174,13 @@ function getGameInfo(gameId) {
                 //put Bot player at the end of the piles array ( it was created in the start of the array)
                 gameInfo.GameState.piles.splice(gameInfo.GameState.piles.length, 0, (gameInfo.GameState.piles.splice(0, 1)[0]));
         */
+        // switch all players in the game to status "Playing"
+        debugger;
+        for (let i=0 ; i < gameInfo.playersCapacity; i++)
+        {
+            gameInfo.GameState.players[i].playerStatus = Enums.PlayerStatusEnum.Playing;
+        }
+
         serverGameUtils.createCardsInDrawPile(gameInfo.id);
         serverGameUtils.dealCards(gameInfo.id);
         gameInfo.GameState.gameStatus = Enums.GameStatusEnum.Ongoing;
