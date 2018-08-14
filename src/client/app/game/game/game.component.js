@@ -50,7 +50,7 @@ class Game extends Component {
 
                     }
                 </div>
-                <Console message={this.state.consoleMessage}/>
+                {/*<Console message={this.state.consoleMessage}/>*/}
                 <ChatContainer gameId={this.state.id}
                                consoleMessage={this.state.GameState.consoleMessage}/>
             </div>
@@ -213,7 +213,7 @@ class Game extends Component {
                 if (!res.ok) {
                     throw res;
                 }
-                this.timeoutId = setTimeout(this.getGameContent, 500);
+                this.timeoutId = setTimeout(this.getGameContent, 1500);
                 return res.json();
             });
     }

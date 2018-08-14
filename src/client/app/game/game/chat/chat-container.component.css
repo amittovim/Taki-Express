@@ -1,10 +1,15 @@
 .chat-container-component {
+    border-top: 2px solid yellow;
+    color: yellow;
+    font-size: 16px;
+    font-family: monospace;
+    background: #161616;
     flex-grow: 1;
+    flex: 1;
+    overflow: auto;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
 }
-
 .chat-container-component .conversation-area-component {
     flex-grow: 1;
     border: 1px solid #ccc;

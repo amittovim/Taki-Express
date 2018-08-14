@@ -19,7 +19,37 @@ gameManagement.use(function log(req, res, next) {
 gameManagement.route('/:id')
     .get(auth.userAuthentication, (req, res) => {
         const gameId = req.params.id;
-        res.json(dbTmp.getGameInfo(gameId));
+        let gameInfo = dbTmp.getGameInfo(gameId);
+        console.log(gameInfo);
+        // todo: delete this after sharing with Dor 
+        //delete gameInfo.GameState.actionInvoked;
+        //delete gameInfo.GameState.currentPlayer;
+        //delete gameInfo.GameState.gameDirection;
+        //delete gameInfo.GameState.gameStatus;
+        //delete gameInfo.GameState.id;
+        //delete gameInfo.GameState.turnNumber;
+        //delete gameInfo.chatContent;
+        //delete gameInfo.history;
+        //delete gameInfo.id;
+        //delete gameInfo.isActive;
+        //delete gameInfo.GameState.piles;
+        //delete gameInfo.GameState.players;
+        //delete gameInfo.GameState.leadingCard;
+        //delete gameInfo.GameState.selectedCard;
+/*
+        delete gameInfo.GameState.consoleMessage;
+        delete gameInfo.GameState.movesCounter;
+        delete gameInfo.GameState.twoPlusCounter;
+        delete gameInfo.isBotEnabled;
+        delete gameInfo.name;
+        delete gameInfo.owner;
+        delete gameInfo.playersCapacity;
+        delete gameInfo.playersEnrolled;
+*/
+
+
+
+        res.json(gameInfo);
     })
     .put(auth.userAuthentication,
         dbTmp.handleRequestPlayerMove, (req, res) => {
