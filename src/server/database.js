@@ -214,7 +214,8 @@ function createNewGame(newGameInfo) {
         chatContent: [],
         isActive: false,
         winners: [],
-        loser: null
+        loser: null,
+
     };
     gameId++;
     // creating Players Array
@@ -272,6 +273,7 @@ function createNewGame(newGameInfo) {
     if (newGame.isBotEnabled === true) {
         newGame.GameState.players[newGame.playersCapacity - 1].pile = newGame.GameState.piles[newGame.playersCapacity + 1];
     }
+    newGame.cleanBackup = newGame;
     gameList.push(newGame);
 }
 
