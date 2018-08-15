@@ -53,6 +53,7 @@ interface GameState {
     twoPlusCounter: number;
     consoleMessage: string;
     gameStatus: GameStatusEnum;
+    gameDirection: GameDirectionEnum;
 }
 
 interface Game {
@@ -92,7 +93,8 @@ enum CardActionEnum {
     Stop = 'stop',
     ChangeColor = 'change-color',
     Plus = 'plus',
-    TwoPlus = 'two-plus'
+    TwoPlus = 'two-plus',
+    ChangeDirection = 'change-direction'
 }
 
 enum PileTypeEnum {
@@ -118,3 +120,7 @@ enum GameStatusEnum {
     // RestockingDeckOfCard = 'RestockingDeckOfCard',
 }
 
+enum GameDirectionEnum {
+    Clockwise = 'Clockwise',
+    CounterClockwise = 'CounterClockwise'
+}

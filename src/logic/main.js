@@ -3,7 +3,7 @@ import {PlayerEnum} from "../app/enums/player.enum";
 import {CardActionEnum} from "../app/enums/card-action-enum";
 import {handleCardMove} from "./dealer/dealer";
 import * as GameUtils from "./utils/game.utils";
-import {GameStatusEnum} from "./game-status.enum";
+import {GameStatusEnum} from "../client/app/enums/game-status.enum";
 import * as dealer from "./dealer/dealer";
 import initDrawPile from "./init/draw-pile.init";
 import initDiscardPile from "./init/discard-pile.init";

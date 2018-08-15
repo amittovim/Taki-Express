@@ -46,7 +46,6 @@ function getAllOnlineUserNames() {
     for (const idProperty in usersList) {
         userNamesArray.push(usersList[idProperty].name);
     }
-    console.log(userNamesArray);
     return userNamesArray;
 }
 

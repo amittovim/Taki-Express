@@ -83,6 +83,7 @@ class Game extends Component {
             },
             history: [],
             isActive: false,
+            winners: [],
             ...this.props.game,
 
             // UI data:
@@ -99,7 +100,7 @@ class Game extends Component {
             isGameOver: false
         };
 
-        this.card= null;
+        this.card = null;
 
 
         this.updateSelectedCard = this.updateSelectedCard.bind(this);
@@ -172,12 +173,14 @@ class Game extends Component {
                                     return ({isLoading: false});
                                 }, () => {
                                     this.setState(() => {
-                                        return ({GameState: {
+                                        return ({
+                                            GameState: {
                                                 currentPlayer: contentFromServer.GameState.currentPlayer,
                                                 piles: contentFromServer.GameState.piles
 
                                             },
-                                            ...contentFromServer});
+                                            ...contentFromServer
+                                        });
                                     })
                                 });
 
@@ -198,14 +201,13 @@ class Game extends Component {
             ? isLoadingStateObject = {}
             : isLoadingStateObject = {'isLoading': true};
         let currentGameStateId = this.state.GameState.id;
-        debugger;
         this.setState(() => {
             let GameState = {
                 'GameState': this.state.history[currentGameStateId],
                 ...isLoadingStateObject
             };
             return GameState;
-        }, () => {debugger;} );
+        });
     }
 
     fetchGameContent() {
@@ -218,22 +220,6 @@ class Game extends Component {
                 return res.json();
             });
     }
-
-    /*
-        handlePlayMove(cardId) {
-            let isMoveLegal = this.getIsMoveLegal(cardId);
-            debugger;
-            const card = this.getCardById(cardId);
-            if (!isMoveLegal) {
-                return this.handleIllegalMove();
-            } else if (card.action === CardActionEnum.ChangeColor &&
-                this.state.piles[card.parentPileId].isHand === true) {
-                this.openColorPicker();
-            } else {
-                this.requestPlayerMove(cardId);
-            }
-        }
-    */
 
     getCardById(cardId) {
         const GameState = this.state.GameState;
@@ -288,7 +274,6 @@ class Game extends Component {
         const body = cardId;
         fetch('/game/' + this.state.id, {method: 'PUT', body: body, credentials: 'include'})
             .then(res => {
-                debugger;
                 (!res.ok)
                     ? console.log(`'Failed to move card in game named ${this.state.game.name}! response content is: `, res)
                     : res.json();
@@ -342,11 +327,11 @@ class Game extends Component {
     }
 
     openColorPicker(card) {
-        this.card= card;
+        this.card = card;
         this.setState((prevState) => {
             return {
                 gameState: {
-                  selectedCard: card
+                    selectedCard: card
                 },
                 modal: {
                     isOpen: true,
@@ -357,16 +342,16 @@ class Game extends Component {
         });
     }
 
-/*
-    startGame() {
-        this.handleCloseModal();
-        this.setState(GameApiService.getInitialState(), () => {
-            if (this.state.currentPlayer === PlayerEnum.Bot) {
-                this.requestStateUpdate();
-            }
-        });
-    }
-*/
+    /*
+        startGame() {
+            this.handleCloseModal();
+            this.setState(GameApiService.getInitialState(), () => {
+                if (this.state.currentPlayer === PlayerEnum.Bot) {
+                    this.requestStateUpdate();
+                }
+            });
+        }
+    */
 
     // Stats:
 
@@ -390,8 +375,11 @@ class Game extends Component {
     }
 
     handleIllegalMove() {
-        this.setState({
-            consoleMessage: 'illegal move'
+        this.setState((prev) => {
+            return (
+                {
+                    /*GameState: {consoleMessage: 'illegal move... try again ' }*/          //TODO: fix this line so console will show error
+                });
         });
     }
 
@@ -412,7 +400,7 @@ class Game extends Component {
     }
 
 
-    // Modal
+// Modal
 
     handleOpenModal(modalType) {
         let callback = this.getModalCallback(modalType);
@@ -447,7 +435,7 @@ class Game extends Component {
     }
 
 
-    // API
+// API
 
     requestMoveCard() {
         GameApiService.requestMoveCard(this.state.selectedCard.id)

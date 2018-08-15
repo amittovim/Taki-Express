@@ -1,6 +1,6 @@
 import {GameState} from "./state";
 import {pickNextBotMove, playGameMove, playHumanMove} from "./main";
-import {GameStatusEnum} from "./game-status.enum";
+import {GameStatusEnum} from "../client/app/enums/game-status.enum";
 import * as init from './main';
 import * as gameStateHistory from './history/state-history';
 

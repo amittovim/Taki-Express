@@ -28,7 +28,6 @@ function addGameToGameList(req, res, next) {
         res.status(403).send('game name already exist');
     } else {
         createNewGame(newGameInfo);
-        console.log(gameList);
         next();
     }
 }
@@ -88,14 +87,18 @@ function handleRequestPlayerMove(req, res, next) {
     if (auth.getUserInfo(req.session.id).name !== currentGame.GameState.currentPlayer.name) {
         return res.status(403).send('play request is forbidden! Not your turn...');
     }
-    result = serverGameUtils.playGameMove(currentGame, cardId);
+
+    if (!currentGame.GameState.isGameOver) {
+        result = serverGameUtils.playGameMove(currentGame, cardId);
+    }
 
     (result === false)
         ? res.status(403).send('play request is forbidden! move chosen is illegal. try again...')
         : null;
 
     // if current player is Bot than play its turn/move
-    while (currentGame.GameState.currentPlayer.name === Enums.PlayerEnum.Bot) {
+    while ((!currentGame.GameState.isGameOver) &&
+    (currentGame.GameState.currentPlayer.name === Enums.PlayerEnum.Bot)) {
         let botCardId = serverGameUtils.pickNextBotMove(currentGame);
         result = serverGameUtils.playGameMove(currentGame, botCardId);
 
@@ -121,7 +124,7 @@ function handleChangeColorRequest(req, res, next) {
     next();
 }
 
-function postingChatInfo (req, res, next) {
+function postingChatInfo(req, res, next) {
     const gameId = req.params.id;
     req.xCurrentGame = getGameInfo(gameId);
 
@@ -131,10 +134,11 @@ function postingChatInfo (req, res, next) {
     if (source === 'user') {
         req.xSourceInfo = auth.getUserInfo(req.session.id);
     } else if (source === 'server') {
-        req.xSourceInfo = { name: 'Console'};
+        req.xSourceInfo = {name: 'Console'};
     }
     next();
 }
+
 /*
 function removeGameFromGameList(req, res, next) {
     if (gameList[req.body.gameName] === undefined) {
@@ -160,9 +164,12 @@ function removeGame(gameId) {
 }
 
 function getGameInfo(gameId) {
-    const gameInfoJson = {game: gameList.find( (game) => {return game.id === parseInt(gameId) })};
+    const gameInfoJson = {
+        game: gameList.find((game) => {
+            return game.id === parseInt(gameId)
+        })
+    };
     const gameInfo = gameInfoJson.game;
-    debugger;
     let hasGameBeenInitialized;
     let gameIndex = initGameList.findIndex((gameName) => {
         return gameName === gameInfo.name;
@@ -175,9 +182,7 @@ function getGameInfo(gameId) {
                 gameInfo.GameState.piles.splice(gameInfo.GameState.piles.length, 0, (gameInfo.GameState.piles.splice(0, 1)[0]));
         */
         // switch all players in the game to status "Playing"
-        debugger;
-        for (let i=0 ; i < gameInfo.playersCapacity; i++)
-        {
+        for (let i = 0; i < gameInfo.playersCapacity; i++) {
             gameInfo.GameState.players[i].playerStatus = Enums.PlayerStatusEnum.Playing;
         }
 
@@ -192,7 +197,6 @@ function getGameInfo(gameId) {
 
 function getAllGames() {
     const gamesArray = _.cloneDeep(gameList);
-    console.log(gamesArray);
     return gamesArray;
 }
 
@@ -207,8 +211,10 @@ function createNewGame(newGameInfo) {
         playersEnrolled: 0,
         isBotEnabled: newGameInfo.isBotEnabled,
         history: [],
-        chatContent: [] ,
-        isActive: false
+        chatContent: [],
+        isActive: false,
+        winners: [],
+        loser: null
     };
     gameId++;
     // creating Players Array
@@ -227,8 +233,8 @@ function createNewGame(newGameInfo) {
     newGamePiles.push(new PileModel(Enums.PileIdEnum.DiscardPile, Enums.PileTypeEnum.DiscardPile));
 
     // creating all players initial piles
-    for (let i=0; i <newGame.playersCapacity ; i++) {
-        newGamePiles.push(new PileModel(i+2, Enums.PileTypeEnum.PlayerPile,true));
+    for (let i = 0; i < newGame.playersCapacity; i++) {
+        newGamePiles.push(new PileModel(i + 2, Enums.PileTypeEnum.PlayerPile, true));
     }
 
     if (newGame.isBotEnabled === true) {
@@ -258,7 +264,8 @@ function createNewGame(newGameInfo) {
         twoPlusCounter: 0,
         consoleMessage: '',
         gameStatus: Enums.GameStatusEnum.AwaitingPlayers,
-        gameDirection: Enums.GameDirection.Clockwise
+        gameDirection: Enums.GameDirectionEnum.Clockwise,
+        isGameOver: false
     };
 
     //if there is a Bot, update the correct pile in for the bot player field

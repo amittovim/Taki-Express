@@ -53,7 +53,7 @@ const CardNumberEnum = {
     Nine: 9
 };
 
-const GameDirection = { // TODO: const isClockwise = false;
+const GameDirectionEnum = { // TODO: const isClockwise = false;
     Clockwise: 'Clockwise',
     CounterClockwise: 'CounterClockwise'
 };
@@ -75,6 +75,6 @@ module.exports = {
     CardNumberEnum,
     CardActionEnum,
     CardColorEnum,
-    GameDirection,
+    GameDirectionEnum,
     PileIdEnum
 };

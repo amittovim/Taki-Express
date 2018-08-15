@@ -19,19 +19,22 @@ export default class ChatInput extends Component {
             sendInProgress: false
         };
 
+        this.lastConsoleMessage = '';
+
         this.sendText = this.sendText.bind(this);
         this.sendConsoleText = this.sendConsoleText.bind(this);
     }
 
     componentWillMount() {
-        this.sendConsoleText('hello there');
+
     }
 
     componentWillReceiveProps() {
-        debugger;
-        (this.props.consoleMessage !== '') ? this.sendConsoleText(this.props.consoleMessage) :null;
+        if ((this.props.consoleMessage !== '') && (this.props.consoleMessage !== this.lastConsoleMessage)) {
+            this.sendConsoleText(this.props.consoleMessage);
+            this.lastConsoleMessage = this.props.consoleMessage;
+        }
     }
-
     sendText(e) {
         e.preventDefault();
         this.setState(() => ({sendInProgress: true}));

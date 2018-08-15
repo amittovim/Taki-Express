@@ -21,11 +21,12 @@ class AdvancedBoard extends Component {
     }
 
     render() {
-        debugger;
         let userPileId = this.props.piles.find((pile) => {
             return pile.ownerPlayerName === this.props.userName;
         }).id;
+        debugger;
         let mainPlayerAreaPileId = userPileId;
+
         let secondPlayerAreaPileId, thirdPlayerAreaPileId, forthPlayerAreaPileId;
         userPileId++;
         userPileId = this.checkUserOverFlow(userPileId);
@@ -42,6 +43,8 @@ class AdvancedBoard extends Component {
             forthPlayerAreaPileId = null;
         }
 
+        // reveal the cards of the main player
+        this.props.piles[mainPlayerAreaPileId].cards.forEach( (item) => { item.isHidden=false; });
 
         return (
             <div className="advanced-board-component">

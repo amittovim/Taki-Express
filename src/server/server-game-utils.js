@@ -30,7 +30,7 @@ module.exports = {
     pickRandomColor,
     getCardInHand,
     handleActivatingActionState,
-    handleDisablingActionState,
+    handleDisablingActionInvoked,
     handleGameStatistics,
     incrementSingleCardCounter,
     incrementGameMovesCounter,
@@ -93,7 +93,6 @@ function createActionCards(currentGame) {
             }
         }
     }
-    debugger;
 }
 
 function dealCards(gameId) {
@@ -139,7 +138,8 @@ function handleCardMove(currentGame) {
         let updatedPiles;
         for (GameState.twoPlusCounter; GameState.twoPlusCounter > 0; GameState.twoPlusCounter--) {
             GameState.selectedCard.parentPileId = GameState.currentPlayer.pile.id;
-            GameState.selectedCard.isHidden = isCardHidden(Enums.PileIdEnum.DrawPile, GameState.currentPlayer.pile.id);
+            GameState.selectedCard.isHidden = isCardHidden(GameState.currentPlayer.pile.id);
+            debugger;
             updatedPiles = moveCard(GameState, Enums.PileIdEnum.DrawPile, GameState.currentPlayer.pile.id);
             GameState.selectedCard = GameState.piles[Enums.PileIdEnum.DrawPile].getTop();
         }
@@ -149,9 +149,10 @@ function handleCardMove(currentGame) {
 
     // all other cases
     const sourcePileId = GameState.selectedCard.parentPileId;
+    debugger;
     const destinationPileId = getDestinationPileId(GameState, sourcePileId);
     GameState.selectedCard.parentPileId = destinationPileId;
-    GameState.selectedCard.isHidden = isCardHidden(sourcePileId, destinationPileId);
+    GameState.selectedCard.isHidden = isCardHidden(destinationPileId);
     updateLeadingCard(GameState, destinationPileId);
     return moveCard(GameState, sourcePileId, destinationPileId); // TODO : currently no one is receiving this return object. could cancel the return here
 }
@@ -182,18 +183,17 @@ function getPileId(GameStatus, name) {
 }
 
 // TODO: for Dor:find a way to implement this function correctly - right now it doesnt work right
-function isCardHidden(sourcePileId, destinationPileId) {
+function isCardHidden(destinationPileId) {
     if (!Consts.VISIBLE_CARDS) {
-        return ((sourcePileId === Enums.PileIdEnum.DrawPile && destinationPileId === Enums.PileIdEnum.Two) ||
-            sourcePileId === Enums.PileIdEnum.DiscardPile);
+        return ( (destinationPileId !== Enums.PileIdEnum.DiscardPile));
+
     } else return false;
 }
 
 
 function calculateConsoleMessage(GameState, sourcePileId, destinationPileId) {
-    debugger;
     let playerName;
-    let message = '';   //TODO: add here <Game-Time> : <Game-TurnNo> : <GameMoveNo> to the beginning of console message
+    let message = `Game-Time | Turn ${GameState.turnNumber}:`;   //TODO: add here <Game-Time> : <Game-TurnNo> : <GameMoveNo> to the beginning of console message
     if (GameState.gameStatus === Enums.GameStatusEnum.InitializingGame ||
         GameState.gameStatus === Enums.GameStatusEnum.SettingStartingCard) {
         playerName = 'Dealer';
@@ -278,7 +278,6 @@ function calculateConsoleMessage(GameState, sourcePileId, destinationPileId) {
     }
 
     function switchPlayers(currentGame) {
-        debugger;
         const GameState = currentGame.GameState;
         do {
             switchPlayersHelper(currentGame);
@@ -292,7 +291,7 @@ function calculateConsoleMessage(GameState, sourcePileId, destinationPileId) {
             return player === GameState.currentPlayer
         });
 
-        if (currentGame.GameState.gameDirection === Enums.GameDirection.Clockwise) {
+        if (currentGame.GameState.gameDirection === Enums.GameDirectionEnum.Clockwise) {
             currentPlayerIndex++;
             currentPlayerIndex > (numOfPlayers - 1) ? currentPlayerIndex = 0 : null;
         } else {
@@ -313,7 +312,7 @@ function calculateConsoleMessage(GameState, sourcePileId, destinationPileId) {
         // updating statistics
         handleGameStatistics(currentGame);
 
-        // check occasions when we need to activate game activeState (if we PUT an action card on discard-pile)
+        // check occasions when we need to activate game actionInvoked (if we PUT an action card on discard-pile)
         if ((GameState.leadingCard.action !== null) &&
             (GameState.leadingCard === GameState.selectedCard)) {
             handleActivatingActionState(currentGame);
@@ -322,33 +321,44 @@ function calculateConsoleMessage(GameState, sourcePileId, destinationPileId) {
         // in case some action state was invoked , act accordingly
         handleAllActionInvokedCases(currentGame);
 
-        // // Checking if game ended
-        GameState.isGameOver = isGameOver(currentGame);
+        // Checking if current player won
+        if ( hasPlayerWon(currentGame) ) {
+            //todo : make a nice modal for players that this player won
+            GameState.currentPlayer.playerStatus = Enums.PlayerStatusEnum.FinishedPlaying;
+            currentGame.winners.push(GameState.currentPlayer);
+        }
 
-        // TODO: for debug: can delete later
-        let stateChange = _.cloneDeep(GameState);
+        // Checking if game ended
+        if (currentGame.winners.length === currentGame.playersCapacity - 1) {
+            GameState.loser = GameState.players.find( (player) => { return player.playerStatus === Enums.PlayerStatusEnum.Playing})
+            //todo : make a nice modal for players that this player LOST
+            GameState.isGameOver = true;
+            return;
+        }
 
         // Save current state in history
         saveGameState(currentGame.id);
 
+        if (GameState.isGameOver) {
+            return;
+        }
         //  handleSwitchPlayers(newGameStateInfo);
         const shouldSwitchPlayer = handleShouldSwitchPlayers(currentGame);
 
         //
-        handleDisablingActionState(currentGame);
+        handleDisablingActionInvoked(currentGame);
 
-        //+++++++++++++++   Import : This is the point where one game move has ended +++++++++++++++++++++++++++
+        //+++++++++++++++   Important : This is the point where one game move has ended +++++++++++++++++++++++++++
         //in charge of switching turns
         handleSwitchPlayer(currentGame, shouldSwitchPlayer);
-        //+++++++++++++++   Import : here we are either in a new game turn or in a new game move +++++++++++++++++++++++++++
+        //+++++++++++++++   Important : here we are either in a new game turn or in a new game move +++++++++++++++++++++++++++
 
     }
 
-    function isGameOver(currentGame) {
+    function hasPlayerWon(currentGame) {
         const GameState = currentGame.GameState;
         const currentPlayersPile = GameState.currentPlayer.pile;
-        if ((GameState.actionInvoked === null) ||
-            (GameState.actionInvoked === Enums.CardActionEnum.Stop)) {
+        if (GameState.actionInvoked !== Enums.CardActionEnum.Plus) {
             return currentPlayersPile.cards.length === 0;
         }
     }
@@ -506,7 +516,8 @@ function calculateConsoleMessage(GameState, sourcePileId, destinationPileId) {
                 return false;
             }
         } else {
-            isSameColor = (card.color && leadingCard.color === card.color);
+            isSameColor = (card.color && leadingCard.color === card.color) ||
+                (card.actionInvoked === Enums.CardActionEnum.ChangeColor);
             let isSameNumber = (card.number && leadingCard.number === card.number);
             let isSameAction = (card.action && leadingCard.action === card.action);
             let isUnColoredActionCard = (card.action && !card.color);
@@ -605,11 +616,12 @@ function calculateConsoleMessage(GameState, sourcePileId, destinationPileId) {
         }
     }
 
-    function handleDisablingActionState(currentGame) {
+    function handleDisablingActionInvoked(currentGame) {
         const GameState = currentGame.GameState;
         // disable actionInvoked if need be
         if ((GameState.actionInvoked === Enums.CardActionEnum.Plus) ||
             (GameState.actionInvoked === Enums.CardActionEnum.Stop) ||
+            (GameState.actionInvoked === Enums.CardActionEnum.ChangeDirection) ||
             (GameState.actionInvoked === Enums.CardActionEnum.ChangeColor) ||
             (GameState.actionInvoked === Enums.CardActionEnum.TwoPlus && GameState.twoPlusCounter === 0)) {
             GameState.actionInvoked = null;
@@ -633,12 +645,16 @@ function calculateConsoleMessage(GameState, sourcePileId, destinationPileId) {
     function handleAllActionInvokedCases(currentGame) {
         const GameState = currentGame.GameState;
 
-
         // if TWOPLUS card was invoked in the current play-move, increment twoPlusCounter by 2
         if (GameState.actionInvoked === Enums.CardActionEnum.TwoPlus &&
             GameState.leadingCard === GameState.selectedCard &&                  // means that player PUT card on discardPile
             GameState.selectedCard.action === Enums.CardActionEnum.TwoPlus) {   // and didn't GET card from Drawpile
             handleInvokedTwoPlusState(currentGame);
+        }
+
+        // if CHANGE DIRECTION card was invoked change game direction
+        else if (GameState.actionInvoked === Enums.CardActionEnum.ChangeDirection) {
+            handleInvokedChangeDirection(currentGame);
         }
 
         // if CHANGE COLOR card was invoked and the current player is BOT, pick a random color for it
@@ -660,6 +676,13 @@ function calculateConsoleMessage(GameState, sourcePileId, destinationPileId) {
         if (GameState.actionInvoked === Enums.CardActionEnum.Taki) {
             handleInvokedTakiState(currentGame);
         }
+    }
+
+    function handleInvokedChangeDirection(currentGame) {
+        const GameState = currentGame.GameState;
+        GameState.gameDirection === Enums.GameDirectionEnum.Clockwise
+            ? GameState.gameDirection =Enums.GameDirectionEnum.CounterClockwise
+            : GameState.gameDirection =Enums.GameDirectionEnum.Clockwise
     }
 
     function handleInvokedTwoPlusState(currentGame) {

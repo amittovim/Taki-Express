@@ -20,8 +20,7 @@ gameManagement.route('/:id')
     .get(auth.userAuthentication, (req, res) => {
         const gameId = req.params.id;
         let gameInfo = dbTmp.getGameInfo(gameId);
-        console.log(gameInfo);
-        // todo: delete this after sharing with Dor 
+        // todo: delete this after sharing with Dor
         //delete gameInfo.GameState.actionInvoked;
         //delete gameInfo.GameState.currentPlayer;
         //delete gameInfo.GameState.gameDirection;
@@ -91,7 +90,7 @@ gameManagement.route('/chat/:id')
     .post(auth.userAuthentication, dbTmp.postingChatInfo, (req, res) => {
         req.xSourceInfo
         req.xTextBody
-        req.xCurrentGame.chatContent.push({user: req.xSourceInfo, text: req.xTextBody});
+        req.xCurrentGame.chatContent.unshift({user: req.xSourceInfo, text: req.xTextBody});
         res.sendStatus(200);
     });
 

@@ -4,7 +4,7 @@ import {PileTypeEnum} from "../../app/enums/pile-type.enum";
 import {CardActionEnum} from "../../app/enums/card-action-enum";
 import * as dealer from "../dealer/dealer";
 import {CardColorEnum} from "../../app/enums/card-color.enum";
-import {GameStatusEnum} from "../game-status.enum";
+import {GameStatusEnum} from "../../client/app/enums/game-status.enum";
 import {PlayerEnum} from "../../app/enums/player.enum";
 
 export function pullTopOfPile(pile) {
