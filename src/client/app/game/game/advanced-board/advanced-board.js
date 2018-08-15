@@ -21,6 +21,7 @@ class AdvancedBoard extends Component {
     }
 
     render() {
+        debugger;
         let userPileId = this.props.piles.find((pile) => {
             return pile.ownerPlayerName === this.props.userName;
         }).id;

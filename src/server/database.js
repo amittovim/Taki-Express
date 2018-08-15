@@ -273,7 +273,7 @@ function createNewGame(newGameInfo) {
     if (newGame.isBotEnabled === true) {
         newGame.GameState.players[newGame.playersCapacity - 1].pile = newGame.GameState.piles[newGame.playersCapacity + 1];
     }
-    newGame.cleanBackup = newGame;
+    newGame.cleanBackup = _.cloneDeep(newGame);
     gameList.push(newGame);
 }
 
