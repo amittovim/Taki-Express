@@ -1,3 +1,4 @@
 .games-container-component {
-
+    height: 560px;
+    overflow: scroll;
 }

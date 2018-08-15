@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import GameListItem from './game-list-item.component';
+import './game-list.component.css';
 
 // Props :
 // successfulGameChoosingHandler
@@ -24,49 +25,46 @@ export default class GameList extends Component {
         }
         else return (<div></div>);
     }
-        constructor(props)
-        {
-            super(...props);
 
-            this.state = {
-                gameList: []
-            };
+    constructor(props) {
+        super(...props);
 
-            this.getGameList = this.getGameList.bind(this);
-            this.handleDeleteGame = this.handleDeleteGame.bind(this);
+        this.state = {
+            gameList: []
+        };
 
+        this.getGameList = this.getGameList.bind(this);
+        this.handleDeleteGame = this.handleDeleteGame.bind(this);
+
+    }
+
+    componentDidMount() {
+        this.getGameList();
+    }
+
+    componentWillUnmount() {
+        if (this.timeoutId) {
+            clearTimeout(this.timeoutId);
         }
+    }
 
-        componentDidMount()
-        {
-            this.getGameList();
-        }
-
-        componentWillUnmount()
-        {
-            if (this.timeoutId) {
-                clearTimeout(this.timeoutId);
-            }
-        }
-
-        getGameList()
-        {
-            return fetch('/lobby/games/', {method: 'GET', credentials: 'include'})
-                .then((res) => {
-                    if (!res.ok) {
-                        throw res;
-                    }
-                    this.timeoutId = setTimeout(this.getGameList, 1000);
-                    return res.json();
-                })
-                .then(gameList => {
-                    this.setState(() => ({gameList}));
-                })
-                .catch((err) => {
-                    console.log(err);
-                    throw err;
-                });
-        }
+    getGameList() {
+        return fetch('/lobby/games/', {method: 'GET', credentials: 'include'})
+            .then((res) => {
+                if (!res.ok) {
+                    throw res;
+                }
+                this.timeoutId = setTimeout(this.getGameList, 1000);
+                return res.json();
+            })
+            .then(gameList => {
+                this.setState(() => ({gameList}));
+            })
+            .catch((err) => {
+                console.log(err);
+                throw err;
+            });
+    }
 
     handleDeleteGame(gameId) {
         const confirmation = confirm('are you sure?');

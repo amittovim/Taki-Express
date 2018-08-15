@@ -8,7 +8,6 @@
     "build-watch": "webpack --watch",
     "start": "node src/server.js",
     "server": "nodemon --inspect src/server.js"
-
   },
   "author": "Amit Tovim & Dor Amar",
   "license": "ISC",

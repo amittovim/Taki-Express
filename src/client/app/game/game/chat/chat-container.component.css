@@ -1,25 +1,25 @@
 .chat-container-component {
-    border-top: 2px solid yellow;
-    color: yellow;
     font-size: 16px;
     font-family: monospace;
-    background: #161616;
-    /*flex-grow: 1;*/
+    background: #1b3b4a;
     flex: 0.255;
-
+    color: white;
     display: flex;
     flex-direction: column;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    min-height: 200px;
 }
 
 .chat-container-component .conversation-area-component {
     overflow: auto;
     flex-grow: 1;
-    border: 1px solid #ccc;
-    margin: 3px;
+    border-top: 1px solid #ccc;
     padding: 8px;
 }
 
-.chat-container-component .conversation-area-component p{
+.chat-container-component .conversation-area-component p {
     margin: 0 0 8px 0;
 }
 
@@ -29,7 +29,7 @@
     display: flex;
 }
 
-.chat-container-component .chat-input-component input{
+.chat-container-component .chat-input-component input {
     line-height: 16px;
     font-size: 16px;
     margin: 1px;

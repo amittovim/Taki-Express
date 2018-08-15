@@ -1,0 +1,15 @@
+.users-area-component ul {
+    list-style: none;
+    margin-left: 0;
+    padding-left: 0;
+}
+
+.users-area-component li {
+    padding-left: 1em;
+    text-indent: -1em;
+}
+
+.users-area-component li:before {
+    content: "\1F464";
+    padding-right: 5px;
+}

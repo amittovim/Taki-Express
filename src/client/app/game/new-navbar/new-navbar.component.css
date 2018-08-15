@@ -1,0 +1,26 @@
+.new-navbar-component {
+    min-width: 680px;
+    padding: 0 20px;
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.3);
+    background: #0e9ac8;
+    border: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-transform: uppercase;
+}
+
+.username:before {
+    content: '\1F464';
+    color: white;
+}
+
+.navbar-right {
+    display: flex;
+    align-items: center;
+    color: white;
+}
+
+.navbar-right .username {
+    margin-right: 30px;
+}

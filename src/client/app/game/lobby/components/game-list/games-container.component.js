@@ -1,4 +1,4 @@
-import React,{Component} from 'react';
+import React, {Component} from 'react';
 import './games-container.component.css';
 import GameList from "./game-list.component";
 
@@ -9,7 +9,7 @@ export default class GamesContainer extends Component {
     render() {
         return (
             <div className="games-container-component">
-                <p>currently available games  : </p>
+                <h2>Available games: </h2>
                 <GameList successfulGameChoosingHandler={this.props.successfulGameChoosingHandler} />
             </div>
         )
