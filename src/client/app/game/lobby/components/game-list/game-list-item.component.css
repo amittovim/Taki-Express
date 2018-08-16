@@ -1,6 +1,5 @@
 .game-list-item {
     cursor: pointer;
-    margin-bottom: 15px;
 }
 
 .game-list-item:hover {

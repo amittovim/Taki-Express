@@ -1,13 +1,8 @@
 import React, {Component} from 'react';
-import Button from "../shared/components/button/button.component";
-import UsersContainer from "./lobby/components/user-list/users-container.component";
-import GamesContainer from "./lobby/components/game-list/games-container.component";
 import CreateGameModal from "./modal/create-game-modal/create-game-modal.component";
 import {ViewsEnum} from "../enums/views-enum";
 import LoginModal from "./login/login.component";
-import ChatContainer from "./game/chat/chat-container.component";
 import Game from "./game/game.component";
-import Navbar from "./navbar/navbar.component";
 import Lobby from "./lobby/lobby.component";
 
 export default class Taki extends Component {
@@ -35,7 +30,8 @@ export default class Taki extends Component {
             }
             case ViewsEnum.Game: {
                 return (<Game game={this.state.currentGame}
-                              userId={this.state.currentUser.name} />
+                              userId={this.state.currentUser.name}
+                              endGameHandler={this.handleEndingOfGame} />
                 );
             }
         }
@@ -60,8 +56,12 @@ export default class Taki extends Component {
         this.handleErrorGameCreation = this.handleErrorGameCreation.bind(this);
         this.handleAbortGameCreation = this.handleAbortGameCreation.bind(this);
         this.handleSuccessfulGameChoosing = this.handleSuccessfulGameChoosing.bind(this);
+        this.handleEndingOfGame = this.handleEndingOfGame.bind(this);
 
         this.getUserName();
+    }
+
+    componentDidUpdate() {
     }
 
     handleSuccessfulLogin() {
@@ -157,6 +157,11 @@ export default class Taki extends Component {
             });
     }
 
+    handleEndingOfGame() {
+        this.setState(() => ({
+            activeView: ViewsEnum.Lobby,
+        }));
 
+    }
 }
 

@@ -1,4 +1,5 @@
 module.exports = {
+    restartGame,
     addGameToGameList,
     getGameInfo,
     getAllGames,
@@ -106,7 +107,16 @@ function handleRequestPlayerMove(req, res, next) {
             ? res.status(403).send('play request is forbidden! move chosen is illegal. try again...')
             : null;
     }
-    req.xGameContent = currentGame;
+    let newCurrentGame;
+    if (currentGame.GameState.isGameOver) {
+        setTimeout( () => {
+            currentGame.isActive= false;
+            restartGame(currentGame);
+            newCurrentGame = getGameInfo(currentGame.id)
+        },10000);
+
+    }
+    currentGame.isActive ? req.xGameContent = currentGame : req.xGameContent = newCurrentGame;
     next();
 }
 
@@ -200,7 +210,10 @@ function getAllGames() {
     return gamesArray;
 }
 
-
+function restartGame(currentGame) {
+    let gameIndex = gameList.findIndex( (game) => { return game.id === currentGame.id; });
+    gameList[gameIndex] = _.cloneDeep(currentGame.cleanBackup);
+}
 function createNewGame(newGameInfo) {
     let newGame;
     newGame = {

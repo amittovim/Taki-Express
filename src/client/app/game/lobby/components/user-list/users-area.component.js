@@ -1,20 +1,19 @@
 import React, {Component} from 'react';
-import './users-container.component.css';
 
 export default class UsersArea extends Component {
     render() {
-        if (this.state.usersList) {
-            return (
-                <div className="users-area-component">
-                    <ul>
-                        {this.state.usersList.map((userName) => (
-                            <li key={userName}>{userName}</li>
-                        ))}
-                    </ul>
-                </div>
-            )
-        }
-        return;
+            if (this.state.usersList) {
+                return (
+                    <div className="users-area-component">
+                        <ul>
+                            {this.state.usersList.map((userName) => (
+                                <li key={userName}>{ userName}</li>
+                            ))}
+                        </ul>
+                    </div>
+                )
+            }
+            return;
     }
 
     constructor(props) {
@@ -41,17 +40,15 @@ export default class UsersArea extends Component {
     getOnlineUsersList() {
         return fetch('/lobby/allUsers/', {method: 'GET', credentials: 'include'})
             .then((response) => {
-                if (!response.ok) {
+                if (!response.ok){
                     throw response;
                 }
                 this.timeoutId = setTimeout(this.getOnlineUsersList, 500);
                 return response.json();
             })
             .then(usersList => {
-                this.setState(() => ({usersList}));
+                this.setState(()=>({usersList}));
             })
-            .catch(err => {
-                throw err
-            });
+            .catch(err => {throw err});
     }
 }

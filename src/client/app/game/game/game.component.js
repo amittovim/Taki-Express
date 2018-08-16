@@ -18,6 +18,7 @@ import ChatContainer from "./chat/chat-container.component";
 // <PROPS>
 // game: Game object
 // userName: string
+// endGameHandler : Function
 
 class Game extends Component {
     render() {
@@ -25,7 +26,7 @@ class Game extends Component {
             <div className="game-component">
                 <Navbar currentPlayer={this.state.GameState.currentPlayer}
                         turnNumber={this.state.GameState.turnNumber}
-                        isGameOver={this.state.isGameOver}
+                        isGameOver={this.state.GameState.isGameOver}
                         abortGameCallback={this.handleOpenModal}
                         gameHistoryCallback={this.handleGetGameHistory}
                         restartGameCallback={this.startGame}
@@ -136,15 +137,15 @@ class Game extends Component {
     componentDidMount() {
 
     }
+    componentWillReceiveProps() {
+    }
 
     componentWillUpdate() {
+        if (this.state.GameState.isGameOver) {
+            this.props.endGameHandler();
+        }
     }
-
     componentDidUpdate() {
-    }
-
-    componentWillMount() {
-        //   this.startGame();
     }
 
     componentWillUnmount() {
@@ -169,6 +170,7 @@ class Game extends Component {
                             this.updateGameStateFromHistory();
                             if (--statesDifference === 0) {
                                 window.clearInterval(intervalId);
+
                                 this.setState(() => {
                                     return ({isLoading: false});
                                 }, () => {
@@ -181,7 +183,15 @@ class Game extends Component {
                                             },
                                             ...contentFromServer
                                         });
-                                    })
+                                    }, () => {
+                                        if (this.state.GameState.isGameOver) {
+                                            this.setState(() => {
+                                                return ({
+                                                    isActive: false
+                                                });
+                                            })
+                                        }
+                                    });
                                 });
 
                             }
