@@ -20,7 +20,7 @@ gameManagement.route('/:id')
     .get(auth.userAuthentication, (req, res) => {
         const gameId = req.params.id;
         let gameInfo = dbTmp.getGameInfo(gameId);
-        delete gameInfo.cleanBackup;    // we dont need the clients to recieve the backup info.
+      //  delete gameInfo.cleanBackup;    // we dont need the clients to recieve the backup info.
         // todo: delete this after sharing with Dor
         //delete gameInfo.GameState.actionInvoked;
         //delete gameInfo.GameState.currentPlayer;
@@ -53,6 +53,7 @@ gameManagement.route('/:id')
     })
     .put(auth.userAuthentication,
         dbTmp.handleRequestPlayerMove, (req, res) => {
+        debugger;
             res.json(req.xGameContent)
         });
 

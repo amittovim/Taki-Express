@@ -22,7 +22,6 @@ class Lobby extends Component {
     }
 
     render() {
-        debugger;
         return (
             <div className="lobby-component">
                 <NewNavbar username={this.props.username} />
@@ -54,6 +53,7 @@ class Lobby extends Component {
             user: this.state.currentUser.name,
             game
         };
+        debugger;
         fetch('/lobby/games', {
             method: 'PUT', body: JSON.stringify(data), credentials: 'include'
         })

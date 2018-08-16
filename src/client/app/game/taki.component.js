@@ -15,7 +15,7 @@ export default class Taki extends Component {
             case ViewsEnum.Login: {
                 return (
                     <LoginModal loginSuccessHandler={this.handleSuccessfulLogin}
-                                loginErrorHandler={this.handleErrorLogin} />
+                                loginErrorHandler={this.handleErrorLogin}/>
                 );
             }
             case ViewsEnum.Lobby: {
@@ -24,12 +24,13 @@ export default class Taki extends Component {
             case ViewsEnum.GameCreation: {
                 return (<CreateGameModal createGameSuccessHandler={this.handleSuccessfulGameCreation}
                                          createGameErrorHandler={this.handleErrorGameCreation}
-                                         abortHandler={this.handleAbortGameCreation} />
+                                         abortHandler={this.handleAbortGameCreation}/>
                 );
             }
             case ViewsEnum.Game: {
                 return (<Game game={this.state.currentGame}
-                              userId={this.state.currentUser.name} />
+                              userId={this.state.currentUser.name}
+                              endGameHandler={this.handleEndingOfGame}/>
                 );
             }
         }
@@ -54,8 +55,12 @@ export default class Taki extends Component {
         this.handleErrorGameCreation = this.handleErrorGameCreation.bind(this);
         this.handleAbortGameCreation = this.handleAbortGameCreation.bind(this);
         this.handleSuccessfulGameChoosing = this.handleSuccessfulGameChoosing.bind(this);
+        this.handleEndingOfGame = this.handleEndingOfGame.bind(this);
 
         this.getUserName();
+    }
+
+    componentDidUpdate() {
     }
 
     handleSuccessfulLogin() {
@@ -72,12 +77,12 @@ export default class Taki extends Component {
             <div className='lobby-room-component'>
                 <div className="user-info-area">
                     Hello {this.state.currentUser.name}
-                    <Button className="logout btn" label={'Logout'} onClick={this.handleLogout} isDisabled={false} />
+                    <Button className="logout btn" label={'Logout'} onClick={this.handleLogout} isDisabled={false}/>
                 </div>
                 <Button className="create-new-game btn" label={'CREATE NEW GAME'} onClick={this.handleCreateNewGame}
-                        isDisabled={false} />
-                <UsersContainer />
-                <GamesContainer successfulGameChoosingHandler={this.handleSuccessfulGameChoosing} />
+                        isDisabled={false}/>
+                <UsersContainer/>
+                <GamesContainer successfulGameChoosingHandler={this.handleSuccessfulGameChoosing}/>
 
                 {/*<ChatContainer message={''}/>*/}
             </div>
@@ -166,6 +171,13 @@ export default class Taki extends Component {
                     throw err; // in case we're getting an error
                 }
             });
+    }
+
+    handleEndingOfGame() {
+        this.setState(() => ({
+            activeView: ViewsEnum.Lobby,
+        }));
+
     }
 
 

@@ -139,7 +139,6 @@ function handleCardMove(currentGame) {
         for (GameState.twoPlusCounter; GameState.twoPlusCounter > 0; GameState.twoPlusCounter--) {
             GameState.selectedCard.parentPileId = GameState.currentPlayer.pile.id;
             GameState.selectedCard.isHidden = isCardHidden(GameState.currentPlayer.pile.id);
-            debugger;
             updatedPiles = moveCard(GameState, Enums.PileIdEnum.DrawPile, GameState.currentPlayer.pile.id);
             GameState.selectedCard = GameState.piles[Enums.PileIdEnum.DrawPile].getTop();
         }
@@ -149,7 +148,6 @@ function handleCardMove(currentGame) {
 
     // all other cases
     const sourcePileId = GameState.selectedCard.parentPileId;
-    debugger;
     const destinationPileId = getDestinationPileId(GameState, sourcePileId);
     GameState.selectedCard.parentPileId = destinationPileId;
     GameState.selectedCard.isHidden = isCardHidden(destinationPileId);
@@ -330,10 +328,9 @@ function calculateConsoleMessage(GameState, sourcePileId, destinationPileId) {
 
         // Checking if game ended
         if (currentGame.winners.length === currentGame.playersCapacity - 1) {
-            GameState.loser = GameState.players.find( (player) => { return player.playerStatus === Enums.PlayerStatusEnum.Playing})
+            currentGame.loser = GameState.players.find( (player) => { return player.playerStatus === Enums.PlayerStatusEnum.Playing})
             //todo : make a nice modal for players that this player LOST
             GameState.isGameOver = true;
-            return;
         }
 
         // Save current state in history
@@ -378,6 +375,15 @@ function calculateConsoleMessage(GameState, sourcePileId, destinationPileId) {
             if (currentGame.GameState.gameStatus === Enums.GameStatusEnum.Ongoing) {
                 processGameStep(currentGame);
             }
+
+/*
+            // if game is active continue. if game isn't active anymore, restart the game
+            if (currentGame.isActive) {
+                return true;
+            } else {
+                //dbTmp.restartGame(currentGame);
+            }
+*/
             return true;
         }
     }
