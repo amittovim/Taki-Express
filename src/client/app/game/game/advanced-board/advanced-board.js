@@ -27,7 +27,7 @@ class AdvancedBoard extends Component {
     }
 
     render() {
-        this.func();
+
         return (
             <div className="advanced-board-component">
                 <div className='top-board'>
@@ -40,10 +40,18 @@ class AdvancedBoard extends Component {
                 </div>
                 <div className='middle-board'>
                     <div className='left-section'>
+                        {(!this.state.thirdAreaPileId)
+                            ? (null)
+                            : (<Hand owner={this.props.piles[this.state.thirdAreaPileId].ownerPlayerName}
+                                     pile={this.props.piles[this.state.thirdAreaPileId]}
+                                     moveCardDriver1={this.moveCardDriver_1}
+                            />)}
+                        {/*
                         <Hand owner={this.props.piles[this.state.thirdAreaPileId].ownerPlayerName}
                               pile={this.props.piles[this.state.thirdAreaPileId]}
                               moveCardDriver1={this.moveCardDriver_1}
                         />
+*/}
                     </div>
                     <div className='center-section'>
                         <Deck drawPile={this.props.piles[PileIdEnum.DrawPile]}
@@ -53,10 +61,12 @@ class AdvancedBoard extends Component {
                         />
                     </div>
                     <div className='right-section'>
-                        <Hand owner={this.props.piles[this.state.forthAreaPileId].ownerPlayerName}
-                              pile={this.props.piles[this.state.forthAreaPileId]}
-                              moveCardDriver1={this.moveCardDriver_1}
-                        />
+                        {(!this.state.forthAreaPileId)
+                            ? (null)
+                            : (<Hand owner={this.props.piles[this.state.forthAreaPileId].ownerPlayerName}
+                                     pile={this.props.piles[this.state.forthAreaPileId]}
+                                     moveCardDriver1={this.moveCardDriver_1}
+                            />)}
                     </div>
                 </div>
                 <div className='bottom-board'>
@@ -69,37 +79,61 @@ class AdvancedBoard extends Component {
         );
     }
 
-    func() {
+    componentWillMount() {
+        this.realignCardHands();
+    }
+
+    componentWillUpdate() {
+
+    }
+
+    realignCardHands() {
+        let mainArea, secondArea, thirdArea, forthArea;
         debugger;
         let idCounter = this.props.piles.find((pile) => {
             return pile.ownerPlayerName === this.props.userName;
         }).id;
-        this.setState({mainAreaPileId: idCounter});
+        mainArea = idCounter;
         idCounter++;
         idCounter = this.checkUserOverFlow(idCounter);
-        this.setState({secondAreaPileId: idCounter});
+        secondArea = idCounter;
+        //this.setState({secondAreaPileId: idCounter});
         if (this.props.playersCapacity > 2) {
             idCounter++;
             idCounter = this.checkUserOverFlow(idCounter);
-            this.setState({thirdAreaPileId: idCounter});
+            thirdArea = idCounter;
+            // this.setState({thirdAreaPileId: idCounter});
 
             if (this.props.playersCapacity > 3) {
                 idCounter++;
                 idCounter = this.checkUserOverFlow(idCounter);
-                this.setState({forthAreaPileId: idCounter});
+                forthArea = idCounter;
+                //this.setState({forthAreaPileId: idCounter});
             } else {
-                this.setState({forthAreaPileId: null});
+                forthArea = null;
+                //this.setState({forthAreaPileId: null});
             }
         } else {
+            thirdArea = null;
+            forthArea = null;
+/*
             this.setState({
                 thirdAreaPileId: null,
                 forthAreaPileId: null
             });
+*/
         }
+        this.setState({
+            mainAreaPileId: mainArea,
+            secondAreaPileId: secondArea,
+            thirdAreaPileId: thirdArea,
+            forthAreaPileId: forthArea
+        }, () => {
+            // reveal the cards of the main player
+            this.props.piles[this.state.mainAreaPileId].cards.forEach((item) => {
+                item.isHidden = false;
+            });
 
-        // reveal the cards of the main player
-        this.props.piles[this.state.mainAreaPileId].cards.forEach((item) => {
-            item.isHidden = false;
         });
     }
 
