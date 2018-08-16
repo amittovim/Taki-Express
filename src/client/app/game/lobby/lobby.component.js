@@ -30,7 +30,7 @@ class Lobby extends Component {
                         <UsersContainer />
                     </ContentCard>
                     <ContentCard>
-                        <GamesContainer successfulGameChoosingHandler={this.handleSuccessfulGameChoosing} />
+                        <GamesContainer successfulGameChoosingHandler={this.props.handleSuccessfulGameChoosing} />
                         <div className="new-game-button">
                             <Button label={'CREATE NEW GAME'}
                                     onClick={this.handleCreateNewGame}
@@ -38,7 +38,6 @@ class Lobby extends Component {
                         </div>
                     </ContentCard>
                 </div>
-                <ChatContainer message={''} />
             </div>
         );
     }

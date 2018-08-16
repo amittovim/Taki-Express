@@ -11,8 +11,7 @@ import Button from "../../../../shared/components/button/button.component";
 export default class GameListItem extends Component {
     render() {
         return (
-            <li
-                onClick={() => this.onClickHandler()}
+            <li onClick={() => this.onClickHandler()}
                 className="game-list-item ">
                 <div className="game-list-info">
                     <div className="info-left">
@@ -56,6 +55,5 @@ export default class GameListItem extends Component {
     deleteGameHandler() {
         this.props.deleteGameHandler(this.props.game.id);
     }
-
 }
 

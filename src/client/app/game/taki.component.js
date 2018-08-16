@@ -23,7 +23,8 @@ export default class Taki extends Component {
             case ViewsEnum.Lobby: {
                 return (
                     <Lobby username={this.state.currentUser.name}
-                           handleCreateNewGame={this.handleCreateNewGame} />
+                           handleCreateNewGame={this.handleCreateNewGame}
+                           handleSuccessfulGameChoosing={this.handleSuccessfulGameChoosing} />
                 );
             }
             case ViewsEnum.GameCreation: {

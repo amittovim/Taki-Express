@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import './games-container.component.css';
 import GameList from "./game-list.component";
 
-// Props :
+// <PROPS>
 // successfulGameChoosingHandler
 
 export default class GamesContainer extends Component {
