@@ -7,8 +7,6 @@ import {ViewsEnum} from "../enums/views-enum";
 import LoginModal from "./login/login.component";
 import ChatContainer from "./game/chat/chat-container.component";
 import Game from "./game/game.component";
-import Navbar from "./navbar/navbar.component";
-import Lobby from "./lobby/lobby.component";
 
 export default class Taki extends Component {
 
@@ -21,10 +19,7 @@ export default class Taki extends Component {
                 );
             }
             case ViewsEnum.Lobby: {
-                return (
-                    <Lobby username={this.state.currentUser.name}
-                           handleCreateNewGame={this.handleCreateNewGame} />
-                );
+                return this.renderLobbyRoom();
             }
             case ViewsEnum.GameCreation: {
                 return (<CreateGameModal createGameSuccessHandler={this.handleSuccessfulGameCreation}
@@ -70,6 +65,23 @@ export default class Taki extends Component {
     handleErrorLogin() {
         console.error('login failed');
         this.setState(() => ({activeView: ViewsEnum.Login}));
+    }
+
+    renderLobbyRoom() {
+        return (
+            <div className='lobby-room-component'>
+                <div className="user-info-area">
+                    Hello {this.state.currentUser.name}
+                    <Button className="logout btn" label={'Logout'} onClick={this.handleLogout} isDisabled={false} />
+                </div>
+                <Button className="create-new-game btn" label={'CREATE NEW GAME'} onClick={this.handleCreateNewGame}
+                        isDisabled={false} />
+                <UsersContainer />
+                <GamesContainer successfulGameChoosingHandler={this.handleSuccessfulGameChoosing} />
+
+                {/*<ChatContainer message={''}/>*/}
+            </div>
+        )
     }
 
     getUserName() {

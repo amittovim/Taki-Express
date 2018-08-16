@@ -1,0 +1,18 @@
+body {
+    background: #607D8B;;
+}
+
+.cards-container {
+    display: flex;
+    justify-content: center;
+}
+
+.content-card-component {
+    position: relative;
+}
+
+.new-game-button button {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+}
