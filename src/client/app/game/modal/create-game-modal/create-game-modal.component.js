@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import './create-game-modal.component.css';
+import ContentCard from "../../../shared/components/content-card/content-card.component";
 // <PROPS>
 // createGameSuccessHandler: function
 // createGameErrorHandler  : function
@@ -9,38 +10,42 @@ export default class CreateGameModal extends Component {
     render() {
         return (
             <div className="create-game-modal-component">
-                <h1> Creating new network TAKI game </h1>
-                <form onSubmit={this.handleCreateGame}>
-                    <table>
-                        <tbody>
-                        <tr>
-                            <td><label className="game-name-label" htmlFor="gameName"> Game name: </label></td>
-                            <td><input className="game-name-input" type="text" placeholder="Game Name"
-                                       name="gameName" /></td>
-                        </tr>
-                        <tr>
-                            <td><label className="number-of-players-label" htmlFor="playersCapacity"> Number of players in
-                                game : </label></td>
-                            <td><select className="number-of-players-input" name="playersCapacity">
-                                <option>2</option>
-                                <option>3</option>
-                                <option>4</option>
-                            </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" name="isBotEnabled" value="BOT Player enabled" />BOT Player enabled
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><input className="submit-btn btn" type="submit" value="Create Game" /></td>
-                            <td><input className="abort-btn btn" type="button" value="Cancel"
-                                       onClick={this.handleAbortGameCreation} /></td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </form>
-                {this.renderErrorMessage()}
+                <ContentCard>
+                    <h1> Creating new network TAKI game </h1>
+                    <form onSubmit={this.handleCreateGame}>
+                        <table>
+                            <tbody>
+                            <tr>
+                                <td><label className="game-name-label" htmlFor="gameName"> Game name: </label></td>
+                                <td><input className="game-name-input" type="text" placeholder="Game Name"
+                                           name="gameName" /></td>
+                            </tr>
+                            <tr>
+                                <td><label className="number-of-players-label" htmlFor="playersCapacity"> Number of
+                                    players in
+                                    game : </label></td>
+                                <td><select className="number-of-players-input" name="playersCapacity">
+                                    <option>2</option>
+                                    <option>3</option>
+                                    <option>4</option>
+                                </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" name="isBotEnabled" value="Bot Player enabled" />BOT Player
+                                    enabled
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input className="submit-btn btn" type="submit" value="Create Game" /></td>
+                                <td><input className="abort-btn btn" type="button" value="Cancel"
+                                           onClick={this.handleAbortGameCreation} /></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                    {this.renderErrorMessage()}
+                </ContentCard>
             </div>
         );
     }
