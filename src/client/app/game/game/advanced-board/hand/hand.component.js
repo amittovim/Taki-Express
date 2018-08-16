@@ -14,14 +14,20 @@ class Hand extends Component {
             <div className="hand-component">
                 {
                     this.props.pile
-                        ? (this.props.pile.cards.map((card) => {
-                            return (
-                                <Card key={card.id}
-                                      card={card}
-                                      hoverEnabled={true}
-                                      moveCardDriver2={this.moveCardDriver2}
-                                />)
-                        }))
+                        ? (<h1>{this.props.pile.ownerPlayerName}</h1>)
+                        : null
+                }
+                {
+                    this.props.pile
+                        ? (
+                            this.props.pile.cards.map((card) => {
+                                return (
+                                    <Card key={card.id}
+                                          card={card}
+                                          hoverEnabled={true}
+                                          moveCardDriver2={this.moveCardDriver2}
+                                    />)
+                            }))
                         : null
                 }
             </div>

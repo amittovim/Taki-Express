@@ -10,6 +10,6 @@
 }
 
 .users-area-component li:before {
-    content: "\1F464";
+    content: '\1F464';
     padding-right: 5px;
 }

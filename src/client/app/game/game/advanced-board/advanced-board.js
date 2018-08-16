@@ -13,7 +13,13 @@ import {PileIdEnum} from "../../../enums/pile-id.enum";
 class AdvancedBoard extends Component {
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {
+            mainAreaPileId: null,
+            secondAreaPileId: null,
+            thirdAreaPileId: null,
+            forthAreaPileId: null,
+        };
+
 
         // this.getCurrentUserPile = this.getCurrentUserPile.bind(this);
         this.moveCardDriver_1 = this.moveCardDriver_1.bind(this);
@@ -21,44 +27,21 @@ class AdvancedBoard extends Component {
     }
 
     render() {
-        let userPileId = this.props.piles.find((pile) => {
-            return pile.ownerPlayerName === this.props.userName;
-        }).id;
-        let mainPlayerAreaPileId = userPileId;
-
-        let secondPlayerAreaPileId, thirdPlayerAreaPileId, forthPlayerAreaPileId;
-        userPileId++;
-        userPileId = this.checkUserOverFlow(userPileId);
-        secondPlayerAreaPileId = userPileId++;
-        if (this.props.playersCapacity > 2) {
-            thirdPlayerAreaPileId = userPileId = this.checkUserOverFlow(userPileId++);
-            if (this.props.playersCapacity > 3) {
-                forthPlayerAreaPileId = userPileId = this.checkUserOverFlow(userPileId++);
-            } else {
-                forthPlayerAreaPileId = null;
-            }
-        } else {
-            thirdPlayerAreaPileId = null;
-            forthPlayerAreaPileId = null;
-        }
-
-        // reveal the cards of the main player
-        this.props.piles[mainPlayerAreaPileId].cards.forEach( (item) => { item.isHidden=false; });
-
+        this.func();
         return (
             <div className="advanced-board-component">
                 <div className='top-board'>
                     <div className='empty-space'></div>
-                    <Hand owner={this.props.piles[secondPlayerAreaPileId].ownerPlayerName}
-                          pile={this.props.piles[secondPlayerAreaPileId]}
+                    <Hand owner={this.props.piles[this.state.secondAreaPileId].ownerPlayerName}
+                          pile={this.props.piles[this.state.secondAreaPileId]}
                           moveCardDriver1={this.moveCardDriver_1}
                     />
                     <div className='empty-space'></div>
                 </div>
                 <div className='middle-board'>
                     <div className='left-section'>
-                        <Hand owner={PlayerEnum.Bot}
-                              pile={this.props.piles[4]}
+                        <Hand owner={this.props.piles[this.state.thirdAreaPileId].ownerPlayerName}
+                              pile={this.props.piles[this.state.thirdAreaPileId]}
                               moveCardDriver1={this.moveCardDriver_1}
                         />
                     </div>
@@ -70,20 +53,54 @@ class AdvancedBoard extends Component {
                         />
                     </div>
                     <div className='right-section'>
-                        <Hand owner={PlayerEnum.Bot}
-                              pile={this.props.piles[5]}
+                        <Hand owner={this.props.piles[this.state.forthAreaPileId].ownerPlayerName}
+                              pile={this.props.piles[this.state.forthAreaPileId]}
                               moveCardDriver1={this.moveCardDriver_1}
                         />
                     </div>
                 </div>
                 <div className='bottom-board'>
-                    <Hand owner={this.props.piles[mainPlayerAreaPileId].ownerPlayerName}
-                          pile={this.props.piles[mainPlayerAreaPileId]}
+                    <Hand owner={this.props.piles[this.state.mainAreaPileId].ownerPlayerName}
+                          pile={this.props.piles[this.state.mainAreaPileId]}
                           moveCardDriver1={this.moveCardDriver_1}
                     />
                 </div>
             </div>
         );
+    }
+
+    func() {
+        debugger;
+        let idCounter = this.props.piles.find((pile) => {
+            return pile.ownerPlayerName === this.props.userName;
+        }).id;
+        this.setState({mainAreaPileId: idCounter});
+        idCounter++;
+        idCounter = this.checkUserOverFlow(idCounter);
+        this.setState({secondAreaPileId: idCounter});
+        if (this.props.playersCapacity > 2) {
+            idCounter++;
+            idCounter = this.checkUserOverFlow(idCounter);
+            this.setState({thirdAreaPileId: idCounter});
+
+            if (this.props.playersCapacity > 3) {
+                idCounter++;
+                idCounter = this.checkUserOverFlow(idCounter);
+                this.setState({forthAreaPileId: idCounter});
+            } else {
+                this.setState({forthAreaPileId: null});
+            }
+        } else {
+            this.setState({
+                thirdAreaPileId: null,
+                forthAreaPileId: null
+            });
+        }
+
+        // reveal the cards of the main player
+        this.props.piles[this.state.mainAreaPileId].cards.forEach((item) => {
+            item.isHidden = false;
+        });
     }
 
     moveCardDriver_1(cardId) {

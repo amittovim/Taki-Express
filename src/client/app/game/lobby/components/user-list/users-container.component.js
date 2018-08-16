@@ -1,4 +1,5 @@
-import React,{Component} from 'react';
+import React, {Component} from 'react';
+import './users-container.component.css';
 import UsersArea from "./users-area.component";
 
 export default class UsersContainer extends Component {
@@ -6,7 +7,7 @@ export default class UsersContainer extends Component {
         return (
             <div className="users-container-component">
                 <p>users currently online : </p>
-                <UsersArea/>
+                <UsersArea />
             </div>
         )
     };

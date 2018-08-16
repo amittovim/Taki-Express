@@ -25,7 +25,7 @@ class NewNavbar extends Component {
                     </div>
                     <Button className="logout btn"
                             label={'Logout'}
-                            onClick={this.handleLogout}
+                            onClick={this.props.handleLogout}
                             isDisabled={false} />
                 </div>
 
