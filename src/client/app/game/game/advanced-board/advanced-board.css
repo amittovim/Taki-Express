@@ -61,4 +61,8 @@
     flex-direction: column;
 }
 
+.bottom-board .card-component {
+    pointer-events: initial;
+}
+
 
