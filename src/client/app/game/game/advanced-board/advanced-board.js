@@ -89,7 +89,6 @@ class AdvancedBoard extends Component {
 
     realignCardHands() {
         let mainArea, secondArea, thirdArea, forthArea;
-        debugger;
         let idCounter = this.props.piles.find((pile) => {
             return pile.ownerPlayerName === this.props.userName;
         }).id;

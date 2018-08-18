@@ -53,7 +53,6 @@ gameManagement.route('/:id')
     })
     .put(auth.userAuthentication,
         dbTmp.handleRequestPlayerMove, (req, res) => {
-        debugger;
             res.json(req.xGameContent)
         });
 

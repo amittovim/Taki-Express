@@ -191,7 +191,8 @@ function isCardHidden(destinationPileId) {
 
 function calculateConsoleMessage(GameState, sourcePileId, destinationPileId) {
     let playerName;
-    let message = `Game-Time | Turn ${GameState.turnNumber}:`;   //TODO: add here <Game-Time> : <Game-TurnNo> : <GameMoveNo> to the beginning of console message
+    let message = `#${GameState.consoleCounter} | Turn ${GameState.turnNumber}:`;   //TODO: add here <Game-Time> : <Game-TurnNo> : <GameMoveNo> to the beginning of console message
+    GameState.consoleCounter++;
     if (GameState.gameStatus === Enums.GameStatusEnum.InitializingGame ||
         GameState.gameStatus === Enums.GameStatusEnum.SettingStartingCard) {
         playerName = 'Dealer';
@@ -205,7 +206,7 @@ function calculateConsoleMessage(GameState, sourcePileId, destinationPileId) {
         if (GameState.piles[destinationPileId].isHand === true) {
             message = `${message} ${playerName} TOOK a card from Draw-Pile`;
         } else if (destinationPileId === Enums.PileIdEnum.DiscardPile) {
-            message = `${message} ${playerName} PUT ${GameState.selectedCard.display} on ${GameState.leadingCard.display} `;
+            message = `${message} ${playerName} PUT ${GameState.selectedCard.display} on ${GameState.piles[1].getSecondCardFromTop().display} `;
         }
     }
     return message;
@@ -332,7 +333,6 @@ function calculateConsoleMessage(GameState, sourcePileId, destinationPileId) {
             //todo : make a nice modal for players that this player LOST
             GameState.isGameOver = true;
         }
-
         // Save current state in history
         saveGameState(currentGame.id);
 
@@ -523,7 +523,7 @@ function calculateConsoleMessage(GameState, sourcePileId, destinationPileId) {
             }
         } else {
             isSameColor = (card.color && leadingCard.color === card.color) ||
-                (card.actionInvoked === Enums.CardActionEnum.ChangeColor);
+                (card.action === Enums.CardActionEnum.ChangeColor);
             let isSameNumber = (card.number && leadingCard.number === card.number);
             let isSameAction = (card.action && leadingCard.action === card.action);
             let isUnColoredActionCard = (card.action && !card.color);

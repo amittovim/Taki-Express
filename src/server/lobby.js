@@ -53,7 +53,7 @@ lobbyManagement.route('/games')
         }
 
         // return ACK and than the client needs to start polling GET requests .
-
+        debugger;
 
         // check if game is ready to start if so,
         // change game status to init and init game

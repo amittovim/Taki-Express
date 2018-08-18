@@ -227,6 +227,7 @@ class Game extends Component {
                     throw res;
                 }
                 this.timeoutId = setTimeout(this.getGameContent, 1500);
+
                 return res.json();
             });
     }
@@ -285,7 +286,7 @@ class Game extends Component {
         fetch('/game/' + this.state.id, {method: 'PUT', body: body, credentials: 'include'})
             .then(res => {
                 (!res.ok)
-                    ? console.log(`'Failed to move card in game named ${this.state.game.name}! response content is: `, res)
+                    ? console.log(`'Failed to move card in game named ${this.state.name}! response content is: `, res)
                     : res.json();
             })
             .then(content => {
@@ -304,9 +305,11 @@ class Game extends Component {
         const body = {cardId, cardColor};
         fetch('/game/changeColor/' + gameId, {method: 'PUT', body: JSON.stringify(body), credentials: 'include'})
             .then(res => {
-                (!res.ok)
-                    ? console.log(`'Failed to change card color in the game named ${this.state.game.name}! response content is: `, res)
-                    : res.json();
+                if (!res.ok) {
+                    console.log(`'Failed to change card color in a game named ${this.state.name}!`);
+                    throw res;
+                }
+                return res;
             })
             .then(content => { // what ever you want to do with the positive response
                 this.requestPlayerMove(cardId);
