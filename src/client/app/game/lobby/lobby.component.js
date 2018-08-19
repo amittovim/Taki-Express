@@ -44,39 +44,37 @@ class Lobby extends Component {
         this.props.handleCreateNewGame();
     }
 
-    // handleSuccessfulGameChoosing(game) {
-    //     const data = {
-    //         user: this.state.currentUser.name,
-    //         game
-    //     };
-    //     debugger;
-    //     fetch('/lobby/games', {
-    //         method: 'PUT', body: JSON.stringify(data), credentials: 'include'
-    //     })
-    //         .then(res => {
-    //             if (!res.ok) {
-    //                 console.log(`'Failed to register ${this.state.currentUser.name} to the game named ${game.name} ! response content is: `, response);
-    //             }
-    //             else {
-    //                 return res.json();
-    //             }
-    //         })
-    //         .then(content => {
-    //             this.setState(() => ({
-    //                 activeView: ViewsEnum.Game,
-    //                 currentGame: content.currentGame,
-    //
-    //             }));
-    //         })
-    //         .catch(err => {
-    //             if (err.status === 401) { // in case we're getting 'unAuthorized' as response
-    //                 this.setState(() => ({activeView: ViewsEnum.Login}));
-    //             } else {
-    //                 throw err; // in case we're getting an error
-    //             }
-    //         });
-    // }
+    handleSuccessfulGameChoosing(game) {
+        const data = {
+            user: this.state.currentUser.name,
+            game
+        };
+        fetch('/lobby/games', {
+            method: 'PUT', body: JSON.stringify(data), credentials: 'include'
+        })
+            .then(res => {
+                if (!res.ok) {
+                    console.log(`'Failed to register ${this.state.currentUser.name} to the game named ${game.name} ! response content is: `, response);
+                }
+                else {
+                    return res.json();
+                }
+            })
+            .then(content => {
+                this.setState(() => ({
+                    activeView: ViewsEnum.Game,
+                    currentGame: content.currentGame,
 
+                }));
+            })
+            .catch(err => {
+                if (err.status === 401) { // in case we're getting 'unAuthorized' as response
+                    this.setState(() => ({activeView: ViewsEnum.Login}));
+                } else {
+                    throw err; // in case we're getting an error
+                }
+            });
+    }
 }
 
 export default Lobby;
