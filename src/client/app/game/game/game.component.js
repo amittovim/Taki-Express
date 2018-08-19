@@ -45,6 +45,7 @@ class Game extends Component {
                         ? (<WaitingMessageComponent
                             numOfNeededPlayers={(this.state.playersCapacity - this.state.playersEnrolled)} />)
                         : ((<AdvancedBoard userName={this.props.userId}
+                                           currentPlayerName={this.state.GameState.currentPlayer.name}
                                            piles={this.state.GameState.piles}
                                            playersCapacity={this.state.playersCapacity}
                                            moveCardDriver={this.handlePlayMove} />))
@@ -137,6 +138,7 @@ class Game extends Component {
     componentDidMount() {
 
     }
+
     componentWillReceiveProps() {
     }
 
@@ -145,6 +147,7 @@ class Game extends Component {
             this.props.endGameHandler();
         }
     }
+
     componentDidUpdate() {
     }
 
@@ -217,8 +220,37 @@ class Game extends Component {
                 ...isLoadingStateObject
             };
             return GameState;
+        }, () => {
+            if (this.state.GameState.isGameOver) {
+                this.openGameOverModal();
+            }
         });
     }
+
+    openGameOverModal() {
+        this.setState((prevState) => {
+            return {
+                modal: {
+                    isOpen: true,
+                    type: ModalTypeEnum.GameOver,
+                    callback: this.closeGameOverModal
+                }
+            };
+        });
+    }
+
+    closeGameOverModal() {
+        this.setState(() => {
+            return {
+                modal: {
+                    isOpen: false,
+                    type: null,
+                    callback: null
+                }
+            };
+        });
+    }
+
 
     fetchGameContent() {
         return fetch('/game/' + this.state.id, {method: 'GET', credentials: 'include'})
@@ -227,7 +259,6 @@ class Game extends Component {
                     throw res;
                 }
                 this.timeoutId = setTimeout(this.getGameContent, 1500);
-
                 return res.json();
             });
     }
@@ -366,7 +397,7 @@ class Game extends Component {
         }
     */
 
-    // Stats:
+// Stats:
 
     getStats() {
         const data = {

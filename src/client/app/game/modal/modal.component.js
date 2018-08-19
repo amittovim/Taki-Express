@@ -4,6 +4,7 @@ import {ModalTypeEnum} from "./modal-type.enum";
 import ModalFrame from "../../shared/components/modal/modal.component";
 import AbortGameModal from "./abort-game/abort-game.component";
 import StatisticsModal from "./statistics/statistics.component";
+import GameOverModal from "./game-over-modal/game-over-modal.component";
 
 // isOpen: boolean
 // type: ModalTypeEnum
@@ -69,6 +70,9 @@ class Modal extends Component {
             case ModalTypeEnum.Statistics: {
                 return (<StatisticsModal {...this.props.data}
                                          onCancel={this.props.closeModal} />);
+            }
+            case ModalTypeEnum.GameOver: {
+                return (<GameOverModal onClick={this.props.handleClick} />);
             }
             case ModalTypeEnum.default: {
                 break;

@@ -69,7 +69,7 @@ class AdvancedBoard extends Component {
                             />)}
                     </div>
                 </div>
-                <div className='bottom-board'>
+                <div className={`bottom-board ${this.props.currentPlayerName === this.player ? 'players-turn' : ''}`}>
                     <Hand owner={this.props.piles[this.state.mainAreaPileId].ownerPlayerName}
                           pile={this.props.piles[this.state.mainAreaPileId]}
                           moveCardDriver1={this.moveCardDriver_1}
@@ -85,6 +85,10 @@ class AdvancedBoard extends Component {
 
     componentWillUpdate() {
 
+    }
+
+    get player() {
+        return this.props.piles[this.state.mainAreaPileId].ownerPlayerName;
     }
 
     realignCardHands() {
@@ -115,12 +119,12 @@ class AdvancedBoard extends Component {
         } else {
             thirdArea = null;
             forthArea = null;
-/*
-            this.setState({
-                thirdAreaPileId: null,
-                forthAreaPileId: null
-            });
-*/
+            /*
+                        this.setState({
+                            thirdAreaPileId: null,
+                            forthAreaPileId: null
+                        });
+            */
         }
         this.setState({
             mainAreaPileId: mainArea,
