@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import './color-picker.component.css';
 import {CardColorEnum} from "../../../enums/card-color.enum";
-import {getKeys} from "../../../../../logic/utils/model.utils";
 import ColorButton from "../../../shared/components/color-button/color-button.component";
 
 // <PROPS>

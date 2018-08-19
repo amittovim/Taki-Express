@@ -41,6 +41,7 @@ class Hand extends Component {
     }
 
     moveCardDriver2(cardId) {
+        debugger;
         this.props.moveCardDriver1(cardId);
     }
 }

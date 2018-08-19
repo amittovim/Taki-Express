@@ -38,7 +38,6 @@ function addUserToGame(req, res, next) {
     let currentGame = gameList.find((game) => {
         return game.name === req.xData.game.name;
     });
-    debugger;
     if (currentGame.isActive) {
         req.xStatus = 403;
         req.xSendMessage = 'Game has already started! cannot enter game';
@@ -111,14 +110,11 @@ function handleRequestPlayerMove(req, res, next) {
         setTimeout(() => {
             currentGame.isActive = false;
             restartGame(currentGame);
-            debugger;
             newCurrentGame = getGameInfo(currentGame.id);
-            debugger;
             newCurrentGame.restarting =true;
             let gameIndex = initGameList.findIndex((gameName) => {
                 return gameName === newCurrentGame.name;});
                 gameList[gameIndex].restarting = true;
-                debugger;
             }, 4000);
 
         }
@@ -201,7 +197,6 @@ function handleRequestPlayerMove(req, res, next) {
         }
         if ((!hasGameBeenInitialized) && (gameInfo.GameState.gameStatus === Enums.GameStatusEnum.InitializingGame)) {
             initGameList.push(gameInfo.name);
-            debugger;
             /*
                     //put Bot player at the end of the piles array ( it was created in the start of the array)
                     gameInfo.GameState.piles.splice(gameInfo.GameState.piles.length, 0, (gameInfo.GameState.piles.splice(0, 1)[0]));
@@ -226,13 +221,11 @@ function handleRequestPlayerMove(req, res, next) {
     }
 
     function restartGame(currentGame) {
-        debugger;
         let gameIndex = gameList.findIndex((game) => {
             return game.id === currentGame.id;
         });
         gameList[gameIndex] = _.cloneDeep(currentGame.cleanBackup);
         gameList[gameIndex].cleanBackup = _.cloneDeep(currentGame.cleanBackup);
-        debugger;
     }
 
     function createNewGame(newGameInfo) {
