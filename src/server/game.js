@@ -56,6 +56,14 @@ gameManagement.route('/:id')
             res.json(req.xGameContent)
         });
 
+
+gameManagement.get('/history/:id', auth.userAuthentication, (req, res) => {
+    const gameId = req.params.id;
+    let gameInfo = dbTmp.getGameInfo(gameId);
+    res.json(gameInfo.history);
+});
+
+
 gameManagement.put('/isMoveLegal/:id', auth.userAuthentication, (req, res) => {
     let cardId = parseInt(req.body);
     const gameId = req.params.id;

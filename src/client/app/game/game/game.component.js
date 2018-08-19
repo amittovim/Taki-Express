@@ -116,7 +116,8 @@ class Game extends Component {
         this.handlePlayMove = this.handlePlayMove.bind(this);
         this.requestCardChangeColor = this.requestCardChangeColor.bind(this);
         this.requestPlayerMove = this.requestPlayerMove.bind(this);
-        this.getGameContent = this.getGameContent.bind(this);
+      //  this.getGameContent = this.getGameContent.bind(this);
+        this.getGameHistory = this.getGameHistory.bind(this);
         this.openColorPicker = this.openColorPicker.bind(this);
         this.handleChangeColor = this.handleChangeColor.bind(this);
         this.updateGameStateFromHistory = this.updateGameStateFromHistory.bind(this);
@@ -124,23 +125,55 @@ class Game extends Component {
         //this.getIsMoveLegal = this.getIsMoveLegal.bind(this);
         this.getCardById = this.getCardById.bind(this);
 
-        this.getGameContent();
+        this.getGameHistory();
+        // this.getGameContent();
     }
+
+    // componentWillMount() {
+    //     debugger;
+    //     this.fetchGameContent()
+    //         .then(contentFromServer => {
+    //             const prevGameState = this.state.GameState;
+    //             this.setState(({
+    //                 ...contentFromServer,
+    //                 GameState: prevGameState
+    //             }));
+    //         });
+    // }
 
     componentDidUpdate(nextProps, nextState) {
-        if (this.state.nextStateId <= this.state.history.length - 1) {
-            this.stateUpdateTimeout = setTimeout(() => {
+        this.stateUpdateTimeout = setTimeout(() => {
+            if (this.state.nextStateId <= this.state.history.length - 1) {
+                const nextStateUpdate = this.state.history[this.state.nextStateId];
+                console.log(nextStateUpdate);
                 this.setState(() => ({
-                    ...history[this.state.nextStateId],
+                    GameState: nextStateUpdate,
                     nextStateId: this.state.nextStateId + 1
                 }));
-            }, 300)
-        } else {
-            clearTimeout(this.stateUpdateTimeout);
-        }
+            } else {
+                clearTimeout(this.stateUpdateTimeout);
+                this.getCurrentGameState();
+            }
+        }, 300);
     }
 
-    componentWillMount() {
+    getGameHistory() {
+        this.fetchGameHistory()
+            .then(gameHistory => {
+                this.setState({ history: gameHistory, nextStateId: 0, isLoading: true})
+            });
+    }
+
+    getCurrentGameState() {
+        this.fetchGameContent()
+            .then(game => {
+                game.GameState.consoleMessage='';
+                this.setState(prevState => ({
+                    GameState: game.GameState,
+                    isLoading: false,
+                    isActive: !prevState.GameState.isGameOver
+                }));
+            });
     }
 
     componentDidMount() {
@@ -159,56 +192,63 @@ class Game extends Component {
         if (this.timeoutId) {
             clearTimeout(this.timeoutId);
         }
+        if (this.timeoutHistoryId) {
+            clearTimeout(this.timeoutHistoryId);
+        }
+
         clearTimeout(this.stateUpdateTimeout);
     }
 
-    getGameContent() {
-        this.fetchGameContent()
-            .then(contentFromServer => {
-                debugger;
-                // contentFromServer.GameState.consoleMessage='';
-                let statesDifference = contentFromServer.history.length - this.state.history.length;
-                if (statesDifference !== 0) {
-                    this.setState(() => {
-                        return { history: contentFromServer.history };
-                    }, () => {
-                        let intervalId = setInterval(() => {
-                            this.updateGameStateFromHistory();
-                            if (--statesDifference === 0) {
-                                window.clearInterval(intervalId);
 
-                                this.setState(() => {
-                                    return ({isLoading: false});
-                                }, () => {
-                                    this.setState(() => {
-                                        return ({
-                                            GameState: {
-                                                currentPlayer: contentFromServer.GameState.currentPlayer,
-                                                piles: contentFromServer.GameState.piles
-                                            },
-                                            ...contentFromServer
-                                        });
-                                    }, () => {
-                                        if (this.state.GameState.isGameOver) {
-                                            this.setState(() => {
-                                                return ({
-                                                    isActive: false
-                                                });
-                                            })
-                                        }
-                                    });
-                                });
 
-                            }
-                        }, 300);
-                    });
-                }
 
-            })
-            .catch(err => {
-                throw err
-            });
-    }
+    // getGameContent() {
+    //     this.fetchGameContent()
+    //         .then(contentFromServer => {
+    //             debugger;
+    //             contentFromServer.GameState.consoleMessage='';
+                // let statesDifference = contentFromServer.history.length - this.state.history.length;
+                // if (statesDifference !== 0) {
+                //     this.setState(() => {
+                //         return { history: contentFromServer.history };
+                //     }, () => {
+                //         let intervalId = setInterval(() => {
+                //             this.updateGameStateFromHistory();
+                //             if (--statesDifference === 0) {
+                //                 window.clearInterval(intervalId);
+                //
+                //                 this.setState(() => {
+                //                     return ({isLoading: false});
+                //                 }, () => {
+                //                     this.setState(() => {
+                //                         return ({
+                //                             GameState: {
+                //                                 currentPlayer: contentFromServer.GameState.currentPlayer,
+                //                                 piles: contentFromServer.GameState.piles
+                //                             },
+                //                             ...contentFromServer
+                //                         });
+                //                     }, () => {
+                //                         if (this.state.GameState.isGameOver) {
+                //                             this.setState(() => {
+                //                                 return ({
+                //                                     isActive: false
+                //                                 });
+                //                             })
+                //                         }
+                //                     });
+                //                 });
+                //
+                //             }
+                //         }, 300);
+                //     });
+                // }
+            //
+            // })
+            // .catch(err => {
+            //     throw err
+            // });
+    // }
 
     updateGameStateFromHistory() {
         let isLoadingStateObject;
@@ -237,6 +277,18 @@ class Game extends Component {
             });
     }
 
+    fetchGameHistory() {
+        return fetch('/game/history/' + this.state.id, {method: 'GET', credentials: 'include'})
+            .then((res) => {
+                if (!res.ok) {
+                    throw res;
+                }
+                this.timeoutHistoryId = setTimeout(this.getGameContent, 1500);
+                return res.json();
+            });
+    }
+
+
     getCardById(cardId) {
         const GameState = this.state.GameState;
         let gameCards = GameState.piles[PileIdEnum.DrawPile].cards
@@ -256,26 +308,25 @@ class Game extends Component {
 
     handlePlayMove(cardId) {
         const body = cardId;
-        let answer;
+        let isMoveLegal = false;
         return fetch('/game/isMoveLegal/' + this.state.id, {method: 'PUT', body: body, credentials: 'include'})
-            .then((res) => {
+            .then(res => {
                 if (!res.ok) {
                     throw res;
                 }
                 return res.json();
             })
-            .then(answerFrmServer => {
-                answer = answerFrmServer;
+            .then(res => {
+                isMoveLegal = res;
                 const card = this.getCardById(cardId);
-                if (!answer) {
+                if (!isMoveLegal) {
                     return this.handleIllegalMove();
-                } else if (card.action === CardActionEnum.ChangeColor &&
-                    this.state.GameState.piles[card.parentPileId].isHand === true) {
+                } else if (card.action === CardActionEnum.ChangeColor && this.state.GameState.piles[card.parentPileId].isHand) {
                     this.openColorPicker(card);
                 } else {
                     this.requestPlayerMove(cardId);
                 }
-                return answer;
+                return isMoveLegal;
             })
             .catch(err => {
                 if (err.status === 403) { // in case we're getting 'forbidden' as response
@@ -288,6 +339,7 @@ class Game extends Component {
 
     requestPlayerMove(cardId) {
         const body = cardId;
+        debugger;
         fetch('/game/' + this.state.id, {method: 'PUT', body: body, credentials: 'include'})
             .then(res => {
                 (!res.ok)

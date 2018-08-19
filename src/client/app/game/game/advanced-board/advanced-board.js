@@ -20,7 +20,6 @@ class AdvancedBoard extends Component {
             forthAreaPileId: null,
         };
 
-
         // this.getCurrentUserPile = this.getCurrentUserPile.bind(this);
         this.moveCardDriver_1 = this.moveCardDriver_1.bind(this);
         this.checkUserOverFlow = this.checkUserOverFlow.bind(this);
