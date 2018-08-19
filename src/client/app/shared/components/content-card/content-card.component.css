@@ -1,14 +1,19 @@
 .content-card-component {
-    width: 50%;
+    width: 70%;
     background: rgb(255, 255, 255);
     margin: 20px;
     padding: 20px;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
 }
 
+.content-card-component:first-child {
+    width: 30%;
+}
+
 .content-card-component h2 {
     font-size: 20px;
-    margin: 0;
     padding: 0;
     font-weight: 400;
+    text-transform: uppercase;
+    color: #0e99c8;
 }

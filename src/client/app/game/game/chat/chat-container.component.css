@@ -22,6 +22,10 @@
     margin: 0 0 8px 0;
 }
 
+.chat-container-component .conversation-area-component p:first-child {
+    color: yellow;
+}
+
 .chat-container-component .chat-input-component {
     margin-bottom: 8px;
     width: 100%;

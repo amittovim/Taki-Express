@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import './lobby.component.css';
 import Button from "../../shared/components/button/button.component";
 import UsersContainer from "./components/user-list/users-container.component";
-import GamesContainer from "./components/game-list/games-container.component";
+import GamesContainer from "./components/games-container.component";
 import NewNavbar from "../new-navbar/new-navbar.component";
 import LobbyDashboard from "./components/lobby-dashboard/lobby-dashboard.component";
 import ContentCard from "../../shared/components/content-card/content-card.component";
@@ -21,7 +21,7 @@ class Lobby extends Component {
         return (
             <div className="lobby-component">
                 <NewNavbar username={this.props.username}
-                           handleLogout={this.props.handleLogout}/>
+                           handleLogout={this.props.handleLogout} />
                 <LobbyDashboard />
                 <div className="cards-container">
                     <ContentCard>
