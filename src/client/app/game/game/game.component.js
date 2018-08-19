@@ -103,9 +103,7 @@ class Game extends Component {
 
         this.card = null;
 
-
         this.updateSelectedCard = this.updateSelectedCard.bind(this);
-
         this.requestMoveCard = this.requestMoveCard.bind(this);
         this.handleIllegalMove = this.handleIllegalMove.bind(this);
         this.handleOpenModal = this.handleOpenModal.bind(this);
@@ -115,8 +113,6 @@ class Game extends Component {
         this.handleGetGameHistory = this.handleGetGameHistory.bind(this);
         // this.startGame = this.startGame.bind(this);
         this.processStateChanges = this.processStateChanges.bind(this);
-
-
         this.handlePlayMove = this.handlePlayMove.bind(this);
         this.requestCardChangeColor = this.requestCardChangeColor.bind(this);
         this.requestPlayerMove = this.requestPlayerMove.bind(this);
@@ -129,6 +125,19 @@ class Game extends Component {
         this.getCardById = this.getCardById.bind(this);
 
         this.getGameContent();
+    }
+
+    componentDidUpdate(nextProps, nextState) {
+        if (this.state.nextStateId <= this.state.history.length - 1) {
+            this.stateUpdateTimeout = setTimeout(() => {
+                this.setState(() => ({
+                    ...history[this.state.nextStateId],
+                    nextStateId: this.state.nextStateId + 1
+                }));
+            }, 300)
+        } else {
+            clearTimeout(this.stateUpdateTimeout);
+        }
     }
 
     componentWillMount() {
@@ -145,26 +154,23 @@ class Game extends Component {
             this.props.endGameHandler();
         }
     }
-    componentDidUpdate() {
-    }
 
     componentWillUnmount() {
         if (this.timeoutId) {
             clearTimeout(this.timeoutId);
         }
+        clearTimeout(this.stateUpdateTimeout);
     }
 
     getGameContent() {
         this.fetchGameContent()
             .then(contentFromServer => {
+                debugger;
                 // contentFromServer.GameState.consoleMessage='';
-                let historyFromServer = contentFromServer.history;
-
-                let historyFromServerObject = {'history': contentFromServer.history};
-                let statesDifference = historyFromServer.length - this.state.history.length;
+                let statesDifference = contentFromServer.history.length - this.state.history.length;
                 if (statesDifference !== 0) {
                     this.setState(() => {
-                        return historyFromServerObject;
+                        return { history: contentFromServer.history };
                     }, () => {
                         let intervalId = setInterval(() => {
                             this.updateGameStateFromHistory();
@@ -179,7 +185,6 @@ class Game extends Component {
                                             GameState: {
                                                 currentPlayer: contentFromServer.GameState.currentPlayer,
                                                 piles: contentFromServer.GameState.piles
-
                                             },
                                             ...contentFromServer
                                         });
@@ -388,11 +393,12 @@ class Game extends Component {
     }
 
     handleIllegalMove() {
-        this.setState((prev) => {
-            return (
-                {
-                    /*GameState: {consoleMessage: 'illegal move... try again ' }*/          //TODO: fix this line so console will show error
-                });
+        this.setState({
+            GameState: {
+                consoleMessage: 'illegal move... try again '
+            }
+        }, (some) => {
+            debugger;
         });
     }
 

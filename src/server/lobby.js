@@ -52,9 +52,6 @@ lobbyManagement.route('/games')
             currentGame.GameState.gameStatus = Enums.GameStatusEnum.InitializingGame;
         }
 
-        // return ACK and than the client needs to start polling GET requests .
-        debugger;
-
         // check if game is ready to start if so,
         // change game status to init and init game
         res.status(req.xStatus).send({
