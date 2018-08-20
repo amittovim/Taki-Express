@@ -142,6 +142,7 @@ function handleRequestPlayerMove(req, res, next) {
     // if current player is Bot than play its turn/move
     while ((!currentGame.GameState.isGameOver) &&
     (currentGame.GameState.currentPlayer.name === Enums.PlayerEnum.Bot)) {
+        debugger;
         let botCardId = serverGameUtils.pickNextBotMove(currentGame);
         result = serverGameUtils.playGameMove(currentGame, botCardId);
 

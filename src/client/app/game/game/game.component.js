@@ -174,6 +174,7 @@ class Game extends Component {
                 if (statesDifference !== 0) {
                     this.setState(() => {
                         return historyFromServerObject;
+                        //return contentFromServer;
                     }, () => {
                         let intervalId = setInterval(() => {
                             this.updateGameStateFromHistory();
@@ -227,10 +228,12 @@ class Game extends Component {
             };
             return GameState;
         }, () => {
+            debugger;
             if (this.state.GameState.isGameOver) {
                 this.openGameOverLoserModal();
             }
             else if (this.state.winners.length === 1 && this.state.winners[0].name === this.state.GameState.currentPlayer.name) {
+                debugger;
                 this.open1stPlaceWinnerModal();
             }
             else if (this.state.winners.length === 2 && this.state.winners[1].name === this.state.GameState.currentPlayer.name) {
