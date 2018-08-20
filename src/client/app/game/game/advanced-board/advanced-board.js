@@ -84,8 +84,15 @@ class AdvancedBoard extends Component {
     }
 
     componentWillUpdate() {
+    }
+    componentDidUpdate() {
+        debugger;
+        this.props.piles[this.state.mainAreaPileId].cards.forEach((item) => {
+            item.isHidden = false;
+        });
 
     }
+
 
     get player() {
         return this.props.piles[this.state.mainAreaPileId].ownerPlayerName;
@@ -133,10 +140,9 @@ class AdvancedBoard extends Component {
             forthAreaPileId: forthArea
         }, () => {
             // reveal the cards of the main player
-            this.props.piles[this.state.mainAreaPileId].cards.forEach((item) => {
-                item.isHidden = false;
-            });
-
+            // this.props.piles[this.state.mainAreaPileId].cards.forEach((item) => {
+            //     item.isHidden = false;
+            // });
         });
     }
 

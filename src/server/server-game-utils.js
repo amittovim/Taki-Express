@@ -525,7 +525,8 @@ function calculateConsoleMessage(GameState, sourcePileId, destinationPileId) {
             isSameColor = (card.color && leadingCard.color === card.color) ||
                 (card.action === Enums.CardActionEnum.ChangeColor);
             let isSameNumber = (card.number && leadingCard.number === card.number);
-            let isSameAction = (card.action && leadingCard.action === card.action);
+            let isSameAction = ((card.action && leadingCard.action === card.action) ||
+                (card.action && leadingCard.action ===Enums.CardActionEnum.SuperTaki && card.action === Enums.CardActionEnum.Taki ));
             let isUnColoredActionCard = (card.action && !card.color);
             if (!(isSameColor || isSameNumber || isSameAction || isUnColoredActionCard)) {
                 return false;

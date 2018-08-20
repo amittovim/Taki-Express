@@ -422,7 +422,10 @@ class Game extends Component {
         this.setState((prev) => {
             return (
                 {
-                    /*GameState: {consoleMessage: 'illegal move... try again ' }*/          //TODO: fix this line so console will show error
+                    ...prev,
+                    GameState: {
+                        ...prev.GameState,
+                        consoleMessage: 'illegal move... try again ' }       //TODO: fix this line so console will show error
                 });
         });
     }
