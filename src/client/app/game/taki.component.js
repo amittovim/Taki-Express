@@ -12,7 +12,7 @@ export default class Taki extends Component {
             case ViewsEnum.Login: {
                 return (
                     <LoginModal loginSuccessHandler={this.handleSuccessfulLogin}
-                                loginErrorHandler={this.handleErrorLogin} />
+                                loginErrorHandler={this.handleErrorLogin}/>
                 );
             }
             case ViewsEnum.Lobby: {
@@ -20,20 +20,20 @@ export default class Taki extends Component {
                     <Lobby username={this.state.currentUser.name}
                            handleCreateNewGame={this.handleCreateNewGame}
                            handleSuccessfulGameChoosing={this.handleSuccessfulGameChoosing}
-                           handleLogout={this.handleLogout} />
+                           handleLogout={this.handleLogout}/>
                 );
             }
             case ViewsEnum.GameCreation: {
                 return (<CreateGameModal createGameSuccessHandler={this.handleSuccessfulGameCreation}
                                          createGameErrorHandler={this.handleErrorGameCreation}
-                                         abortHandler={this.handleAbortGameCreation} />
+                                         abortHandler={this.handleAbortGameCreation}/>
                 );
             }
             case ViewsEnum.Game: {
                 return (<Game game={this.state.currentGame}
                               userId={this.state.currentUser.name}
-                              handleSuccessfulGameLeaving = {this.handleSuccessfulGameLeaving}
-                              endGameHandler={this.handleEndingOfGame} />
+                              handleSuccessfulGameLeaving={this.handleSuccessfulGameLeaving}
+                              endGameHandler={this.handleEndingOfGame}/>
                 );
             }
         }
@@ -60,7 +60,7 @@ export default class Taki extends Component {
         this.handleSuccessfulGameChoosing = this.handleSuccessfulGameChoosing.bind(this);
         this.handleEndingOfGame = this.handleEndingOfGame.bind(this);
         this.handleSuccessfulGameLeaving = this.handleSuccessfulGameLeaving.bind(this);
-
+        this.requestGameRestart = this.requestGameRestart.bind(this);
         this.getUserName();
     }
 
@@ -161,13 +161,33 @@ export default class Taki extends Component {
     }
 
     handleEndingOfGame() {
-        setTimeout(() => {
-            this.setState(() => ({
-                activeView: ViewsEnum.Lobby,
-            }));
-        }, 2000);
+        this.setState(() => ({
+            activeView: ViewsEnum.Lobby,
+        }));
+        this.requestGameRestart(this.state.currentGame.id);
+    };
 
+    requestGameRestart(gameId) {
+        fetch('/lobby/games/restartGame/' + gameId, {method: 'GET', credentials: 'include'})
+            .then(res => {
+                if (!res.ok) {
+                    console.log(`'Failed to restart game with gameId ${gameId} ! response content is: `, response);
+                }
+                else {
+                    return res.json();
+                }
+            })
+            .then(content => {
+
+            })
+            .catch(err => {
+                if (err.status === 401) { // in case we're getting 'unAuthorized' as response
+                } else {
+                    throw err; // in case we're getting an error
+                }
+            });
     }
+
 
     handleSuccessfulGameLeaving(game) {
         const data = {

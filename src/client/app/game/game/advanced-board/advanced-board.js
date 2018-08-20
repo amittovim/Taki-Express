@@ -86,7 +86,6 @@ class AdvancedBoard extends Component {
     componentWillUpdate() {
     }
     componentDidUpdate() {
-        debugger;
         this.props.piles[this.state.mainAreaPileId].cards.forEach((item) => {
             item.isHidden = false;
         });

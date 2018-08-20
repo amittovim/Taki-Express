@@ -84,12 +84,10 @@ export default class GameTable extends Component {
     // Getters:
 
     isGameActive() {
-        debugger;
         return this.props.game.isActive;
     }
 
     gameStatus(game) {
-        debugger;
         return game.isActive
             ? 'Game is active'
             : `Awaiting ${game.playersCapacity - game.playersEnrolled} players`
@@ -114,8 +112,6 @@ export default class GameTable extends Component {
     }
 
     handleDeleteGame(game) {
-        // TODO: Amit: only if game is empty and you are the owner
-        debugger;
         const confirmation = confirm('are you sure?');
         if (confirmation) {
             return fetch('/lobby/games/delete/' + game.id, {method: 'DELETE', credentials: 'include'})
@@ -145,7 +141,6 @@ export default class GameTable extends Component {
     }
 
     shouldDeleteBeEnabled(game) {
-        debugger;
         if ((game.owner.name === this.props.username) && (game.isActive !== true)
             && ((game.isBotEnabled === false && game.playersEnrolled === 0) ||
                 (game.isBotEnabled === true && game.playersEnrolled === 1))) {
@@ -155,7 +150,6 @@ export default class GameTable extends Component {
 
 
     shouldJoinBeEnabled(game) {
-        debugger;
         if (game.isActive===false) {
             return true;
         }

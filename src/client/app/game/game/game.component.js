@@ -30,32 +30,32 @@ class Game extends Component {
                         abortGameCallback={this.handleOpenModal}
                         gameHistoryCallback={this.handleGetGameHistory}
                         openModalCallback={this.handleOpenModal}
-                        emitAverageTime={this.updateAverageTime} />
-                <Loader isLoading={this.state.isLoading} />
-                <Overlay isVisible={this.state.isLoading || this.state.modal.isOpen || this.state.isGameOver} />
+                        emitAverageTime={this.updateAverageTime}/>
+                <Loader isLoading={this.state.isLoading}/>
+                <Overlay isVisible={this.state.isLoading || this.state.modal.isOpen || this.state.isGameOver}/>
                 <Modal isOpen={this.state.modal.isOpen}
                        type={this.state.modal.type}
                        callback={this.state.modal.callback}
                        restartGameCallback={this.startGame}
                        data={this.getStats()}
-                       closeModal={this.handleCloseModal} />
+                       closeModal={this.handleCloseModal}/>
                 <div className="game-body">
                     {this.state.playersCapacity > this.state.playersEnrolled
-                        ? (<WaitingMessageComponent game = {this.props.game}
-                                                    handleSuccessfulGameLeaving = {this.props.handleSuccessfulGameLeaving}
-                                                    numOfNeededPlayers={(this.state.playersCapacity - this.state.playersEnrolled)} />)
+                        ? (<WaitingMessageComponent game={this.props.game}
+                                                    handleSuccessfulGameLeaving={this.props.handleSuccessfulGameLeaving}
+                                                    numOfNeededPlayers={(this.state.playersCapacity - this.state.playersEnrolled)}/>)
                         : ((<AdvancedBoard userName={this.props.userId}
                                            currentPlayerName={this.state.GameState.currentPlayer.name}
                                            piles={this.state.GameState.piles}
                                            playersCapacity={this.state.playersCapacity}
-                                           moveCardDriver={this.handlePlayMove} />))
+                                           moveCardDriver={this.handlePlayMove}/>))
                         /*moveCardDriver={this.requestPlayerMove}/>))*/
 
                     }
                 </div>
                 {/*<Console message={this.state.consoleMessage}/>*/}
                 <ChatContainer gameId={this.state.id}
-                               consoleMessage={this.state.GameState.consoleMessage} />
+                               consoleMessage={this.state.GameState.consoleMessage}/>
             </div>
         );
     }
@@ -129,6 +129,12 @@ class Game extends Component {
         //this.getIsMoveLegal = this.getIsMoveLegal.bind(this);
         this.getCardById = this.getCardById.bind(this);
 
+        this.closeGameOverLoserModal = this.closeGameOverLoserModal.bind(this);
+        this.openGameOverLoserModal = this.openGameOverLoserModal.bind(this);
+        this.close1stPlaceWinnerModal = this.close1stPlaceWinnerModal.bind(this);
+        this.open1stPlaceWinnerModal = this.open1stPlaceWinnerModal.bind(this);
+        // this.closeGameOverLoserModal = this.closeGameOverLoserModal.bind(this);
+        // this.openGameOverLoserModal = this.openGameOverLoserModal.bind(this);
         this.getGameContent();
     }
 
@@ -143,9 +149,9 @@ class Game extends Component {
     }
 
     componentWillUpdate() {
-        if (this.state.GameState.isGameOver) {
-            this.props.endGameHandler();
-        }
+        // if (this.state.GameState.isGameOver) {
+        //     this.props.endGameHandler();
+        // }
     }
 
     componentDidUpdate() {
@@ -222,8 +228,69 @@ class Game extends Component {
             return GameState;
         }, () => {
             if (this.state.GameState.isGameOver) {
-                this.openGameOverModal();
+                this.openGameOverLoserModal();
             }
+            else if (this.state.winners.length === 1 && this.state.winners[0].name === this.state.GameState.currentPlayer.name) {
+                this.open1stPlaceWinnerModal();
+            }
+            else if (this.state.winners.length === 2 && this.state.winners[1].name === this.state.GameState.currentPlayer.name) {
+                this.open2ndPlaceWinnerModal();
+            }
+        });
+    }
+
+    openGameOverLoserModal() {
+        this.setState((prevState) => {
+            return {
+                modal: {
+                    isOpen: true,
+                    type: ModalTypeEnum.GameOverLoser,
+                    callback: this.closeGameOverLoserModal
+                }
+            };
+        });
+    }
+
+
+    closeGameOverLoserModal() {
+        debugger;
+        this.setState(() => {
+            return {
+                modal: {
+                    isOpen: false,
+                    type: null,
+                    callback: null
+                }
+            };
+        }, () => {
+            debugger;
+            this.props.endGameHandler();
+        });
+
+
+    }
+
+    open1stPlaceWinnerModal() {
+        this.setState((prevState) => {
+            return {
+                modal: {
+                    isOpen: true,
+                    type: ModalTypeEnum.FirstPlaceWinner,
+                    callback: this.close1stPlaceWinnerModal
+                }
+            };
+        });
+    }
+
+    close1stPlaceWinnerModal() {
+        this.setState(() => {
+            return {
+                modal: {
+                    isOpen: false,
+                    type: null,
+                    callback: null
+                }
+            };
         });
     }
 
@@ -425,7 +492,8 @@ class Game extends Component {
                     ...prev,
                     GameState: {
                         ...prev.GameState,
-                        consoleMessage: 'illegal move... try again ' }       //TODO: fix this line so console will show error
+                        consoleMessage: 'illegal move... try again '
+                    }       //TODO: fix this line so console will show error
                 });
         });
     }
@@ -532,7 +600,6 @@ class Game extends Component {
 
     }
 }
-
 
 
 export default Game;

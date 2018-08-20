@@ -3,5 +3,7 @@ export const ModalTypeEnum = {
     ColorPicker: 'ColorPicker',
     AbortGame: 'AbortGame',
     Statistics: 'Statistics',
-    GameOver: 'GameOver'
+    GameOverLoser: 'GameOverLoser',
+    FirstPlaceWinner: 'FirstPlaceWinner',
+    SecondPlaceWinner: 'SecondPlaceWinner',
 };

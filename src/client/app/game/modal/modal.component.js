@@ -5,6 +5,9 @@ import ModalFrame from "../../shared/components/modal/modal.component";
 import AbortGameModal from "./abort-game/abort-game.component";
 import StatisticsModal from "./statistics/statistics.component";
 import GameOverModal from "./game-over-modal/game-over-modal.component";
+import GameOverLoserModal from "./game-over-loser-modal/game-over-loser-modal.component";
+import FirstPlaceWinnerModal from "./first-winner-modal/first-place-winner-modal.component";
+import SecondPlaceWinnerModal from "./second-winner-modal/second-place-winner-modal.component";
 
 // isOpen: boolean
 // type: ModalTypeEnum
@@ -70,9 +73,16 @@ class Modal extends Component {
                 return (<StatisticsModal {...this.props.data}
                                          onCancel={this.props.closeModal} />);
             }
-            case ModalTypeEnum.GameOver: {
-                return (<GameOverModal onClick={this.props.handleClick} />);
+            case ModalTypeEnum.GameOverLoser: {
+                return (<GameOverLoserModal onSubmit={this.props.callback} />);
             }
+            case ModalTypeEnum.FirstPlaceWinner: {
+                return (<FirstPlaceWinnerModal onClick={this.props.handleClick} />);
+            }
+            case ModalTypeEnum.SecondPlaceWinner: {
+                return (<SecondPlaceWinnerModal onClick={this.props.handleClick} />);
+            }
+
             case ModalTypeEnum.default: {
                 break;
             }

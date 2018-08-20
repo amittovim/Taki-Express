@@ -325,6 +325,8 @@ function calculateConsoleMessage(GameState, sourcePileId, destinationPileId) {
             //todo : make a nice modal for players that this player won
             GameState.currentPlayer.playerStatus = Enums.PlayerStatusEnum.FinishedPlaying;
             currentGame.winners.push(GameState.currentPlayer);
+            debugger;
+
         }
 
     // Checking if game ended
