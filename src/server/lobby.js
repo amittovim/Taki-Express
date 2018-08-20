@@ -63,6 +63,13 @@ lobbyManagement.route('/games')
         });
     });
 
+lobbyManagement.put('/games/leaving', auth.userAuthentication, dbTmp.removeUserFromGame,  (req, res) => {
+    const currentGame = req.xGame;
+    res.status(req.xStatus).send({
+        currentGame: currentGame,     // we might not need to send this here
+        sendMessage: req.xSendMessage
+    });
+});
 
 lobbyManagement.delete('/games/delete/:id', auth.userAuthentication, (req, res) => {
     const gameDeleted = dbTmp.removeGame(Number(req.params.id));

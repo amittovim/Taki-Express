@@ -16,10 +16,8 @@ class AbortGameModal extends Component {
                 <h1>Abort Game</h1>
                 <h2>What do you wanna do?</h2>
                 <div className='buttons-area'>
-                    <Button label="Exit"
+                    <Button label="Exit to Lobby"
                             onClick={this.props.onSubmit} />
-                    <Button label="Restart"
-                            onClick={this.props.onRestart} />
                     <Button label="Cancel"
                             onClick={this.props.onCancel} />
                 </div>

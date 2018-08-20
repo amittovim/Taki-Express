@@ -19,7 +19,7 @@ import ChatContainer from "./chat/chat-container.component";
 // game: Game object
 // userName: string
 // endGameHandler : Function
-
+// handleSuccessfulGameLeaving : Function
 class Game extends Component {
     render() {
         return (
@@ -29,7 +29,6 @@ class Game extends Component {
                         isGameOver={this.state.GameState.isGameOver}
                         abortGameCallback={this.handleOpenModal}
                         gameHistoryCallback={this.handleGetGameHistory}
-                        restartGameCallback={this.startGame}
                         openModalCallback={this.handleOpenModal}
                         emitAverageTime={this.updateAverageTime} />
                 <Loader isLoading={this.state.isLoading} />
@@ -42,8 +41,9 @@ class Game extends Component {
                        closeModal={this.handleCloseModal} />
                 <div className="game-body">
                     {this.state.playersCapacity > this.state.playersEnrolled
-                        ? (<WaitingMessageComponent
-                            numOfNeededPlayers={(this.state.playersCapacity - this.state.playersEnrolled)} />)
+                        ? (<WaitingMessageComponent game = {this.props.game}
+                                                    handleSuccessfulGameLeaving = {this.props.handleSuccessfulGameLeaving}
+                                                    numOfNeededPlayers={(this.state.playersCapacity - this.state.playersEnrolled)} />)
                         : ((<AdvancedBoard userName={this.props.userId}
                                            piles={this.state.GameState.piles}
                                            playersCapacity={this.state.playersCapacity}
@@ -436,7 +436,7 @@ class Game extends Component {
     getModalCallback(modalType) {
         switch (modalType) {
             case ModalTypeEnum.AbortGame: {
-                return this.exitToTakiWiki;
+                return this.removePlayerBeforeGameStarts();       //todo: this should abort the game if it hasnt started yet
             }
             default: {
                 return null;
@@ -490,6 +490,12 @@ class Game extends Component {
                 });
             })
     }
+
+    removePlayerBeforeGameStarts() {
+
+    }
 }
+
+
 
 export default Game;

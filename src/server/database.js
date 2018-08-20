@@ -4,6 +4,7 @@ module.exports = {
     getGameInfo,
     getAllGames,
     addUserToGame,
+    removeUserFromGame,
     removeGame,
     handleRequestPlayerMove,
     handleChangeColorRequest,
@@ -32,6 +33,48 @@ function addGameToGameList(req, res, next) {
         next();
     }
 }
+function removeUserFromGame(req, res, next) {
+    req.xData = JSON.parse(req.body);
+
+    let currentGame = gameList.find((game) => {
+        return game.name === req.xData.game.name;
+    });
+    if (currentGame.isActive) {
+        req.xStatus = 403;
+        req.xSendMessage = 'Game has already started! cannot remove player from game ';
+        next();
+    } else {
+        let playerSeatIndex = currentGame.GameState.players.findIndex((player) => {
+            return player.name === req.xData.user.name;
+        });
+
+        // delete the leaving player from player array
+        currentGame.GameState.players.splice(playerSeatIndex,1);
+
+        //add a free spot for a new player in this game
+        if (currentGame.playersCapacity ===2) {
+            currentGame.GameState.players.splice(1,0,'unassigned');
+        }
+        if (currentGame.playersCapacity ===3) {
+            currentGame.GameState.players.splice(2,0,'unassigned');
+        }
+        if (currentGame.playersCapacity ===4) {
+           currentGame.GameState.players.splice(3,0,'unassigned');
+        }
+        // update number of enrolled players
+        currentGame.playersEnrolled--;
+
+        req.xGame = currentGame;
+        req.xStatus = 200;
+        req.xSendMessage = 'player removed from game successfully';
+
+        next();
+    }
+
+
+
+}
+
 
 function addUserToGame(req, res, next) {
     req.xData = JSON.parse(req.body);
