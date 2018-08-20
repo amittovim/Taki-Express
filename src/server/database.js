@@ -160,14 +160,12 @@ function requestRestartGame(req, res, next) {
     if (currentGame.GameState.isGameOver) {
         currentGame.isActive = false;
         restartGame(currentGame);
-        debugger;
         newCurrentGame = getGameInfo(currentGame.id);
         newCurrentGame.restarting = true;
         let gameIndex = initGameList.findIndex((gameName) => {
             return gameName === newCurrentGame.name;
         });
         gameList[gameIndex].restarting = true;
-        debugger;
 
         req.xGameContent = newCurrentGame;
     }

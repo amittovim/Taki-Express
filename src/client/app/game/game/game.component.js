@@ -169,7 +169,7 @@ class Game extends Component {
                 // contentFromServer.GameState.consoleMessage='';
                 let historyFromServer = contentFromServer.history;
 
-                let historyFromServerObject = {'history': contentFromServer.history};
+                let historyFromServerObject = {history: contentFromServer.history};
                 let statesDifference = historyFromServer.length - this.state.history.length;
                 if (statesDifference !== 0) {
                     this.setState(() => {
@@ -222,7 +222,7 @@ class Game extends Component {
         let currentGameStateId = this.state.GameState.id;
         this.setState(() => {
             let GameState = {
-                'GameState': this.state.history[currentGameStateId],
+                GameState: this.state.history[currentGameStateId],
                 ...isLoadingStateObject
             };
             return GameState;
@@ -253,7 +253,6 @@ class Game extends Component {
 
 
     closeGameOverLoserModal() {
-        debugger;
         this.setState(() => {
             return {
                 modal: {
@@ -263,7 +262,6 @@ class Game extends Component {
                 }
             };
         }, () => {
-            debugger;
             this.props.endGameHandler();
         });
 
@@ -283,6 +281,30 @@ class Game extends Component {
     }
 
     close1stPlaceWinnerModal() {
+        this.setState(() => {
+            return {
+                modal: {
+                    isOpen: false,
+                    type: null,
+                    callback: null
+                }
+            };
+        });
+    }
+
+    open2ndPlaceWinnerModal() {
+        this.setState((prevState) => {
+            return {
+                modal: {
+                    isOpen: true,
+                    type: ModalTypeEnum.SecondPlaceWinner,
+                    callback: this.close2ndPlaceWinnerModal
+                }
+            };
+        });
+    }
+
+    close2ndPlaceWinnerModal() {
         this.setState(() => {
             return {
                 modal: {

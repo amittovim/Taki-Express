@@ -15,6 +15,7 @@ export default class GameTable extends Component {
                         <td>{game.owner.name}</td>
                         <td>{game.playersCapacity}</td>
                         <td>{game.playersEnrolled}</td>
+                        <td>{this.isBotEnabled(game)}</td>
                         <td>{game.isActive}</td>
                         <td>{this.gameStatus(game)}</td>
                         <td>
@@ -43,6 +44,7 @@ export default class GameTable extends Component {
                         <th>Owner</th>
                         <th>Players</th>
                         <th>Active Players</th>
+                        <th>BOT Player</th>
                         <th colSpan={2}>Status</th>
                         <th colSpan={3}>Buttons</th>
                     </tr>
@@ -91,6 +93,12 @@ export default class GameTable extends Component {
         return game.isActive
             ? 'Game is active'
             : `Awaiting ${game.playersCapacity - game.playersEnrolled} players`
+    }
+
+    isBotEnabled(game) {
+        return game.isBotEnabled
+            ? 'Enabled '
+            : `Disabled`
     }
 
     getGameList() {
