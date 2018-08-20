@@ -23,6 +23,7 @@ class DrawPile extends Component {
                                      card={card}
                                      hoverEnabled={index === this.props.drawPile.cards.length - 1}
                                      moveCardDriver2={this.moveCardDriver2}
+                                     DOMCoordinates={this.props.DOMCoordinates}
                         />
                     })
                 }

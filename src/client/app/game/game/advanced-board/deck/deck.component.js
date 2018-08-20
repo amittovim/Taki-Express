@@ -7,7 +7,7 @@ import DrawPile from "./draw-pile/draw-pile.component";
 // DrawPile
 // DiscardPile
 // moveCardDriver0
-
+// DOMCoordinates
 class Deck extends Component {
     constructor(props) {
         super(props);
@@ -20,10 +20,12 @@ class Deck extends Component {
                 <DiscardPile name="discardPile"
                              discardPile={this.props.discardPile}
                              moveCardDriver1={this.moveCardDriver1}
+                             DOMCoordinates={this.props.DOMCoordinates}
                 />
                 <DrawPile name="drawPile"
                           drawPile={this.props.drawPile}
                           moveCardDriver1={this.moveCardDriver1}
+                          DOMCoordinates={this.props.DOMCoordinates}
                 />
             </div>
         );

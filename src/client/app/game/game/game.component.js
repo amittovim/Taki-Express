@@ -31,31 +31,31 @@ class Game extends Component {
                         gameHistoryCallback={this.handleGetGameHistory}
                         restartGameCallback={this.startGame}
                         openModalCallback={this.handleOpenModal}
-                        emitAverageTime={this.updateAverageTime} />
-                <Loader isLoading={this.state.isLoading} />
-                <Overlay isVisible={this.state.isLoading || this.state.modal.isOpen || this.state.isGameOver} />
+                        emitAverageTime={this.updateAverageTime}/>
+                <Loader isLoading={this.state.isLoading}/>
+                <Overlay isVisible={this.state.isLoading || this.state.modal.isOpen || this.state.isGameOver}/>
                 <Modal isOpen={this.state.modal.isOpen}
                        type={this.state.modal.type}
                        callback={this.state.modal.callback}
                        restartGameCallback={this.startGame}
                        data={this.getStats()}
-                       closeModal={this.handleCloseModal} />
+                       closeModal={this.handleCloseModal}/>
                 <div className="game-body">
                     {this.state.playersCapacity > this.state.playersEnrolled
                         ? (<WaitingMessageComponent
-                            numOfNeededPlayers={(this.state.playersCapacity - this.state.playersEnrolled)} />)
+                            numOfNeededPlayers={(this.state.playersCapacity - this.state.playersEnrolled)}/>)
                         : ((<AdvancedBoard userName={this.props.userId}
                                            currentPlayerName={this.state.GameState.currentPlayer.name}
                                            piles={this.state.GameState.piles}
                                            playersCapacity={this.state.playersCapacity}
-                                           moveCardDriver={this.handlePlayMove} />))
+                                           moveCardDriver={this.handlePlayMove}/>))
                         /*moveCardDriver={this.requestPlayerMove}/>))*/
 
                     }
                 </div>
                 {/*<Console message={this.state.consoleMessage}/>*/}
                 <ChatContainer gameId={this.state.id}
-                               consoleMessage={this.state.GameState.consoleMessage} />
+                               consoleMessage={this.state.GameState.consoleMessage}/>
             </div>
         );
     }
@@ -214,16 +214,33 @@ class Game extends Component {
             ? isLoadingStateObject = {}
             : isLoadingStateObject = {'isLoading': true};
         let currentGameStateId = this.state.GameState.id;
-        this.setState(() => {
-            let GameState = {
-                'GameState': this.state.history[currentGameStateId],
-                ...isLoadingStateObject
-            };
-            return GameState;
+        let GameState = {
+            'GameState': this.state.history[currentGameStateId],
+            ...isLoadingStateObject
+        };
+        // GameState.selectedCard.animateCard()
+        this.setState((prev) => {
+            debugger;
+            return ({
+                ...prev,
+                'GameState' : {
+                    ...prev.GameState,
+                    'selectedCard': {
+                        ...prev.GameState.selectedCard,
+                        currentPositionX: (100),
+                        currentPositionY: (100)
+                    }
+                }            })
+
         }, () => {
-            if (this.state.GameState.isGameOver) {
-                this.openGameOverModal();
-            }
+            debugger;
+            this.setState(() => {
+                return GameState;
+            }, () => {
+                if (this.state.GameState.isGameOver) {
+                    this.openGameOverModal();
+                }
+            })
         });
     }
 

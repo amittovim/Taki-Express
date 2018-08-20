@@ -4,6 +4,7 @@ import Hand from "../advanced-board/hand/hand.component";
 import {PlayerEnum} from "../../../enums/player.enum";
 import Deck from "../advanced-board/deck/deck.component";
 import {PileIdEnum} from "../../../enums/pile-id.enum";
+import * as ReactDom from "react-dom";
 
 // <PROPS>
 // piles: Pile[]
@@ -19,11 +20,15 @@ class AdvancedBoard extends Component {
             thirdAreaPileId: null,
             forthAreaPileId: null,
         };
+        this.DOMCoordinates = null;
 
 
         // this.getCurrentUserPile = this.getCurrentUserPile.bind(this);
         this.moveCardDriver_1 = this.moveCardDriver_1.bind(this);
         this.checkUserOverFlow = this.checkUserOverFlow.bind(this);
+        this.updateDOMCoordinates = this.updateDOMCoordinates.bind();
+
+        this.updateDOMCoordinates();
     }
 
     render() {
@@ -35,6 +40,7 @@ class AdvancedBoard extends Component {
                     <Hand owner={this.props.piles[this.state.secondAreaPileId].ownerPlayerName}
                           pile={this.props.piles[this.state.secondAreaPileId]}
                           moveCardDriver1={this.moveCardDriver_1}
+                          DOMCoordinates={this.DOMCoordinates}
                     />
                     <div className='empty-space'></div>
                 </div>
@@ -45,6 +51,7 @@ class AdvancedBoard extends Component {
                             : (<Hand owner={this.props.piles[this.state.thirdAreaPileId].ownerPlayerName}
                                      pile={this.props.piles[this.state.thirdAreaPileId]}
                                      moveCardDriver1={this.moveCardDriver_1}
+                                     DOMCoordinates={this.DOMCoordinates}
                             />)}
                         {/*
                         <Hand owner={this.props.piles[this.state.thirdAreaPileId].ownerPlayerName}
@@ -57,6 +64,7 @@ class AdvancedBoard extends Component {
                         <Deck drawPile={this.props.piles[PileIdEnum.DrawPile]}
                               discardPile={this.props.piles[PileIdEnum.DiscardPile]}
                               moveCardDriver0={this.moveCardDriver_1}
+                              DOMCoordinates={this.DOMCoordinates}
 
                         />
                     </div>
@@ -66,6 +74,7 @@ class AdvancedBoard extends Component {
                             : (<Hand owner={this.props.piles[this.state.forthAreaPileId].ownerPlayerName}
                                      pile={this.props.piles[this.state.forthAreaPileId]}
                                      moveCardDriver1={this.moveCardDriver_1}
+                                     DOMCoordinates={this.DOMCoordinates}
                             />)}
                     </div>
                 </div>
@@ -73,6 +82,7 @@ class AdvancedBoard extends Component {
                     <Hand owner={this.props.piles[this.state.mainAreaPileId].ownerPlayerName}
                           pile={this.props.piles[this.state.mainAreaPileId]}
                           moveCardDriver1={this.moveCardDriver_1}
+                          DOMCoordinates={this.DOMCoordinates}
                     />
                 </div>
             </div>
@@ -151,6 +161,19 @@ class AdvancedBoard extends Component {
         return userPileId;
     }
 
+    updateDOMCoordinates() {
+/*
+        this.DOMCoordinates = {
+            advancedBoardDOM: ReactDom.findDOMNode(this),
+            drawPileDOM: ReactDom.findDOMNode(this).childNodes[1].childNodes[1].firstChild.firstChild.lastChild,
+            discardPileDOM: ReactDom.findDOMNode(this).childNodes[1].childNodes[1].firstChild.childNodes[1].lastChild,
+            mainAreaPileDOM: ReactDom.findDOMNode(this).lastChild.firstChild.lastChild,
+            secondAreaPileDOM: ReactDom.findDOMNode(this).firstChild.childNodes[1].lastChild,
+            thirdAreaPileDOM: ReactDom.findDOMNode(this).childNodes[1].firstChild.lastChild,
+            forthAreaPileDOM: ReactDom.findDOMNode(this).childNodes[1].lastChild.lastChild,
+        }
+*/
+    }
 }
 
 export default AdvancedBoard;

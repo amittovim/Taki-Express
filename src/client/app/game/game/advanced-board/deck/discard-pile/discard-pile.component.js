@@ -3,7 +3,7 @@ import './discard-pile.component.css'
 import Card from "../../../../../shared/components/card/card.component";
 
 // discardPile: Pile
-
+// DOMCoordinates={this.props.DOMCoordinates}
 class DiscardPile extends Component {
     constructor(props) {
         super(props);
@@ -22,6 +22,7 @@ class DiscardPile extends Component {
                         return <Card key={card.id}
                                      card={card}
                                      moveCardDriver2={this.moveCardDriver2}
+                                     DOMCoordinates={this.props.DOMCoordinates}
 
                         />
                     })

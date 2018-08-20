@@ -6,6 +6,7 @@ import {PlayerEnum} from "../../../../enums/player.enum";
 // owner: PlayerEnum
 // pile: Pile
 // moveCardDriver1
+// DOMCoordinates
 
 class Hand extends Component {
 
@@ -26,6 +27,7 @@ class Hand extends Component {
                                           card={card}
                                           hoverEnabled={true}
                                           moveCardDriver2={this.moveCardDriver2}
+                                          DOMCoordinates={this.props.DOMCoordinates}
                                     />)
                             }))
                         : null
