@@ -18,17 +18,18 @@ export default class GameTable extends Component {
                         <td>{game.isActive}</td>
                         <td>{this.gameStatus(game)}</td>
                         <td>
-                            <Button label="Delete"
-                                    onClick={() => this.handleDeleteGame(game)}
-                                    isDisabled={this.shouldDeleteBeEnabled(game) ? false : true}/>
-                        </td>
-                        <td>
                             <Button label="Join"
-                                    onClick={() => this.onClickJoinHandler(game)}/>
+                                    onClick={() => this.onClickJoinHandler(game)}
+                                    isDisabled={!this.shouldJoinBeEnabled(game)}/>
                         </td>
                         <td>
                             <Button label="View"
                                     onClick={() => this.props.handleSuccessfulGameChoosing(game)}/>
+                        </td>
+                        <td>
+                            <Button label="Delete"
+                                    onClick={() => this.handleDeleteGame(game)}
+                                    isDisabled={!this.shouldDeleteBeEnabled(game)}/>
                         </td>
                     </tr>
                 )
@@ -66,6 +67,8 @@ export default class GameTable extends Component {
         this.getGameList = this.getGameList.bind(this);
         this.handleDeleteGame = this.handleDeleteGame.bind(this);
         this.onClickJoinHandler = this.onClickJoinHandler.bind(this);
+        this.shouldDeleteBeEnabled= this.shouldDeleteBeEnabled.bind(this);
+        this.shouldJoinBeEnabled = this.shouldJoinBeEnabled.bind(this);
     }
 
     componentDidMount() {
@@ -149,5 +152,14 @@ export default class GameTable extends Component {
             return true;
         }
     }
+
+
+    shouldJoinBeEnabled(game) {
+        debugger;
+        if (game.isActive===false) {
+            return true;
+        }
+    }
+
 }
 

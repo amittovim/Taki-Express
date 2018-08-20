@@ -161,9 +161,11 @@ export default class Taki extends Component {
     }
 
     handleEndingOfGame() {
-        this.setState(() => ({
-            activeView: ViewsEnum.Lobby,
-        }));
+        setTimeout(() => {
+            this.setState(() => ({
+                activeView: ViewsEnum.Lobby,
+            }));
+        }, 2000);
 
     }
 

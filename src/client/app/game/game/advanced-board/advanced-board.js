@@ -69,7 +69,7 @@ class AdvancedBoard extends Component {
                             />)}
                     </div>
                 </div>
-                <div className='bottom-board'>
+                <div className={`bottom-board ${this.props.currentPlayerName === this.player ? 'players-turn' : ''}`}>
                     <Hand owner={this.props.piles[this.state.mainAreaPileId].ownerPlayerName}
                           pile={this.props.piles[this.state.mainAreaPileId]}
                           moveCardDriver1={this.moveCardDriver_1}
@@ -84,12 +84,22 @@ class AdvancedBoard extends Component {
     }
 
     componentWillUpdate() {
+    }
+    componentDidUpdate() {
+        debugger;
+        this.props.piles[this.state.mainAreaPileId].cards.forEach((item) => {
+            item.isHidden = false;
+        });
 
+    }
+
+
+    get player() {
+        return this.props.piles[this.state.mainAreaPileId].ownerPlayerName;
     }
 
     realignCardHands() {
         let mainArea, secondArea, thirdArea, forthArea;
-        debugger;
         let idCounter = this.props.piles.find((pile) => {
             return pile.ownerPlayerName === this.props.userName;
         }).id;
@@ -116,12 +126,12 @@ class AdvancedBoard extends Component {
         } else {
             thirdArea = null;
             forthArea = null;
-/*
-            this.setState({
-                thirdAreaPileId: null,
-                forthAreaPileId: null
-            });
-*/
+            /*
+                        this.setState({
+                            thirdAreaPileId: null,
+                            forthAreaPileId: null
+                        });
+            */
         }
         this.setState({
             mainAreaPileId: mainArea,
@@ -130,10 +140,9 @@ class AdvancedBoard extends Component {
             forthAreaPileId: forthArea
         }, () => {
             // reveal the cards of the main player
-            this.props.piles[this.state.mainAreaPileId].cards.forEach((item) => {
-                item.isHidden = false;
-            });
-
+            // this.props.piles[this.state.mainAreaPileId].cards.forEach((item) => {
+            //     item.isHidden = false;
+            // });
         });
     }
 

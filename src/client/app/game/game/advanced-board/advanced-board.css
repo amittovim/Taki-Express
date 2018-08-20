@@ -61,7 +61,7 @@
     flex-direction: column;
 }
 
-.bottom-board .card-component {
+.players-turn .card-component {
     pointer-events: initial;
 }
 

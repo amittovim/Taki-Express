@@ -45,6 +45,7 @@ class Game extends Component {
                                                     handleSuccessfulGameLeaving = {this.props.handleSuccessfulGameLeaving}
                                                     numOfNeededPlayers={(this.state.playersCapacity - this.state.playersEnrolled)} />)
                         : ((<AdvancedBoard userName={this.props.userId}
+                                           currentPlayerName={this.state.GameState.currentPlayer.name}
                                            piles={this.state.GameState.piles}
                                            playersCapacity={this.state.playersCapacity}
                                            moveCardDriver={this.handlePlayMove} />))
@@ -137,6 +138,7 @@ class Game extends Component {
     componentDidMount() {
 
     }
+
     componentWillReceiveProps() {
     }
 
@@ -145,6 +147,7 @@ class Game extends Component {
             this.props.endGameHandler();
         }
     }
+
     componentDidUpdate() {
     }
 
@@ -217,8 +220,37 @@ class Game extends Component {
                 ...isLoadingStateObject
             };
             return GameState;
+        }, () => {
+            if (this.state.GameState.isGameOver) {
+                this.openGameOverModal();
+            }
         });
     }
+
+    openGameOverModal() {
+        this.setState((prevState) => {
+            return {
+                modal: {
+                    isOpen: true,
+                    type: ModalTypeEnum.GameOver,
+                    callback: this.closeGameOverModal
+                }
+            };
+        });
+    }
+
+    closeGameOverModal() {
+        this.setState(() => {
+            return {
+                modal: {
+                    isOpen: false,
+                    type: null,
+                    callback: null
+                }
+            };
+        });
+    }
+
 
     fetchGameContent() {
         return fetch('/game/' + this.state.id, {method: 'GET', credentials: 'include'})
@@ -285,7 +317,7 @@ class Game extends Component {
         fetch('/game/' + this.state.id, {method: 'PUT', body: body, credentials: 'include'})
             .then(res => {
                 (!res.ok)
-                    ? console.log(`'Failed to move card in game named ${this.state.game.name}! response content is: `, res)
+                    ? console.log(`'Failed to move card in game named ${this.state.name}! response content is: `, res)
                     : res.json();
             })
             .then(content => {
@@ -304,9 +336,11 @@ class Game extends Component {
         const body = {cardId, cardColor};
         fetch('/game/changeColor/' + gameId, {method: 'PUT', body: JSON.stringify(body), credentials: 'include'})
             .then(res => {
-                (!res.ok)
-                    ? console.log(`'Failed to change card color in the game named ${this.state.game.name}! response content is: `, res)
-                    : res.json();
+                if (!res.ok) {
+                    console.log(`'Failed to change card color in a game named ${this.state.name}!`);
+                    throw res;
+                }
+                return res;
             })
             .then(content => { // what ever you want to do with the positive response
                 this.requestPlayerMove(cardId);
@@ -363,7 +397,7 @@ class Game extends Component {
         }
     */
 
-    // Stats:
+// Stats:
 
     getStats() {
         const data = {
@@ -388,7 +422,10 @@ class Game extends Component {
         this.setState((prev) => {
             return (
                 {
-                    /*GameState: {consoleMessage: 'illegal move... try again ' }*/          //TODO: fix this line so console will show error
+                    ...prev,
+                    GameState: {
+                        ...prev.GameState,
+                        consoleMessage: 'illegal move... try again ' }       //TODO: fix this line so console will show error
                 });
         });
     }
