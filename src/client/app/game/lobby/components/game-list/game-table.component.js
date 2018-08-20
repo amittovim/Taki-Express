@@ -35,6 +35,7 @@ export default class GameTable extends Component {
 
             return (
                 <table className="games-table-component">
+                    <tbody>
                     <tr>
                         <th>Name</th>
                         <th>Owner</th>
@@ -44,6 +45,7 @@ export default class GameTable extends Component {
                         <th colSpan={3}>Buttons</th>
                     </tr>
                     {gameItems}
+                    </tbody>
                 </table>
                 // <ul className="game-list-component">
                 //     {gameItems}
@@ -109,6 +111,7 @@ export default class GameTable extends Component {
 
     handleDeleteGame(gameId) {
         // TODO: Amit: only if game is empty and you are the owner
+        debugger;
         const confirmation = confirm('are you sure?');
         if (confirmation) {
             return fetch('/lobby/games/delete/' + gameId, {method: 'DELETE', credentials: 'include'})
