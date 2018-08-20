@@ -106,7 +106,6 @@ class Game extends Component {
 
 
         this.updateSelectedCard = this.updateSelectedCard.bind(this);
-
         this.requestMoveCard = this.requestMoveCard.bind(this);
         this.handleIllegalMove = this.handleIllegalMove.bind(this);
         this.handleOpenModal = this.handleOpenModal.bind(this);
@@ -114,29 +113,30 @@ class Game extends Component {
         this.humanMoveCardHandler = this.humanMoveCardHandler.bind(this);
         this.updateAverageTime = this.updateAverageTime.bind(this);
         this.handleGetGameHistory = this.handleGetGameHistory.bind(this);
-        // this.startGame = this.startGame.bind(this);
         this.processStateChanges = this.processStateChanges.bind(this);
-
 
         this.handlePlayMove = this.handlePlayMove.bind(this);
         this.requestCardChangeColor = this.requestCardChangeColor.bind(this);
         this.requestPlayerMove = this.requestPlayerMove.bind(this);
-        this.getGameContent = this.getGameContent.bind(this);
+        //this.getGameContent = this.getGameContent.bind(this);
         this.openColorPicker = this.openColorPicker.bind(this);
         this.handleChangeColor = this.handleChangeColor.bind(this);
-        this.updateGameStateFromHistory = this.updateGameStateFromHistory.bind(this);
+        //this.updateGameStateFromHistory = this.updateGameStateFromHistory.bind(this);
         //this.findCardPileByCardId = this.findCardPileByCardId.bind(this);
         //this.getIsMoveLegal = this.getIsMoveLegal.bind(this);
         this.getCardById = this.getCardById.bind(this);
-
+        this.getGameHistory =this.getGameHistory.bind(this);
         this.closeGameOverLoserModal = this.closeGameOverLoserModal.bind(this);
         this.openGameOverLoserModal = this.openGameOverLoserModal.bind(this);
         this.close1stPlaceWinnerModal = this.close1stPlaceWinnerModal.bind(this);
         this.open1stPlaceWinnerModal = this.open1stPlaceWinnerModal.bind(this);
         // this.closeGameOverLoserModal = this.closeGameOverLoserModal.bind(this);
         // this.openGameOverLoserModal = this.openGameOverLoserModal.bind(this);
-        this.getGameContent();
+
+        this.getGameHistory();
+       // this.getGameContent();
     }
+
 
     componentWillMount() {
     }
@@ -149,71 +149,142 @@ class Game extends Component {
     }
 
     componentWillUpdate() {
-        // if (this.state.GameState.isGameOver) {
-        //     this.props.endGameHandler();
-        // }
+        if (this.state.GameState.isGameOver) {
+            this.openGameOverLoserModal();
+        }
+        else if (this.state.winners.length === 1 && this.state.winners[0].name === this.state.GameState.currentPlayer.name) {
+            debugger;
+            this.open1stPlaceWinnerModal();
+        }
+        else if (this.state.winners.length === 2 && this.state.winners[1].name === this.state.GameState.currentPlayer.name) {
+            this.open2ndPlaceWinnerModal();
+        }
     }
 
-    componentDidUpdate() {
+    componentDidUpdate(nextProps, nextState) {
+        this.stateUpdateTimeoutId = setTimeout(() => {
+            if (this.state.nextStateId <= this.state.history.length - 1) {
+                const nextStateUpdate = this.state.history[this.state.nextStateId];
+                this.setState(() => ({
+                    GameState: nextStateUpdate,
+                    nextStateId: this.state.nextStateId + 1
+                }));
+            } else {
+                clearTimeout(this.stateUpdateTimeoutId);
+                this.getCurrentGameState();
+            }
+        }, 300);
     }
+
 
     componentWillUnmount() {
         if (this.timeoutId) {
             clearTimeout(this.timeoutId);
         }
+        if (this.timeoutHistoryId) {
+            clearTimeout(this.timeoutHistoryId);
+        }
+
+        clearTimeout(this.stateUpdateTimeoutId);
     }
 
-    getGameContent() {
-        this.fetchGameContent()
-            .then(contentFromServer => {
-                // contentFromServer.GameState.consoleMessage='';
-                let historyFromServer = contentFromServer.history;
+    getGameHistory() {
+        this.fetchGameHistory()
+            .then(gameHistory => {
 
-                let historyFromServerObject = {history: contentFromServer.history};
-                let statesDifference = historyFromServer.length - this.state.history.length;
-                debugger;
-                if (statesDifference !== 0) {
-                    this.setState(() => {
-                        return historyFromServerObject;
-                    }, () => {
-                        let intervalId = setInterval(() => {
-                            this.updateGameStateFromHistory();
-                            if (--statesDifference === 0) {
-                                window.clearInterval(intervalId);
-
-                                this.setState(() => {
-                                    return ({isLoading: false});
-                                }, () => {
-                                    this.setState(() => {
-                                        return ({
-                                            GameState: {
-                                                currentPlayer: contentFromServer.GameState.currentPlayer,
-                                                piles: contentFromServer.GameState.piles
-                                            },
-                                            ...contentFromServer
-                                        });
-                                    }, () => {
-                                        if (this.state.GameState.isGameOver) {
-                                            this.setState(() => {
-                                                return ({
-                                                    isActive: false
-                                                });
-                                            })
-                                        }
-                                    });
-                                });
-
-                            }
-                        }, 300);
-                    });
-                }
-
-            })
-            .catch(err => {
-                throw err
+                this.setState({history: gameHistory, nextStateId: 0, isLoading: true})
             });
     }
 
+    getCurrentGameState() {
+        this.fetchGameContent()
+            .then(game => {
+                game.GameState.consoleMessage = '';
+                this.setState(prevState => ({
+                    GameState: game.GameState,
+                    isLoading: false,
+                    isActive: !prevState.GameState.isGameOver
+                }));
+            });
+    }
+
+    fetchGameContent() {
+        return fetch('/game/' + this.state.id, {method: 'GET', credentials: 'include'})
+            .then((res) => {
+                if (!res.ok) {
+                    throw res;
+                }
+                this.timeoutId = setTimeout(this.getGameContent, 1500);
+                return res.json();
+            });
+    }
+
+    fetchGameHistory() {
+        return fetch('/game/history/' + this.state.id, {method: 'GET', credentials: 'include'})
+            .then((res) => {
+                if (!res.ok) {
+                    throw res;
+                }
+                this.timeoutHistoryId = setTimeout(this.getGameContent, 1500);
+                return res.json();
+            });
+    }
+
+
+    /*
+        getGameContent() {
+            this.fetchGameContent()
+                .then(contentFromServer => {
+                    // contentFromServer.GameState.consoleMessage='';
+                    let historyFromServer = contentFromServer.history;
+
+                    let historyFromServerObject = {history: contentFromServer.history};
+                    let statesDifference = historyFromServer.length - this.state.history.length;
+                    debugger;
+                    if (statesDifference !== 0) {
+                        this.setState(() => {
+                            return historyFromServerObject;
+                        }, () => {
+                            let intervalId = setInterval(() => {
+                                this.updateGameStateFromHistory();
+                                if (--statesDifference === 0) {
+                                    window.clearInterval(intervalId);
+
+                                    this.setState(() => {
+                                        return ({isLoading: false});
+                                    }, () => {
+                                        this.setState(() => {
+                                            return ({
+                                                GameState: {
+                                                    currentPlayer: contentFromServer.GameState.currentPlayer,
+                                                    piles: contentFromServer.GameState.piles
+                                                },
+                                                ...contentFromServer
+                                            });
+                                        }, () => {
+                                            if (this.state.GameState.isGameOver) {
+                                                this.setState(() => {
+                                                    return ({
+                                                        isActive: false
+                                                    });
+                                                })
+                                            }
+                                        });
+                                    });
+
+                                }
+                            }, 300);
+                        });
+                    }
+
+                })
+                .catch(err => {
+                    throw err
+                });
+        }
+    */
+
+/*
     updateGameStateFromHistory() {
         let isLoadingStateObject;
         (this.state.isLoading === true)
@@ -228,131 +299,12 @@ class Game extends Component {
             return GameState;
         }, () => {
             debugger;
-            if (this.state.GameState.isGameOver) {
-                this.openGameOverLoserModal();
-            }
-            else if (this.state.winners.length === 1 && this.state.winners[0].name === this.state.GameState.currentPlayer.name) {
-                debugger;
-                this.open1stPlaceWinnerModal();
-            }
-            else if (this.state.winners.length === 2 && this.state.winners[1].name === this.state.GameState.currentPlayer.name) {
-                this.open2ndPlaceWinnerModal();
-            }
         });
     }
-
-    openGameOverLoserModal() {
-        this.setState((prevState) => {
-            return {
-                modal: {
-                    isOpen: true,
-                    type: ModalTypeEnum.GameOverLoser,
-                    callback: this.closeGameOverLoserModal
-                }
-            };
-        });
-    }
+*/
 
 
-    closeGameOverLoserModal() {
-        this.setState(() => {
-            return {
-                modal: {
-                    isOpen: false,
-                    type: null,
-                    callback: null
-                }
-            };
-        }, () => {
-            this.props.endGameHandler();
-        });
 
-
-    }
-
-    open1stPlaceWinnerModal() {
-        this.setState((prevState) => {
-            return {
-                modal: {
-                    isOpen: true,
-                    type: ModalTypeEnum.FirstPlaceWinner,
-                    callback: this.close1stPlaceWinnerModal
-                }
-            };
-        });
-    }
-
-    close1stPlaceWinnerModal() {
-        this.setState(() => {
-            return {
-                modal: {
-                    isOpen: false,
-                    type: null,
-                    callback: null
-                }
-            };
-        });
-    }
-
-    open2ndPlaceWinnerModal() {
-        this.setState((prevState) => {
-            return {
-                modal: {
-                    isOpen: true,
-                    type: ModalTypeEnum.SecondPlaceWinner,
-                    callback: this.close2ndPlaceWinnerModal
-                }
-            };
-        });
-    }
-
-    close2ndPlaceWinnerModal() {
-        this.setState(() => {
-            return {
-                modal: {
-                    isOpen: false,
-                    type: null,
-                    callback: null
-                }
-            };
-        });
-    }
-
-    openGameOverModal() {
-        this.setState((prevState) => {
-            return {
-                modal: {
-                    isOpen: true,
-                    type: ModalTypeEnum.GameOver,
-                    callback: this.closeGameOverModal
-                }
-            };
-        });
-    }
-
-    closeGameOverModal() {
-        this.setState(() => {
-            return {
-                modal: {
-                    isOpen: false,
-                    type: null,
-                    callback: null
-                }
-            };
-        });
-    }
-
-
-    fetchGameContent() {
-        return fetch('/game/' + this.state.id, {method: 'GET', credentials: 'include'})
-            .then((res) => {
-                if (!res.ok) {
-                    throw res;
-                }
-                this.timeoutId = setTimeout(this.getGameContent, 1500);
-                return res.json();
-            });
-    }
 
     getCardById(cardId) {
         const GameState = this.state.GameState;
@@ -477,16 +429,111 @@ class Game extends Component {
         });
     }
 
-    /*
-        startGame() {
-            this.handleCloseModal();
-            this.setState(GameApiService.getInitialState(), () => {
-                if (this.state.currentPlayer === PlayerEnum.Bot) {
-                    this.requestStateUpdate();
+    openGameOverLoserModal() {
+        this.setState((prevState) => {
+            return {
+                modal: {
+                    isOpen: true,
+                    type: ModalTypeEnum.GameOverLoser,
+                    callback: this.closeGameOverLoserModal
                 }
-            });
-        }
-    */
+            };
+        });
+    }
+
+
+    closeGameOverLoserModal() {
+        this.setState(() => {
+            return {
+                modal: {
+                    isOpen: false,
+                    type: null,
+                    callback: null
+                }
+            };
+        }, () => {
+            this.props.endGameHandler();
+        });
+
+
+    }
+
+    open1stPlaceWinnerModal() {
+        this.setState((prevState) => {
+            return {
+                modal: {
+                    isOpen: true,
+                    type: ModalTypeEnum.FirstPlaceWinner,
+                    callback: this.close1stPlaceWinnerModal
+                }
+            };
+        });
+    }
+
+    close1stPlaceWinnerModal() {
+        this.setState(() => {
+            return {
+                modal: {
+                    isOpen: false,
+                    type: null,
+                    callback: null
+                }
+            };
+        });
+    }
+
+    open2ndPlaceWinnerModal() {
+        this.setState((prevState) => {
+            return {
+                modal: {
+                    isOpen: true,
+                    type: ModalTypeEnum.SecondPlaceWinner,
+                    callback: this.close2ndPlaceWinnerModal
+                }
+            };
+        });
+    }
+
+    close2ndPlaceWinnerModal() {
+        this.setState(() => {
+            return {
+                modal: {
+                    isOpen: false,
+                    type: null,
+                    callback: null
+                }
+            };
+        });
+    }
+
+    // openGameOverModal() {
+    //     this.setState((prevState) => {
+    //         return {
+    //             modal: {
+    //                 isOpen: true,
+    //                 type: ModalTypeEnum.GameOver,
+    //                 callback: this.closeGameOverModal
+    //             }
+    //         };
+    //     });
+    // }
+    //
+    // closeGameOverModal() {
+    //     this.setState(() => {
+    //         return {
+    //             modal: {
+    //                 isOpen: false,
+    //                 type: null,
+    //                 callback: null
+    //             }
+    //         };
+    //     });
+    // }
+    //
+
+
+
+
 
 // Stats:
 
