@@ -9,7 +9,8 @@ import ContentCard from "../../shared/components/content-card/content-card.compo
 
 // <PROPS>
 // username: string;
-
+//handleSuccessfulGameChoosing : function
+//handleLogout : function
 class Lobby extends Component {
     constructor(props) {
         super(props);
@@ -28,7 +29,8 @@ class Lobby extends Component {
                         <UsersContainer />
                     </ContentCard>
                     <ContentCard>
-                        <GamesContainer successfulGameChoosingHandler={this.props.handleSuccessfulGameChoosing} />
+                        <GamesContainer username={this.props.username}
+                                        handleSuccessfulGameChoosing={this.props.handleSuccessfulGameChoosing} />
                         <div className="new-game-button">
                             <Button label={'CREATE NEW GAME'}
                                     onClick={this.handleCreateNewGame}

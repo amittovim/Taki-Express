@@ -3,8 +3,8 @@ import Button from "../../../../shared/components/button/button.component";
 import './game-table.component.css';
 
 // Props :
-// successfulGameChoosingHandler
-
+// handleSuccessfulGameChoosing
+// username
 export default class GameTable extends Component {
     render() {
         if (this.state.gameList.length > 0) {
@@ -19,15 +19,16 @@ export default class GameTable extends Component {
                         <td>{this.gameStatus(game)}</td>
                         <td>
                             <Button label="Delete"
-                                    onClick={this.handleDeleteGame} />
+                                    onClick={() => this.handleDeleteGame(game)}
+                                    isDisabled={this.shouldDeleteBeEnabled(game) ? false : true}/>
                         </td>
                         <td>
                             <Button label="Join"
-                                    onClick={this.props.successfulGameChoosingHandler} />
+                                    onClick={() => this.onClickJoinHandler(game)}/>
                         </td>
                         <td>
                             <Button label="View"
-                                    onClick={this.props.successfulGameChoosingHandler} />
+                                    onClick={() => this.props.handleSuccessfulGameChoosing(game)}/>
                         </td>
                     </tr>
                 )
@@ -64,7 +65,7 @@ export default class GameTable extends Component {
 
         this.getGameList = this.getGameList.bind(this);
         this.handleDeleteGame = this.handleDeleteGame.bind(this);
-
+        this.onClickJoinHandler = this.onClickJoinHandler.bind(this);
     }
 
     componentDidMount() {
@@ -109,12 +110,12 @@ export default class GameTable extends Component {
             });
     }
 
-    handleDeleteGame(gameId) {
+    handleDeleteGame(game) {
         // TODO: Amit: only if game is empty and you are the owner
         debugger;
         const confirmation = confirm('are you sure?');
         if (confirmation) {
-            return fetch('/lobby/games/delete/' + gameId, {method: 'DELETE', credentials: 'include'})
+            return fetch('/lobby/games/delete/' + game.id, {method: 'DELETE', credentials: 'include'})
                 .then((res) => {
                     if (!res.ok) {
                         throw res;
@@ -131,5 +132,22 @@ export default class GameTable extends Component {
         }
     }
 
+    onClickJoinHandler(game) {
+        if (game.isActive === true) {
+            return null;
+        } else {
+            this.props.handleSuccessfulGameChoosing(game);
+        }
+
+    }
+
+    shouldDeleteBeEnabled(game) {
+        debugger;
+        if ((game.owner.name === this.props.username) && (game.isActive !== true)
+            && ((game.isBotEnabled === false && game.playersEnrolled === 0) ||
+                (game.isBotEnabled === true && game.playersEnrolled === 1))) {
+            return true;
+        }
+    }
 }
 
