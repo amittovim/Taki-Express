@@ -171,10 +171,10 @@ class Game extends Component {
 
                 let historyFromServerObject = {history: contentFromServer.history};
                 let statesDifference = historyFromServer.length - this.state.history.length;
+                debugger;
                 if (statesDifference !== 0) {
                     this.setState(() => {
                         return historyFromServerObject;
-                        //return contentFromServer;
                     }, () => {
                         let intervalId = setInterval(() => {
                             this.updateGameStateFromHistory();
@@ -189,7 +189,6 @@ class Game extends Component {
                                             GameState: {
                                                 currentPlayer: contentFromServer.GameState.currentPlayer,
                                                 piles: contentFromServer.GameState.piles
-
                                             },
                                             ...contentFromServer
                                         });
