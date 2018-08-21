@@ -206,15 +206,18 @@ class Game extends Component {
                 game.GameState.consoleMessage = '';
                 this.setState(prevState => {
                     if (!prevState.GameState.isGameOver && game.GameState.isGameOver) {
-                            this.openGameOverLoserModal();
+
+                        this.openGameOverLoserModal(game.GameState.loser.name);
+                    }
+                    else if (prevState.winners.length !==game.winners.length) {
+                        if ((game.winners.length === 1) && (game.winners[0].name === game.GameState.currentPlayer.name)) {
+                            debugger;
+                            this.open1stPlaceWinnerModal(game.winners[0].name);
                         }
-                        // else if (this.state.winners.length === 1 && this.state.winners[0].name === this.state.GameState.currentPlayer.name) {
-                        //     debugger;
-                        //     this.open1stPlaceWinnerModal();
-                        // }
-                        // else if (this.state.winners.length === 2 && this.state.winners[1].name === this.state.GameState.currentPlayer.name) {
-                        //     this.open2ndPlaceWinnerModal();
-                        // }
+                        else if (game.winners.length === 2 && game.winners[1].name === this.state.GameState.currentPlayer.name) {
+                            this.open2ndPlaceWinnerModal(game.winners[1].name);
+                        }
+                    }
                     return ({
                     ...game,
                     GameState: game.GameState,
