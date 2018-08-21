@@ -26,13 +26,7 @@ class ModalFrame extends Component {
         super(props);
         this.state = {
             errMessage: ''
-        }
-
-        this.handleLogin = this.handleLogin.bind(this);
-    }
-
-    handleLogin() {
-        
+        };
     }
 }
 

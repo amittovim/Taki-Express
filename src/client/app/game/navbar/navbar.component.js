@@ -23,7 +23,6 @@ class Navbar extends Component {
             restart: false
         };
 
-        this.handleAbortGame = this.handleAbortGame.bind(this);
         this.getPreviousMove = this.getPreviousMove.bind(this);
         this.getNextMove = this.getNextMove.bind(this);
         this.handleRestartGame = this.handleRestartGame.bind(this);
@@ -80,19 +79,12 @@ class Navbar extends Component {
                         </div>
                     </div>)
                     : (<div className="nav-buttons">
-                        <Button label="Abort"
-                                onClick={this.handleAbortGame} />
-
                         <Button label="Stats"
                                 onClick={this.handleShowStats} />
                     </div>)
                 }
             </div>
         )
-    }
-
-    handleAbortGame() {
-        this.props.openModalCallback(ModalTypeEnum.AbortGame);
     }
 
     handleShowStats() {

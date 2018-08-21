@@ -30,32 +30,33 @@ class Game extends Component {
                         abortGameCallback={this.handleOpenModal}
                         gameHistoryCallback={this.handleGetGameHistory}
                         openModalCallback={this.handleOpenModal}
-                        emitAverageTime={this.updateAverageTime}/>
-                <Loader isLoading={this.state.isLoading}/>
-                <Overlay isVisible={this.state.isLoading || this.state.modal.isOpen || this.state.isGameOver}/>
+                        emitAverageTime={this.updateAverageTime} />
+                <Loader isLoading={this.state.isLoading} />
+                <Overlay isVisible={this.state.isLoading || this.state.modal.isOpen || this.state.isGameOver} />
                 <Modal isOpen={this.state.modal.isOpen}
                        type={this.state.modal.type}
                        callback={this.state.modal.callback}
                        restartGameCallback={this.startGame}
-                       data={this.getStats()}
-                       closeModal={this.handleCloseModal}/>
+                    // data={this.getStats()}
+                       data={this.state.modal.data}
+                       closeModal={this.handleCloseModal} />
                 <div className="game-body">
                     {this.state.playersCapacity > this.state.playersEnrolled
                         ? (<WaitingMessageComponent game={this.props.game}
                                                     handleSuccessfulGameLeaving={this.props.handleSuccessfulGameLeaving}
-                                                    numOfNeededPlayers={(this.state.playersCapacity - this.state.playersEnrolled)}/>)
+                                                    numOfNeededPlayers={(this.state.playersCapacity - this.state.playersEnrolled)} />)
                         : ((<AdvancedBoard userName={this.props.userId}
                                            currentPlayerName={this.state.GameState.currentPlayer.name}
                                            piles={this.state.GameState.piles}
                                            playersCapacity={this.state.playersCapacity}
-                                           moveCardDriver={this.handlePlayMove}/>))
+                                           moveCardDriver={this.handlePlayMove} />))
                         /*moveCardDriver={this.requestPlayerMove}/>))*/
 
                     }
                 </div>
                 {/*<Console message={this.state.consoleMessage}/>*/}
                 <ChatContainer gameId={this.state.id}
-                               consoleMessage={this.state.GameState.consoleMessage}/>
+                               consoleMessage={this.state.GameState.consoleMessage} />
             </div>
         );
     }
@@ -119,22 +120,22 @@ class Game extends Component {
         this.requestCardChangeColor = this.requestCardChangeColor.bind(this);
         this.requestPlayerMove = this.requestPlayerMove.bind(this);
         //this.getGameContent = this.getGameContent.bind(this);
-        this.openColorPicker = this.openColorPicker.bind(this);
+        this.openColorPickerModal = this.openColorPickerModal.bind(this);
         this.handleChangeColor = this.handleChangeColor.bind(this);
         //this.updateGameStateFromHistory = this.updateGameStateFromHistory.bind(this);
         //this.findCardPileByCardId = this.findCardPileByCardId.bind(this);
         //this.getIsMoveLegal = this.getIsMoveLegal.bind(this);
         this.getCardById = this.getCardById.bind(this);
-        this.getGameHistory =this.getGameHistory.bind(this);
-        this.closeGameOverLoserModal = this.closeGameOverLoserModal.bind(this);
+        this.getGameHistory = this.getGameHistory.bind(this);
+
+        // Modals:
         this.openGameOverLoserModal = this.openGameOverLoserModal.bind(this);
-        this.close1stPlaceWinnerModal = this.close1stPlaceWinnerModal.bind(this);
-        this.open1stPlaceWinnerModal = this.open1stPlaceWinnerModal.bind(this);
-        // this.closeGameOverLoserModal = this.closeGameOverLoserModal.bind(this);
-        // this.openGameOverLoserModal = this.openGameOverLoserModal.bind(this);
+        this.closeGameOverLoserModal = this.closeGameOverLoserModal.bind(this);
+        this.openWinnerModal = this.openWinnerModal.bind(this);
+        this.closeWinnerModal = this.closeWinnerModal.bind(this);
 
         this.getGameHistory();
-       // this.getGameContent();
+        // this.getGameContent();
     }
 
 
@@ -148,17 +149,25 @@ class Game extends Component {
     componentWillReceiveProps() {
     }
 
-    componentWillUpdate() {
-        // if (this.state.GameState.isGameOver) {
-        //     this.openGameOverLoserModal();
-        // }
-        // else if (this.state.winners.length === 1 && this.state.winners[0].name === this.state.GameState.currentPlayer.name) {
-        //     this.open1stPlaceWinnerModal();
-        // }
-        // else if (this.state.winners.length === 2 && this.state.winners[1].name === this.state.GameState.currentPlayer.name) {
-        //     this.open2ndPlaceWinnerModal();
-        // }
+    componentWillUpdate(prevState) {
+        if (!prevState.game.GameState.isGameOver && this.props.game.GameState.isGameOver) {
+            this.openGameOverLoserModal(this.props.game.GameState.loser);
+        }
+        else if (prevState.game.winners.length < this.props.game.winners.length) {
+            const winningPlace = this.props.game.winners.length;
+            this.openWinnerModal(winningPlace);
+        }
     }
+
+    // if (this.state.GameState.isGameOver) {
+    //     this.openGameOverLoserModal();
+    // }
+    // else if (this.state.winners.length === 1 && this.state.winners[0].name === this.state.GameState.currentPlayer.name) {
+    //     this.openWinnerModal();
+    // }
+    // else if (this.state.winners.length === 2 && this.state.winners[1].name === this.state.GameState.currentPlayer.name) {
+    //     this.open2ndPlaceWinnerModal();
+    // }
 
     componentDidUpdate(nextProps, nextState) {
         this.stateUpdateTimeoutId = setTimeout(() => {
@@ -202,25 +211,13 @@ class Game extends Component {
         this.fetchGameContent()
             .then(game => {
                 game.GameState.consoleMessage = '';
-                this.setState(prevState => {
-                    if (!prevState.GameState.isGameOver && game.GameState.isGameOver) {
 
-                        this.openGameOverLoserModal(game.GameState.loser);
-                    }
-                    else if (prevState.winners.length !==game.winners.length) {
-                        if (game.winners.length === 1  ) {
-                            this.open1stPlaceWinnerModal(game.winners[0].name);
-                        }
-                        else if (game.winners.length === 2 ) {
-                            this.open2ndPlaceWinnerModal(game.winners[1].name);
-                        }
-                    }
-                    return ({
+                this.setState({
                     ...game,
                     GameState: game.GameState,
                     isLoading: false,
                     //isActive: !prevState.GameState.isGameOver
-                })});
+                });
             });
     }
 
@@ -299,25 +296,23 @@ class Game extends Component {
         }
     */
 
-/*
-    updateGameStateFromHistory() {
-        let isLoadingStateObject;
-        (this.state.isLoading === true)
-            ? isLoadingStateObject = {}
-            : isLoadingStateObject = {'isLoading': true};
-        let currentGameStateId = this.state.GameState.id;
-        this.setState(() => {
-            let GameState = {
-                GameState: this.state.history[currentGameStateId],
-                ...isLoadingStateObject
-            };
-            return GameState;
-        }, () => {
-        });
-    }
-*/
-
-
+    /*
+        updateGameStateFromHistory() {
+            let isLoadingStateObject;
+            (this.state.isLoading === true)
+                ? isLoadingStateObject = {}
+                : isLoadingStateObject = {'isLoading': true};
+            let currentGameStateId = this.state.GameState.id;
+            this.setState(() => {
+                let GameState = {
+                    GameState: this.state.history[currentGameStateId],
+                    ...isLoadingStateObject
+                };
+                return GameState;
+            }, () => {
+            });
+        }
+    */
 
 
     getCardById(cardId) {
@@ -354,7 +349,7 @@ class Game extends Component {
                     return this.handleIllegalMove();
                 } else if (card.action === CardActionEnum.ChangeColor &&
                     this.state.GameState.piles[card.parentPileId].isHand === true) {
-                    this.openColorPicker(card);
+                    this.openColorPickerModal(card);
                 } else {
                     this.requestPlayerMove(cardId);
                 }
@@ -427,7 +422,9 @@ class Game extends Component {
         });
     }
 
-    openColorPicker(card) {
+// MODALS:
+
+    openColorPickerModal(card) {
         this.card = card;
         this.setState((prevState) => {
             return {
@@ -449,103 +446,58 @@ class Game extends Component {
                 modal: {
                     isOpen: true,
                     type: ModalTypeEnum.GameOverLoser,
-                    callback: this.closeGameOverLoserModal
+                    callback: this.closeGameOverLoserModal,
+                    data: {
+                        playerName: this.state.GameState.currentPlayer.name
+                    }
                 }
             };
         });
     }
-
 
     closeGameOverLoserModal() {
         this.setState(() => {
-    return {
-    modal: {
-        isOpen: false,
-        type: null,
-        callback: null
+            return {
+                modal: {
+                    isOpen: false,
+                    type: null,
+                    callback: null,
+                    data: null
+                }
+            };
+        }, () => {
+            this.props.endGameHandler();
+        });
     }
-};
-}, () => {
-    this.props.endGameHandler();
-});
-}
 
-    open1stPlaceWinnerModal() {
+    openWinnerModal(winningPlace) {
         this.setState((prevState) => {
             return {
                 modal: {
                     isOpen: true,
-                    type: ModalTypeEnum.FirstPlaceWinner,
-                    callback: this.close1stPlaceWinnerModal
+                    type: ModalTypeEnum.Winner,
+                    callback: this.closeWinnerModal,
+                    data: {
+                        winningPlace,
+                        playerName: this.state.GameState.currentPlayer.name
+                    }
                 }
             };
         });
     }
 
-    close1stPlaceWinnerModal() {
+    closeWinnerModal() {
         this.setState(() => {
             return {
                 modal: {
                     isOpen: false,
                     type: null,
-                    callback: null
+                    callback: null,
+                    data: null
                 }
             };
         });
     }
-
-    open2ndPlaceWinnerModal() {
-        this.setState((prevState) => {
-            return {
-                modal: {
-                    isOpen: true,
-                    type: ModalTypeEnum.SecondPlaceWinner,
-                    callback: this.close2ndPlaceWinnerModal
-                }
-            };
-        });
-    }
-
-    close2ndPlaceWinnerModal() {
-        this.setState(() => {
-            return {
-                modal: {
-                    isOpen: false,
-                    type: null,
-                    callback: null
-                }
-            };
-        });
-    }
-
-    // openGameOverModal() {
-    //     this.setState((prevState) => {
-    //         return {
-    //             modal: {
-    //                 isOpen: true,
-    //                 type: ModalTypeEnum.GameOver,
-    //                 callback: this.closeGameOverModal
-    //             }
-    //         };
-    //     });
-    // }
-    //
-    // closeGameOverModal() {
-    //     this.setState(() => {
-    //         return {
-    //             modal: {
-    //                 isOpen: false,
-    //                 type: null,
-    //                 callback: null
-    //             }
-    //         };
-    //     });
-    // }
-    //
-
-
-
-
 
 // Stats:
 

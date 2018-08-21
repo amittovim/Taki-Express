@@ -21,16 +21,16 @@ export default class GameTable extends Component {
                         <td>
                             <Button label="Join"
                                     onClick={() => this.onClickJoinHandler(game)}
-                                    isDisabled={!this.shouldJoinBeEnabled(game)}/>
+                                    isDisabled={!this.shouldJoinBeEnabled(game)} />
                         </td>
                         <td>
                             <Button label="View"
-                                    onClick={() => this.props.handleSuccessfulGameChoosing(game)}/>
+                                    isDisabled={true} />
                         </td>
                         <td>
                             <Button label="Delete"
                                     onClick={() => this.handleDeleteGame(game)}
-                                    isDisabled={!this.shouldDeleteBeEnabled(game)}/>
+                                    isDisabled={!this.shouldDeleteBeEnabled(game)} />
                         </td>
                     </tr>
                 )
@@ -69,7 +69,7 @@ export default class GameTable extends Component {
         this.getGameList = this.getGameList.bind(this);
         this.handleDeleteGame = this.handleDeleteGame.bind(this);
         this.onClickJoinHandler = this.onClickJoinHandler.bind(this);
-        this.shouldDeleteBeEnabled= this.shouldDeleteBeEnabled.bind(this);
+        this.shouldDeleteBeEnabled = this.shouldDeleteBeEnabled.bind(this);
         this.shouldJoinBeEnabled = this.shouldJoinBeEnabled.bind(this);
     }
 
@@ -158,7 +158,7 @@ export default class GameTable extends Component {
 
 
     shouldJoinBeEnabled(game) {
-        if (game.isActive===false) {
+        if (game.isActive === false) {
             return true;
         }
     }

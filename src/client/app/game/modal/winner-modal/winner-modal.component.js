@@ -1,26 +1,27 @@
 import React, {Component} from 'react';
-import './first-place-winner-modal.component.css';
+import './winner-modal.component.css';
 import Button from "../../../shared/components/button/button.component";
 
 // onSubmit: Function
 // onCancel: Function
+// data: any
 
-class FirstPlaceWinnerModal extends Component {
+class WinnerModal extends Component {
     constructor(props) {
         super(props);
     }
 
     render() {
         return (
-            <div className="first-place-winner-modal-component">
-                <h1>player is the winner </h1>
+            <div className="winner-modal-component">
+                <h1>Congratulations! {this.props.playerName} has won {this.props.winningPlace} place</h1>
                 <div className='buttons-area'>
                     <Button label="Ok"
-                            onClick={this.props.onsubmit} />
+                            onClick={this.props.onSubmit} />
                 </div>
             </div>
         );
     }
 }
 
-export default FirstPlaceWinnerModal ;
+export default WinnerModal;

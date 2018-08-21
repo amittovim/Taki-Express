@@ -4,6 +4,5 @@ export const ModalTypeEnum = {
     AbortGame: 'AbortGame',
     Statistics: 'Statistics',
     GameOverLoser: 'GameOverLoser',
-    FirstPlaceWinner: 'FirstPlaceWinner',
-    SecondPlaceWinner: 'SecondPlaceWinner',
+    Winner: 'Winner'
 };

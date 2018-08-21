@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
-import './game-over-loser-modal.component.css';
+import './game-over-loser-modal.component.css'
 import Button from "../../../shared/components/button/button.component";
 
+// playerName: string;
 // onSubmit: Function
 // onCancel: Function
 
@@ -14,7 +15,7 @@ class GameOverLoserModal extends Component {
         return (
             <div className="game-over-loser-modal-component">
                 <h1>Game Over!</h1>
-                <h2> Player has lost the game</h2>
+                <h2> {this.props.playerName} has lost the game</h2>
                 <div className='buttons-area'>
                     <Button label="ok"
                             onClick={this.props.onSubmit} />

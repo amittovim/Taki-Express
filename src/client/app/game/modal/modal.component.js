@@ -4,13 +4,12 @@ import {ModalTypeEnum} from "./modal-type.enum";
 import ModalFrame from "../../shared/components/modal/modal.component";
 import AbortGameModal from "./abort-game/abort-game.component";
 import StatisticsModal from "./statistics/statistics.component";
-import GameOverModal from "./game-over-modal/game-over-modal.component";
 import GameOverLoserModal from "./game-over-loser-modal/game-over-loser-modal.component";
-import FirstPlaceWinnerModal from "./first-winner-modal/first-place-winner-modal.component";
-import SecondPlaceWinnerModal from "./second-winner-modal/second-place-winner-modal.component";
+import WinnerModal from "./winner-modal/winner-modal.component.css";
 
 // isOpen: boolean
 // type: ModalTypeEnum
+// data: any
 // callback: Function
 // closeModal: Function
 // restart: Function
@@ -24,7 +23,6 @@ class Modal extends Component {
         };
         this.renderSwitch = this.renderSwitch.bind(this);
         this.handleClick = this.handleClick.bind(this);
-
     }
 
     render() {
@@ -74,15 +72,14 @@ class Modal extends Component {
                                          onCancel={this.props.closeModal} />);
             }
             case ModalTypeEnum.GameOverLoser: {
-                return (<GameOverLoserModal onSubmit={this.props.callback} />);
+                return (<GameOverLoserModal playerName={this.props.data.playerName}
+                                            onSubmit={this.props.callback} />);
             }
-            case ModalTypeEnum.FirstPlaceWinner: {
-                return (<FirstPlaceWinnerModal onSubmit={this.props.callback}  />);
+            case ModalTypeEnum.Winner: {
+                return (<WinnerModal playerName={this.props.data.playerName}
+                                     winningPlace={this.props.data.winningPlace}
+                                     onSubmit={this.props.callback} />);
             }
-            case ModalTypeEnum.SecondPlaceWinner: {
-                return (<SecondPlaceWinnerModal onSubmit={this.props.callback} />);
-            }
-
             case ModalTypeEnum.default: {
                 break;
             }
