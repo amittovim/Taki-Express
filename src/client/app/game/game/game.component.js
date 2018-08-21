@@ -149,25 +149,17 @@ class Game extends Component {
     componentWillReceiveProps() {
     }
 
-    componentWillUpdate(prevState) {
-        if (!prevState.game.GameState.isGameOver && this.props.game.GameState.isGameOver) {
-            this.openGameOverLoserModal(this.props.game.GameState.loser);
-        }
-        else if (prevState.game.winners.length < this.props.game.winners.length) {
-            const winningPlace = this.props.game.winners.length;
-            this.openWinnerModal(winningPlace);
-        }
+    componentWillUpdate() {
+        // if (this.state.GameState.isGameOver) {
+        //     this.openGameOverLoserModal();
+        // }
+        // else if (this.state.winners.length === 1 && this.state.winners[0].name === this.state.GameState.currentPlayer.name) {
+        //     this.openWinnerModal();
+        // }
+        // else if (this.state.winners.length === 2 && this.state.winners[1].name === this.state.GameState.currentPlayer.name) {
+        //     this.open2ndPlaceWinnerModal();
+        // }
     }
-
-    // if (this.state.GameState.isGameOver) {
-    //     this.openGameOverLoserModal();
-    // }
-    // else if (this.state.winners.length === 1 && this.state.winners[0].name === this.state.GameState.currentPlayer.name) {
-    //     this.openWinnerModal();
-    // }
-    // else if (this.state.winners.length === 2 && this.state.winners[1].name === this.state.GameState.currentPlayer.name) {
-    //     this.open2ndPlaceWinnerModal();
-    // }
 
     componentDidUpdate(nextProps, nextState) {
         this.stateUpdateTimeoutId = setTimeout(() => {
@@ -211,12 +203,26 @@ class Game extends Component {
         this.fetchGameContent()
             .then(game => {
                 game.GameState.consoleMessage = '';
-
-                this.setState({
-                    ...game,
-                    GameState: game.GameState,
-                    isLoading: false,
-                    //isActive: !prevState.GameState.isGameOver
+                this.setState(prevState => {
+                    if (!prevState.GameState.isGameOver && game.GameState.isGameOver) {
+                        this.openGameOverLoserModal(game.GameState.loser);
+                    }
+                    else if (prevState.winners.length < game.winners.length) {
+                        const winningPlace = game.winners.length;
+                        this.openWinnerModal(winningPlace);
+                        // if (game.winners.length === 1) {
+                        //     this.openWinnerModal(game.winners[0].name);
+                        // }
+                        // else if (game.winners.length === 2) {
+                        //     this.open2ndPlaceWinnerModal(game.winners[1].name);
+                        // }
+                    }
+                    return ({
+                        ...game,
+                        GameState: game.GameState,
+                        isLoading: false,
+                        //isActive: !prevState.GameState.isGameOver
+                    })
                 });
             });
     }
@@ -422,7 +428,7 @@ class Game extends Component {
         });
     }
 
-// MODALS:
+    // MODALS:
 
     openColorPickerModal(card) {
         this.card = card;
@@ -499,7 +505,7 @@ class Game extends Component {
         });
     }
 
-// Stats:
+    // Stats:
 
     getStats() {
         const data = {
