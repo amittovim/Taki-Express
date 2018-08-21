@@ -33,15 +33,9 @@ class Card extends Component {
     };
 
     get imageSrc() {
-        // return this.props.isHidden
-        //     ? require('../../../../assets/images/card-backside.jpeg')
-        //     : require(`../../../../assets/images/${this.fileName}`);
-        debugger;
-        if (this.props.isHidden){
-            return require(`../../../../assets/images/${this.fileName}`);
-        } else {
-            return require(`../../../../assets/images/${this.fileName}`);
-        }
+        return this.props.isHidden
+            ? require('../../../../assets/images/card-backside.jpeg')
+            : require(`../../../../assets/images/${this.fileName}`);
     }
 
     get fileName() {

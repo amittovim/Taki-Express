@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import './discard-pile.component.css'
 import Card from "../../../../../shared/components/card/card.component";
+import {DEBBUG_MODE} from "../../../../../../../server/logic/consts";
 
 // discardPile: Pile
 
@@ -19,7 +20,8 @@ class DiscardPile extends Component {
             <div className="discard-pile-component">
                 {
                     this.props.discardPile.cards.map(card => {
-                        return <Card key={card.id}
+                        return <Card isHidden={false}
+                                     key={card.id}
                                      card={card}
                                      moveCardDriver2={this.moveCardDriver2}
 

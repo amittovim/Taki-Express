@@ -4,6 +4,7 @@ import Hand from "../advanced-board/hand/hand.component";
 import {PlayerEnum} from "../../../enums/player.enum";
 import Deck from "../advanced-board/deck/deck.component";
 import {PileIdEnum} from "../../../enums/pile-id.enum";
+import {DEBBUG_MODE} from "../../../../../server/logic/consts";
 
 // <PROPS>
 // piles: Pile[]
@@ -26,12 +27,12 @@ class AdvancedBoard extends Component {
     }
 
     render() {
-
         return (
             <div className="advanced-board-component">
                 <div className='top-board'>
                     <div className='empty-space'></div>
-                    <Hand currentPlayerName={this.props.currentPlayerName}
+                    <Hand openHand={DEBBUG_MODE || false}
+                          currentPlayerName={this.props.currentPlayerName}
                           owner={this.props.piles[this.state.secondAreaPileId].ownerPlayerName}
                           pile={this.props.piles[this.state.secondAreaPileId]}
                           moveCardDriver1={this.moveCardDriver_1}
@@ -42,17 +43,12 @@ class AdvancedBoard extends Component {
                     <div className='left-section'>
                         {(!this.state.thirdAreaPileId)
                             ? (null)
-                            : (<Hand currentPlayerName={this.props.currentPlayerName}
+                            : (<Hand openHand={DEBBUG_MODE || false}
+                                     currentPlayerName={this.props.currentPlayerName}
                                      owner={this.props.piles[this.state.thirdAreaPileId].ownerPlayerName}
                                      pile={this.props.piles[this.state.thirdAreaPileId]}
                                      moveCardDriver1={this.moveCardDriver_1}
                             />)}
-                        {/*
-                        <Hand owner={this.props.piles[this.state.thirdAreaPileId].ownerPlayerName}
-                              pile={this.props.piles[this.state.thirdAreaPileId]}
-                              moveCardDriver1={this.moveCardDriver_1}
-                        />
-*/}
                     </div>
                     <div className='center-section'>
                         <Deck drawPile={this.props.piles[PileIdEnum.DrawPile]}
@@ -64,7 +60,8 @@ class AdvancedBoard extends Component {
                     <div className='right-section'>
                         {(!this.state.forthAreaPileId)
                             ? (null)
-                            : (<Hand currentPlayerName={this.props.currentPlayerName}
+                            : (<Hand openHand={DEBBUG_MODE || false}
+                                     currentPlayerName={this.props.currentPlayerName}
                                      owner={this.props.piles[this.state.forthAreaPileId].ownerPlayerName}
                                      pile={this.props.piles[this.state.forthAreaPileId]}
                                      moveCardDriver1={this.moveCardDriver_1}
@@ -72,7 +69,8 @@ class AdvancedBoard extends Component {
                     </div>
                 </div>
                 <div className={`bottom-board ${this.props.currentPlayerName === this.player ? 'players-turn' : ''}`}>
-                    <Hand currentPlayerName={this.props.currentPlayerName}
+                    <Hand openHand={DEBBUG_MODE || true}
+                          currentPlayerName={this.props.currentPlayerName}
                           owner={this.props.piles[this.state.mainAreaPileId].ownerPlayerName}
                           pile={this.props.piles[this.state.mainAreaPileId]}
                           moveCardDriver1={this.moveCardDriver_1}
@@ -130,11 +128,6 @@ class AdvancedBoard extends Component {
             secondAreaPileId: secondArea,
             thirdAreaPileId: thirdArea,
             forthAreaPileId: forthArea
-        }, () => {
-            // reveal the cards of the main player
-            // this.props.piles[this.state.mainAreaPileId].cards.forEach((item) => {
-            //     item.isHidden = false;
-            // });
         });
     }
 

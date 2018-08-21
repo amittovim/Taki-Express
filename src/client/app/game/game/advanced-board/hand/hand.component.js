@@ -23,7 +23,7 @@ class Hand extends Component {
                         ? (
                             this.props.pile.cards.map((card) => {
                                 return (
-                                    <Card isHidden={this.isCardHidden}
+                                    <Card isHidden={!this.props.openHand}
                                           key={card.id}
                                           card={card}
                                           hoverEnabled={true}
@@ -42,9 +42,13 @@ class Hand extends Component {
         this.moveCardDriver2 = this.moveCardDriver2.bind(this);
     }
 
-    get isCardHidden() {
-        return this.props.currentPlayerName !== this.props.owner;
-    }
+    // get isCardHidden() {
+    //     const condition = this.props.currentPlayerName !== this.props.owner;
+    //     if (condition) {
+    //         debugger;
+    //     }
+    //     return condition;
+    // }
 
     moveCardDriver2(cardId) {
         this.props.moveCardDriver1(cardId);

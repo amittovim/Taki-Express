@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import './draw-pile.component.css';
 import Card from "../../../../../shared/components/card/card.component";
+import {DEBBUG_MODE} from "../../../../../../../server/logic/consts";
 
 // drawPile: Pile
 
@@ -19,7 +20,8 @@ class DrawPile extends Component {
             <div className="draw-pile-component">
                 {
                     this.props.drawPile.cards.map((card, index) => {
-                        return <Card key={card.id}
+                        return <Card isHidden={!DEBBUG_MODE}
+                                     key={card.id}
                                      card={card}
                                      hoverEnabled={index === this.props.drawPile.cards.length - 1}
                                      moveCardDriver2={this.moveCardDriver2}
