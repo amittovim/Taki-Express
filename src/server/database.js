@@ -243,12 +243,12 @@ function getGameInfo(gameId) {
         hasGameBeenInitialized = true
     } else {
         hasGameBeenInitialized = false;
-        if (gameInfo.restarting) {
-            gameList[gameIndex].restarting = false;
-        }
     }
     if ((!hasGameBeenInitialized) && (gameInfo.GameState.gameStatus === Enums.GameStatusEnum.InitializingGame)) {
-        initGameList.push(gameInfo.name);
+
+        if (!gameInfo.restarting) {
+            initGameList.push(gameInfo.name);
+        }
         /*
                 //put Bot player at the end of the piles array ( it was created in the start of the array)
                 gameInfo.GameState.piles.splice(gameInfo.GameState.piles.length, 0, (gameInfo.GameState.piles.splice(0, 1)[0]));
@@ -256,6 +256,9 @@ function getGameInfo(gameId) {
         // switch all players in the game to status "Playing"
         for (let i = 0; i < gameInfo.playersCapacity; i++) {
             gameInfo.GameState.players[i].playerStatus = Enums.PlayerStatusEnum.Playing;
+        }
+        if (gameInfo.restarting) {
+            gameList[gameIndex].restarting = false;
         }
 
         serverGameUtils.createCardsInDrawPile(gameInfo.id);
@@ -278,6 +281,8 @@ function restartGame(currentGame) {
     });
     gameList[gameIndex] = _.cloneDeep(currentGame.cleanBackup);
     gameList[gameIndex].cleanBackup = _.cloneDeep(currentGame.cleanBackup);
+
+
 }
 
 function createNewGame(newGameInfo) {

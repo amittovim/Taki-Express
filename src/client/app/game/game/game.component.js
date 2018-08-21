@@ -208,7 +208,7 @@ class Game extends Component {
                     debugger;
                     if (!prevState.GameState.isGameOver && game.GameState.isGameOver) {
 
-                        this.openGameOverLoserModal(game.GameState.loser.name);
+                        this.openGameOverLoserModal(game.GameState.loser);
                     }
                     else if (prevState.winners.length !==game.winners.length) {
                         if (game.winners.length === 1  ) {

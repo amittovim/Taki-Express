@@ -164,7 +164,7 @@ export default class Taki extends Component {
         this.setState(() => ({
             activeView: ViewsEnum.Lobby,
         }));
-        //this.requestGameRestart(this.state.currentGame.id);
+        this.requestGameRestart(this.state.currentGame.id);
     };
 
     requestGameRestart(gameId) {
