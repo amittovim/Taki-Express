@@ -336,12 +336,14 @@ function calculateConsoleMessage(GameState, sourcePileId, destinationPileId) {
         })
         //todo : make a nice modal for players that this player LOST
         GameState.isGameOver = true;
+
     }
 
     // Save current state in history
     saveGameState(currentGame.id);
 
         if (GameState.isGameOver) {
+            currentGame.isActive=false;
             return;
         }
         //  handleSwitchPlayers(newGameStateInfo);
@@ -474,10 +476,10 @@ function calculateConsoleMessage(GameState, sourcePileId, destinationPileId) {
                 GameState.piles[Enums.PileIdEnum.Two].cards,
                 GameState.piles[Enums.PileIdEnum.Three].cards);
         if (GameState.piles[Enums.PileIdEnum.Four] !== undefined) {
-            gameCards.concat(GameState.piles[Enums.PileIdEnum.Four].cards);
+            gameCards = gameCards.concat(GameState.piles[Enums.PileIdEnum.Four].cards);
         }
         if (GameState.piles[Enums.PileIdEnum.Five] !== undefined) {
-            gameCards.concat(GameState.piles[Enums.PileIdEnum.Five].cards);
+            gameCards = gameCards.concat(GameState.piles[Enums.PileIdEnum.Five].cards);
         }
         return gameCards.filter((card) => {
             return card.id === cardId
@@ -761,6 +763,11 @@ function calculateConsoleMessage(GameState, sourcePileId, destinationPileId) {
         const GameState = currentGame.GameState;
         let shouldSwitchPlayers = true;
         let currentPlayerPile = GameState.currentPlayer.pile;
+
+        // if current player status different than "playing" we should switch players (like maybe he just won)
+        if ( GameState.currentPlayer.playerStatus !== Enums.PlayerStatusEnum.Playing)
+            return true;
+
         // we check all cases when we shouldn't switch player
         if  //if someone just put a PLUS card
         (((GameState.actionInvoked === GameState.leadingCard.action) && (GameState.leadingCard.action === Enums.CardActionEnum.Plus))

@@ -142,7 +142,6 @@ function handleRequestPlayerMove(req, res, next) {
     // if current player is Bot than play its turn/move
     while ((!currentGame.GameState.isGameOver) &&
     (currentGame.GameState.currentPlayer.name === Enums.PlayerEnum.Bot)) {
-        debugger;
         let botCardId = serverGameUtils.pickNextBotMove(currentGame);
         result = serverGameUtils.playGameMove(currentGame, botCardId);
 
@@ -158,7 +157,7 @@ function requestRestartGame(req, res, next) {
     const gameId = req.params.id;
     const currentGame = getGameInfo(gameId);
     let newCurrentGame;
-    if (currentGame.GameState.isGameOver) {
+    if (currentGame.GameState.isGameOver && (!currentGame.isActive) ) {
         currentGame.isActive = false;
         restartGame(currentGame);
         newCurrentGame = getGameInfo(currentGame.id);
@@ -167,7 +166,6 @@ function requestRestartGame(req, res, next) {
             return gameName === newCurrentGame.name;
         });
         gameList[gameIndex].restarting = true;
-
         req.xGameContent = newCurrentGame;
     }
 

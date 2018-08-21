@@ -149,31 +149,34 @@ class Game extends Component {
     }
 
     componentWillUpdate() {
-        if (this.state.GameState.isGameOver) {
-            this.openGameOverLoserModal();
-        }
-        else if (this.state.winners.length === 1 && this.state.winners[0].name === this.state.GameState.currentPlayer.name) {
-            debugger;
-            this.open1stPlaceWinnerModal();
-        }
-        else if (this.state.winners.length === 2 && this.state.winners[1].name === this.state.GameState.currentPlayer.name) {
-            this.open2ndPlaceWinnerModal();
-        }
+        // if (this.state.GameState.isGameOver) {
+        //     debugger
+        //     this.openGameOverLoserModal();
+        // }
+        // else if (this.state.winners.length === 1 && this.state.winners[0].name === this.state.GameState.currentPlayer.name) {
+        //     debugger;
+        //     this.open1stPlaceWinnerModal();
+        // }
+        // else if (this.state.winners.length === 2 && this.state.winners[1].name === this.state.GameState.currentPlayer.name) {
+        //     this.open2ndPlaceWinnerModal();
+        // }
     }
 
     componentDidUpdate(nextProps, nextState) {
         this.stateUpdateTimeoutId = setTimeout(() => {
-            if (this.state.nextStateId <= this.state.history.length - 1) {
-                const nextStateUpdate = this.state.history[this.state.nextStateId];
+            if (this.state.GameState.id <= this.state.history.length - 1) {
+                const nextStateUpdate = this.state.history[this.state.GameState.id];
                 this.setState(() => ({
                     GameState: nextStateUpdate,
-                    nextStateId: this.state.nextStateId + 1
+                    isLoading: true,
+                    //nextStateId: this.state.nextStateId + 1
                 }));
             } else {
                 clearTimeout(this.stateUpdateTimeoutId);
                 this.getCurrentGameState();
+
             }
-        }, 300);
+        }, 500);
     }
 
 
@@ -184,15 +187,16 @@ class Game extends Component {
         if (this.timeoutHistoryId) {
             clearTimeout(this.timeoutHistoryId);
         }
-
-        clearTimeout(this.stateUpdateTimeoutId);
+        if (this.stateUpdateTimeoutId) {
+            clearTimeout(this.stateUpdateTimeoutId);
+        }
     }
 
     getGameHistory() {
         this.fetchGameHistory()
             .then(gameHistory => {
 
-                this.setState({history: gameHistory, nextStateId: 0, isLoading: true})
+                this.setState({history: gameHistory, nextStateId: 0})
             });
     }
 
@@ -200,11 +204,23 @@ class Game extends Component {
         this.fetchGameContent()
             .then(game => {
                 game.GameState.consoleMessage = '';
-                this.setState(prevState => ({
+                this.setState(prevState => {
+                    if (!prevState.GameState.isGameOver && game.GameState.isGameOver) {
+                            this.openGameOverLoserModal();
+                        }
+                        // else if (this.state.winners.length === 1 && this.state.winners[0].name === this.state.GameState.currentPlayer.name) {
+                        //     debugger;
+                        //     this.open1stPlaceWinnerModal();
+                        // }
+                        // else if (this.state.winners.length === 2 && this.state.winners[1].name === this.state.GameState.currentPlayer.name) {
+                        //     this.open2ndPlaceWinnerModal();
+                        // }
+                    return ({
+                    ...game,
                     GameState: game.GameState,
                     isLoading: false,
-                    isActive: !prevState.GameState.isGameOver
-                }));
+                    //isActive: !prevState.GameState.isGameOver
+                })});
             });
     }
 
@@ -225,7 +241,7 @@ class Game extends Component {
                 if (!res.ok) {
                     throw res;
                 }
-                this.timeoutHistoryId = setTimeout(this.getGameContent, 1500);
+                this.timeoutHistoryId = setTimeout(this.getGameHistory, 1500);
                 return res.json();
             });
     }
@@ -313,10 +329,10 @@ class Game extends Component {
                 GameState.piles[PileIdEnum.Two].cards,
                 GameState.piles[PileIdEnum.Three].cards);
         if (GameState.piles[PileIdEnum.Four] !== undefined) {
-            gameCards.concat(GameState.piles[PileIdEnum.Four].cards);
+            gameCards = gameCards.concat(GameState.piles[PileIdEnum.Four].cards);
         }
         if (GameState.piles[PileIdEnum.Five] !== undefined) {
-            gameCards.concat(GameState.piles[PileIdEnum.Five].cards);
+            gameCards = gameCards.concat(GameState.piles[PileIdEnum.Five].cards);
         }
         return gameCards.filter((card) => {
             return card.id === cardId
@@ -335,6 +351,7 @@ class Game extends Component {
             })
             .then(answerFrmServer => {
                 answer = answerFrmServer;
+                debugger;
                 const card = this.getCardById(cardId);
                 if (!answer) {
                     return this.handleIllegalMove();
