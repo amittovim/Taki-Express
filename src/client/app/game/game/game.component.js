@@ -150,11 +150,9 @@ class Game extends Component {
 
     componentWillUpdate() {
         // if (this.state.GameState.isGameOver) {
-        //     debugger
         //     this.openGameOverLoserModal();
         // }
         // else if (this.state.winners.length === 1 && this.state.winners[0].name === this.state.GameState.currentPlayer.name) {
-        //     debugger;
         //     this.open1stPlaceWinnerModal();
         // }
         // else if (this.state.winners.length === 2 && this.state.winners[1].name === this.state.GameState.currentPlayer.name) {
@@ -211,7 +209,6 @@ class Game extends Component {
                     }
                     else if (prevState.winners.length !==game.winners.length) {
                         if (game.winners.length === 1  ) {
-                            debugger;
                             this.open1stPlaceWinnerModal(game.winners[0].name);
                         }
                         else if (game.winners.length === 2 ) {
@@ -259,7 +256,6 @@ class Game extends Component {
 
                     let historyFromServerObject = {history: contentFromServer.history};
                     let statesDifference = historyFromServer.length - this.state.history.length;
-                    debugger;
                     if (statesDifference !== 0) {
                         this.setState(() => {
                             return historyFromServerObject;
@@ -317,7 +313,6 @@ class Game extends Component {
             };
             return GameState;
         }, () => {
-            debugger;
         });
     }
 */
@@ -354,7 +349,6 @@ class Game extends Component {
             })
             .then(answerFrmServer => {
                 answer = answerFrmServer;
-                debugger;
                 const card = this.getCardById(cardId);
                 if (!answer) {
                     return this.handleIllegalMove();

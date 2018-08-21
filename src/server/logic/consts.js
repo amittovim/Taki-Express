@@ -1,7 +1,7 @@
 const NUMBER_OF_STARTING_CARDS_IN_PLAYERS_HAND = 3;
 const VISIBLE_CARDS = false;
-const ALL_MOVES_LEGAL = true;
-const DEBBUG_MODE = true;
+const ALL_MOVES_LEGAL = false;
+const DEBBUG_MODE = false;
 
 module.exports = {
     NUMBER_OF_STARTING_CARDS_IN_PLAYERS_HAND,

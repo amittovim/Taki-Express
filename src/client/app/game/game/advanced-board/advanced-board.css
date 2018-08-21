@@ -30,9 +30,11 @@
     font-style: italic;
     z-index: 5;
 }
-.top-board .hand-component .card-component{
+
+.top-board .hand-component .card-component {
     margin-left: -20px;
 }
+
 .top-board .hand-component, .bottom-board .hand-component {
     display: flex;
     flex: 5;
@@ -41,11 +43,12 @@
 .middle-board .left-section, .middle-board .right-section {
     display: flex;
     flex: 1;
+    background: green;
 }
 
 .center-section {
     flex: 3;
-    background: #339900;
+    background: var(--board-color);
     overflow: hidden;
     display: flex;
 }

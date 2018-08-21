@@ -42,14 +42,6 @@ class Hand extends Component {
         this.moveCardDriver2 = this.moveCardDriver2.bind(this);
     }
 
-    // get isCardHidden() {
-    //     const condition = this.props.currentPlayerName !== this.props.owner;
-    //     if (condition) {
-    //         debugger;
-    //     }
-    //     return condition;
-    // }
-
     moveCardDriver2(cardId) {
         this.props.moveCardDriver1(cardId);
     }
