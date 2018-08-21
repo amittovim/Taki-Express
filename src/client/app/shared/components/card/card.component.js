@@ -97,10 +97,10 @@ class Card extends Component {
     }
 
     handleClick() {
-        // const cardSourceDOM = ReactDom.findDOMNode(this);
-        // const cardDestinationDOM = ReactDom.findDOMNode(this).parentNode.parentNode.parentNode.childNodes[1].childNodes[1].firstChild.firstChild.lastChild;
-        //
-        // this.animateCard(cardSourceDOM, cardDestinationDOM ,this.props.moveCardDriver2, this.props.card.id);
+        const cardSourceDOM = ReactDom.findDOMNode(this);
+        const cardDestinationDOM = ReactDom.findDOMNode(this).parentNode.parentNode.parentNode.childNodes[1].childNodes[1].firstChild.firstChild.lastChild;
+
+        this.animateCard(cardSourceDOM, cardDestinationDOM ,this.props.moveCardDriver2, this.props.card.id);
 
 /*          // version1 ***************************************************
         debugger;
