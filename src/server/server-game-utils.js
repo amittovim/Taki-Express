@@ -304,8 +304,9 @@ function calculateConsoleMessage(GameState, sourcePileId, destinationPileId) {
     function processGameStep(currentGame) {
         const GameState = currentGame.GameState;
         // if drawPile is empty restock it with cards from discardPile
+        debugger;
         if (GameState.piles[Enums.PileIdEnum.DrawPile].isPileEmpty) {
-            restockDrawPile();
+            restockDrawPile(currentGame);
         }
 
         // updating statistics
@@ -573,13 +574,13 @@ function calculateConsoleMessage(GameState, sourcePileId, destinationPileId) {
         let wasRestocked;
         let oldSelectedCard = GameState.selectedCard;
         GameState.gameStatus = Enums.GameStatusEnum.RestockingDeckOfCard;
-        while (GameState.DiscardPile.cards.length > 1) {
-            cleaningCards();
-            moveCard(Enums.PileTypeEnum.DiscardPile, Enums.PileTypeEnum.DrawPile);
+        while (GameState.piles[Enums.PileIdEnum.DiscardPile].cards.length > 1) {
+            cleaningCards(currentGame);
+            moveCard(GameState, Enums.PileIdEnum.DiscardPile, Enums.PileIdEnum.DrawPile);
             wasRestocked = true;
         }
         if (wasRestocked) {
-            Utils.shuffleArray(GameState.DrawPile.cards);
+            Utils.shuffleArray(GameState.piles[Enums.PileIdEnum.DrawPile].cards);
             GameState.selectedCard = oldSelectedCard;
         }
         GameState.gameStatus = Enums.GameStatusEnum.Ongoing;
@@ -588,8 +589,8 @@ function calculateConsoleMessage(GameState, sourcePileId, destinationPileId) {
     function cleaningCards(currentGame) {
         const GameState = currentGame.GameState;
 
-        GameState.selectedCard = GameState.DiscardPile.cards[0];
-        GameState.selectedCard.parentPileType = Enums.PileTypeEnum.DrawPile;
+        GameState.selectedCard = GameState.piles[Enums.PileIdEnum.DiscardPile].cards[0];
+        GameState.selectedCard.parentPileId = Enums.PileIdEnum.DrawPile;
 
         if ((GameState.selectedCard.action === Enums.CardActionEnum.ChangeColor) ||
             (GameState.selectedCard.action === Enums.CardActionEnum.SuperTaki)) {

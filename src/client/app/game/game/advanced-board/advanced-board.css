@@ -26,6 +26,10 @@
     flex: 1;
 }
 
+.hand-component h1 {
+    font-style: italic;
+    z-index: 5;
+}
 .top-board .hand-component .card-component{
     margin-left: -20px;
 }
