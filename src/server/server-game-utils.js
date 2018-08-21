@@ -54,7 +54,7 @@ function createNumberCards(currentGame) {
             for (let color in Enums.CardColorEnum) {
                 let card = new CardModel(cardId++, Enums.CardColorEnum[color], Enums.CardNumberEnum[number]);
                 if (Consts.VISIBLE_CARDS) {
-                    card.isHidden = false;
+                    // card.isHidden = false;
                 }
                 currentGame.GameState.piles[Enums.PileIdEnum.DrawPile].cards.push(card);
             }
@@ -138,7 +138,8 @@ function handleCardMove(currentGame) {
         let updatedPiles;
         for (GameState.twoPlusCounter; GameState.twoPlusCounter > 0; GameState.twoPlusCounter--) {
             GameState.selectedCard.parentPileId = GameState.currentPlayer.pile.id;
-            GameState.selectedCard.isHidden = isCardHidden(GameState.currentPlayer.pile.id);
+            debugger;
+            // GameState.selectedCard.isHidden = isCardHidden(GameState.currentPlayer.pile.id);
             updatedPiles = moveCard(GameState, Enums.PileIdEnum.DrawPile, GameState.currentPlayer.pile.id);
             GameState.selectedCard = GameState.piles[Enums.PileIdEnum.DrawPile].getTop();
         }
@@ -150,7 +151,8 @@ function handleCardMove(currentGame) {
     const sourcePileId = GameState.selectedCard.parentPileId;
     const destinationPileId = getDestinationPileId(GameState, sourcePileId);
     GameState.selectedCard.parentPileId = destinationPileId;
-    GameState.selectedCard.isHidden = isCardHidden(destinationPileId);
+    debugger;
+    // GameState.selectedCard.isHidden = isCardHidden(destinationPileId);
     updateLeadingCard(GameState, destinationPileId);
     return moveCard(GameState, sourcePileId, destinationPileId); // TODO : currently no one is receiving this return object. could cancel the return here
 }
@@ -182,9 +184,9 @@ function getPileId(GameStatus, name) {
 
 // TODO: for Dor:find a way to implement this function correctly - right now it doesnt work right
 function isCardHidden(destinationPileId) {
+    debugger;
     if (!Consts.VISIBLE_CARDS) {
         return ((destinationPileId !== Enums.PileIdEnum.DiscardPile));
-
     } else return false;
 }
 

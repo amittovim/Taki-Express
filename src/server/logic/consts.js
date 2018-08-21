@@ -1,5 +1,5 @@
 const NUMBER_OF_STARTING_CARDS_IN_PLAYERS_HAND = 3;
-const VISIBLE_CARDS = true;
+const VISIBLE_CARDS = false;
 const ALL_MOVES_LEGAL = true;
 
 

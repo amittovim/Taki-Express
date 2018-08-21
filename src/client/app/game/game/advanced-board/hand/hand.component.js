@@ -3,7 +3,8 @@ import './hand.component.css';
 import Card from "../../../../shared/components/card/card.component";
 import {PlayerEnum} from "../../../../enums/player.enum";
 
-// owner: PlayerEnum
+// currentPlayer: string
+// owner: string
 // pile: Pile
 // moveCardDriver1
 
@@ -22,7 +23,8 @@ class Hand extends Component {
                         ? (
                             this.props.pile.cards.map((card) => {
                                 return (
-                                    <Card key={card.id}
+                                    <Card isHidden={this.isCardHidden}
+                                          key={card.id}
                                           card={card}
                                           hoverEnabled={true}
                                           moveCardDriver2={this.moveCardDriver2}
@@ -36,8 +38,12 @@ class Hand extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {}
+        this.state = {};
         this.moveCardDriver2 = this.moveCardDriver2.bind(this);
+    }
+
+    get isCardHidden() {
+        return this.props.currentPlayerName !== this.props.owner;
     }
 
     moveCardDriver2(cardId) {

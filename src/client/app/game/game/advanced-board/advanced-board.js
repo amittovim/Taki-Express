@@ -20,7 +20,6 @@ class AdvancedBoard extends Component {
             forthAreaPileId: null,
         };
 
-
         // this.getCurrentUserPile = this.getCurrentUserPile.bind(this);
         this.moveCardDriver_1 = this.moveCardDriver_1.bind(this);
         this.checkUserOverFlow = this.checkUserOverFlow.bind(this);
@@ -32,7 +31,8 @@ class AdvancedBoard extends Component {
             <div className="advanced-board-component">
                 <div className='top-board'>
                     <div className='empty-space'></div>
-                    <Hand owner={this.props.piles[this.state.secondAreaPileId].ownerPlayerName}
+                    <Hand currentPlayerName={this.props.currentPlayerName}
+                          owner={this.props.piles[this.state.secondAreaPileId].ownerPlayerName}
                           pile={this.props.piles[this.state.secondAreaPileId]}
                           moveCardDriver1={this.moveCardDriver_1}
                     />
@@ -42,7 +42,8 @@ class AdvancedBoard extends Component {
                     <div className='left-section'>
                         {(!this.state.thirdAreaPileId)
                             ? (null)
-                            : (<Hand owner={this.props.piles[this.state.thirdAreaPileId].ownerPlayerName}
+                            : (<Hand currentPlayerName={this.props.currentPlayerName}
+                                     owner={this.props.piles[this.state.thirdAreaPileId].ownerPlayerName}
                                      pile={this.props.piles[this.state.thirdAreaPileId]}
                                      moveCardDriver1={this.moveCardDriver_1}
                             />)}
@@ -63,14 +64,16 @@ class AdvancedBoard extends Component {
                     <div className='right-section'>
                         {(!this.state.forthAreaPileId)
                             ? (null)
-                            : (<Hand owner={this.props.piles[this.state.forthAreaPileId].ownerPlayerName}
+                            : (<Hand currentPlayerName={this.props.currentPlayerName}
+                                     owner={this.props.piles[this.state.forthAreaPileId].ownerPlayerName}
                                      pile={this.props.piles[this.state.forthAreaPileId]}
                                      moveCardDriver1={this.moveCardDriver_1}
                             />)}
                     </div>
                 </div>
                 <div className={`bottom-board ${this.props.currentPlayerName === this.player ? 'players-turn' : ''}`}>
-                    <Hand owner={this.props.piles[this.state.mainAreaPileId].ownerPlayerName}
+                    <Hand currentPlayerName={this.props.currentPlayerName}
+                          owner={this.props.piles[this.state.mainAreaPileId].ownerPlayerName}
                           pile={this.props.piles[this.state.mainAreaPileId]}
                           moveCardDriver1={this.moveCardDriver_1}
                     />
@@ -82,16 +85,6 @@ class AdvancedBoard extends Component {
     componentWillMount() {
         this.realignCardHands();
     }
-
-    componentWillUpdate() {
-    }
-    componentDidUpdate() {
-        this.props.piles[this.state.mainAreaPileId].cards.forEach((item) => {
-            item.isHidden = false;
-        });
-
-    }
-
 
     get player() {
         return this.props.piles[this.state.mainAreaPileId].ownerPlayerName;

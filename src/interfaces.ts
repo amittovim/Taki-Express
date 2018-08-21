@@ -12,7 +12,7 @@ interface Card {
     color: CardColorEnum;
     number: CardNumberEnum;
     action: CardActionEnum;
-    isHidden: boolean;
+    // isHidden: boolean;
     parentPileId: PileIdEnum;
 }
 

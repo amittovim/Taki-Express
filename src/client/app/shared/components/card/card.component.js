@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import './card.component.css'
-import backImage from '../../../../assets/images/card-backside.jpeg';
 import {CardActionEnum} from "../../../enums/card-action-enum";
 
 
@@ -8,6 +7,7 @@ import {CardActionEnum} from "../../../enums/card-action-enum";
 // card: card
 // hoverEnabled: boolean
 // Driver: function
+// isHidden: boolean
 
 class Card extends Component {
 
@@ -16,8 +16,7 @@ class Card extends Component {
             <div className={`card-component${this.props.hoverEnabled ? ' hover-enabled' : ''}`}
                  id={`card-${this.props.card.id}`}
                  onClick={this.handleClick}>
-                <img className={`${this.props.card.isHidden ? 'back-card-img' : 'front-card-img'}`}
-                     src={this.imageSrc}
+                <img src={this.imageSrc}
                      alt={this.display} />
             </div>
         );
@@ -27,7 +26,6 @@ class Card extends Component {
         super(props);
         this.state = {};
         this.handleClick = this.handleClick.bind(this);
-
     }
 
     get display() {
@@ -35,7 +33,15 @@ class Card extends Component {
     };
 
     get imageSrc() {
-        return this.props.card.isHidden ? backImage : require(`../../../../assets/images/${this.fileName}`);
+        // return this.props.isHidden
+        //     ? require('../../../../assets/images/card-backside.jpeg')
+        //     : require(`../../../../assets/images/${this.fileName}`);
+        debugger;
+        if (this.props.isHidden){
+            return require(`../../../../assets/images/${this.fileName}`);
+        } else {
+            return require(`../../../../assets/images/${this.fileName}`);
+        }
     }
 
     get fileName() {

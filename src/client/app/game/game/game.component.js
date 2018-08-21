@@ -205,7 +205,6 @@ class Game extends Component {
             .then(game => {
                 game.GameState.consoleMessage = '';
                 this.setState(prevState => {
-                    debugger;
                     if (!prevState.GameState.isGameOver && game.GameState.isGameOver) {
 
                         this.openGameOverLoserModal(game.GameState.loser);
