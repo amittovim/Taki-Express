@@ -16,7 +16,7 @@ class FirstPlaceWinnerModal extends Component {
                 <h1>player is the winner </h1>
                 <div className='buttons-area'>
                     <Button label="Ok"
-                            onClick={this.props.handleClick} />
+                            onClick={this.props.onsubmit} />
                 </div>
             </div>
         );

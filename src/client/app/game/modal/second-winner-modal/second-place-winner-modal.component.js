@@ -16,7 +16,7 @@ class SecondPlaceWinnerModal extends Component {
                 <h1>Game Over!</h1>
                 <div className='buttons-area'>
                     <Button label="Ok"
-                            onClick={this.props.handleClick} />
+                            onClick={this.props.onSubmit} />
                 </div>
             </div>
         );

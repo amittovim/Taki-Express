@@ -205,16 +205,17 @@ class Game extends Component {
             .then(game => {
                 game.GameState.consoleMessage = '';
                 this.setState(prevState => {
+                    debugger;
                     if (!prevState.GameState.isGameOver && game.GameState.isGameOver) {
 
                         this.openGameOverLoserModal(game.GameState.loser.name);
                     }
                     else if (prevState.winners.length !==game.winners.length) {
-                        if ((game.winners.length === 1) && (game.winners[0].name === game.GameState.currentPlayer.name)) {
+                        if (game.winners.length === 1  ) {
                             debugger;
                             this.open1stPlaceWinnerModal(game.winners[0].name);
                         }
-                        else if (game.winners.length === 2 && game.winners[1].name === this.state.GameState.currentPlayer.name) {
+                        else if (game.winners.length === 2 ) {
                             this.open2ndPlaceWinnerModal(game.winners[1].name);
                         }
                     }
@@ -464,19 +465,17 @@ class Game extends Component {
 
     closeGameOverLoserModal() {
         this.setState(() => {
-            return {
-                modal: {
-                    isOpen: false,
-                    type: null,
-                    callback: null
-                }
-            };
-        }, () => {
-            this.props.endGameHandler();
-        });
-
-
+    return {
+    modal: {
+        isOpen: false,
+        type: null,
+        callback: null
     }
+};
+}, () => {
+    this.props.endGameHandler();
+});
+}
 
     open1stPlaceWinnerModal() {
         this.setState((prevState) => {

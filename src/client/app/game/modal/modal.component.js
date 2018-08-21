@@ -77,10 +77,10 @@ class Modal extends Component {
                 return (<GameOverLoserModal onSubmit={this.props.callback} />);
             }
             case ModalTypeEnum.FirstPlaceWinner: {
-                return (<FirstPlaceWinnerModal onClick={this.props.handleClick} />);
+                return (<FirstPlaceWinnerModal onSubmit={this.props.callback}  />);
             }
             case ModalTypeEnum.SecondPlaceWinner: {
-                return (<SecondPlaceWinnerModal onClick={this.props.handleClick} />);
+                return (<SecondPlaceWinnerModal onSubmit={this.props.callback} />);
             }
 
             case ModalTypeEnum.default: {
