@@ -17,7 +17,7 @@ class DrawPile extends Component {
 
     render() {
         return (
-            <div className="draw-pile-component">
+            <div className={`draw-pile-component ${this.isPlayersTurn ? 'clickable-pile' : ''}`}>
                 {
                     this.props.drawPile.cards.map((card, index) => {
                         return <Card isHidden={!DEBBUG_MODE}
@@ -35,6 +35,10 @@ class DrawPile extends Component {
     moveCardDriver2(card) {
         this.props.moveCardDriver1(card, this.props.drawPile);
     };
+
+    get isPlayersTurn() {
+        return this.props.currentPlayerName === this.props.myPlayerName;
+    }
 }
 
 export default DrawPile;

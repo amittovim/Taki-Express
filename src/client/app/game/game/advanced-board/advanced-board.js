@@ -10,6 +10,7 @@ import {DEBBUG_MODE} from "../../../../../server/logic/consts";
 // piles: Pile[]
 // userName: string
 // playersCapacity: Number
+// currentPlayerName: string
 
 class AdvancedBoard extends Component {
     constructor(props) {
@@ -51,7 +52,9 @@ class AdvancedBoard extends Component {
                             />)}
                     </div>
                     <div className='center-section'>
-                        <Deck drawPile={this.props.piles[PileIdEnum.DrawPile]}
+                        <Deck currentPlayerName={this.props.currentPlayerName}
+                              myPlayerName={this.props.piles[this.state.mainAreaPileId].ownerPlayerName}
+                              drawPile={this.props.piles[PileIdEnum.DrawPile]}
                               discardPile={this.props.piles[PileIdEnum.DiscardPile]}
                               moveCardDriver0={this.moveCardDriver_1}
 
