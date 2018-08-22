@@ -19,9 +19,9 @@ class Card extends Component {
                  style={
                      {
                          // transform: `translate(${this.state.currentPositionX}px, ${this.state.currentPositionY}px)`,
-                         transition: 'all 0.3s ease-in-out',
+                         // TODO: transition: 'all 0.3s ease-in-out',
                          // left: 0,
-                         opacity: this.state.opacity
+                         // TODO: opacity: this.state.opacity
                      }
                  }>
                 <img src={this.imageSrc}

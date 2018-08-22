@@ -106,24 +106,16 @@ class Game extends Component {
 
 
         this.updateSelectedCard = this.updateSelectedCard.bind(this);
-        this.requestMoveCard = this.requestMoveCard.bind(this);
         this.handleIllegalMove = this.handleIllegalMove.bind(this);
         this.handleOpenStatsModal = this.handleOpenStatsModal.bind(this);
         this.handleCloseModal = this.handleCloseModal.bind(this);
         this.humanMoveCardHandler = this.humanMoveCardHandler.bind(this);
         this.updateAverageTime = this.updateAverageTime.bind(this);
-        this.handleGetGameHistory = this.handleGetGameHistory.bind(this);
-        this.processStateChanges = this.processStateChanges.bind(this);
-
         this.handlePlayMove = this.handlePlayMove.bind(this);
         this.requestCardChangeColor = this.requestCardChangeColor.bind(this);
         this.requestPlayerMove = this.requestPlayerMove.bind(this);
-        //this.getGameContent = this.getGameContent.bind(this);
         this.openColorPickerModal = this.openColorPickerModal.bind(this);
         this.handleChangeColor = this.handleChangeColor.bind(this);
-        //this.updateGameStateFromHistory = this.updateGameStateFromHistory.bind(this);
-        //this.findCardPileByCardId = this.findCardPileByCardId.bind(this);
-        //this.getIsMoveLegal = this.getIsMoveLegal.bind(this);
         this.getCardById = this.getCardById.bind(this);
         this.getGameHistory = this.getGameHistory.bind(this);
 
@@ -167,12 +159,14 @@ class Game extends Component {
         }
         else if (prevState.winners.length < this.state.winners.length) {
             const winningPlace = this.state.winners.length;
-           this.openWinnerModal(winningPlace);
+            this.openWinnerModal(winningPlace);
         }
+        // Displaying all player moves since the last history update:
         this.stateUpdateTimeoutId = setTimeout(() => {
             if (this.state.GameState.id <= this.state.history.length - 1) {
                 const nextStateUpdate = this.state.history[this.state.GameState.id];
                 //console.log(`before1 :${this.state.GameState.consoleMessage}`);
+                debugger;
                 this.setState(() => ({
                     GameState: nextStateUpdate,
                     isLoading: true,
@@ -181,7 +175,6 @@ class Game extends Component {
             } else {
                 clearTimeout(this.stateUpdateTimeoutId);
                 this.getCurrentGameState();
-
             }
         }, 200);
     }
@@ -335,6 +328,9 @@ class Game extends Component {
     handlePlayMove(cardId) {
         const body = cardId;
         let answer;
+        this.setState({
+            isLoading: true,
+        });
         return fetch('/game/isMoveLegal/' + this.state.id, {method: 'PUT', body: body, credentials: 'include'})
             .then((res) => {
                 if (!res.ok) {
@@ -582,58 +578,6 @@ class Game extends Component {
             }
         }
     }
-
-
-// API
-
-    requestMoveCard() {
-        GameApiService.requestMoveCard(this.state.selectedCard.id)
-            .then(response => {
-                if (GameStatusEnum.Ongoing) {
-                    this.setState({
-                        ...response.body,
-                    }, () => {
-                        this.intervalId = setTimeout(this.processStateChanges, 1000)
-                    });
-                }
-            });
-    }
-
-    processStateChanges() {
-        if (this.state.currentPlayer !== PlayerEnum.Human) {
-            this.setState({
-                isLoading: true
-            }, this.requestStateUpdate);
-        }
-    }
-
-    requestStateUpdate() {
-        GameApiService.requestGameStateUpdate()
-            .then(response => {
-                this.setState({
-                    ...response.body,
-                    isLoading: false
-                }, this.processStateChanges);
-            })
-            .catch(error => {
-                console.error('Error', error);
-            });
-    }
-
-    handleGetGameHistory(getNext) {
-        GameApiService.getGameStateHistory(getNext)
-            .then(response => {
-                this.setState({
-                    ...response.body,
-                    isGameOver: true
-                });
-            })
-    }
-
-    removePlayerBeforeGameStarts() {
-
-    }
 }
-
 
 export default Game;
