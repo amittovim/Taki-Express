@@ -16,10 +16,10 @@ interface Card {
 }
 
 interface Pile {
-    type: PileIdEnum; // TODO: is this in user?
+    type: PileIdEnum;
     cards: Card[];
     isHand: boolean;
-    ownerPlayerName: User.name; // refers to the player user info // TODO: string or ref?
+    ownerPlayerName: User.name; // refers to the player user info
     singleCardCounter: number;
 }
 
@@ -113,10 +113,8 @@ enum PlayerEnum {
 enum GameStatusEnum {
     AwaitingPlayers = 'AwaitingPlayers',
     InitializingGame = 'InitializingGame',
-    Ongoing = 'Ongoing', // TODO: used to be Ongoing
+    Ongoing = 'Ongoing',
     Ended = 'Ended',
-    // TODO: when we get there
-    // RestockingDeckOfCard = 'RestockingDeckOfCard',
 }
 
 enum GameDirectionEnum {

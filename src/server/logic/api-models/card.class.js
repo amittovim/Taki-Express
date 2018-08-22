@@ -1,4 +1,3 @@
-/*import {PileTypeEnum} from "../enums/pile-type.enum";*/
 const Enums = require('../../enums-node')
 
 class CardModel {

@@ -18,10 +18,8 @@ class Card extends Component {
                  onClick={this.handleClick}
                  style={
                      {
-                         // transform: `translate(${this.state.currentPositionX}px, ${this.state.currentPositionY}px)`,
-                         // TODO: transition: 'all 0.3s ease-in-out',
-                         // left: 0,
-                         // TODO: opacity: this.state.opacity
+                         transition: 'all 0.3s ease-in-out',
+                         opacity: this.state.opacity
                      }
                  }>
                 <img src={this.imageSrc}
@@ -33,8 +31,6 @@ class Card extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            // currentPositionX: 0,
-            // currentPositionY: 0,
             opacity: 0
         };
         this.handleClick = this.handleClick.bind(this);

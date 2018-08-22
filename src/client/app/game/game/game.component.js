@@ -167,7 +167,6 @@ class Game extends Component {
         this.stateUpdateTimeoutId = setTimeout(() => {
             if (this.state.GameState.id <= this.state.history.length - 1) {
                 const nextStateUpdate = this.state.history[this.state.GameState.id];
-                //console.log(`before1 :${this.state.GameState.consoleMessage}`);
                 this.setState(() => ({
                     GameState: nextStateUpdate,
                     isLoading: true,
@@ -205,7 +204,6 @@ class Game extends Component {
         this.fetchGameContent()
             .then(game => {
                 //game.GameState.consoleMessage = '';
-                //console.log(`before2 :${this.state.GameState.consoleMessage}`);
                 this.setState({
                     ...game,
                     GameState: game.GameState,
@@ -452,7 +450,7 @@ class Game extends Component {
                     GameState: {
                         ...prev.GameState,
                         consoleMessage: 'illegal move... try again '
-                    }       //TODO: fix this line so console will show error
+                    }
                 });
         });
     }
@@ -501,7 +499,7 @@ class Game extends Component {
     getModalCallback(modalType) {
         switch (modalType) {
             case ModalTypeEnum.AbortGame: {
-                return this.removePlayerBeforeGameStarts();       //todo: this should abort the game if it hasnt started yet
+                return this.removePlayerBeforeGameStarts();
             }
             default: {
                 return null;

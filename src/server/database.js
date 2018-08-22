@@ -1,6 +1,5 @@
 module.exports = {
     requestRestartGame,
-    restartGame,
     addGameToGameList,
     getGameInfo,
     getAllGames,
@@ -73,10 +72,7 @@ function removeUserFromGame(req, res, next) {
 
         next();
     }
-
-
 }
-
 
 function addUserToGame(req, res, next) {
     req.xData = JSON.parse(req.body);
@@ -98,8 +94,6 @@ function addUserToGame(req, res, next) {
         // already started and we cannot enter a game which is already started.
         if (gameHasSeatAvailable) {
             currentGame.GameState.piles[emptyPlayerSeatIndex + 2].ownerPlayerName = nameObject.name;
-            // currentGame.GameState.piles.splice(currentGame.playersEnrolled + 1, 1, (newPlayerPile));
-            // TODO : having a problem using PlayerModel constructor here
             currentGame.GameState.players[emptyPlayerSeatIndex] = {
                 name: nameObject.name,
                 pile: currentGame.GameState.piles[emptyPlayerSeatIndex + 2],
@@ -158,7 +152,7 @@ function requestRestartGame(req, res, next) {
     const gameId = req.params.id;
     const currentGame = getGameInfo(gameId);
     let newCurrentGame;
-    if (currentGame.GameState.isGameOver && (!currentGame.isActive) ) {
+    if (currentGame.GameState.isGameOver && (!currentGame.isActive)) {
         currentGame.isActive = false;
         restartGame(currentGame);
         newCurrentGame = getGameInfo(currentGame.id);
@@ -204,16 +198,6 @@ function postingChatInfo(req, res, next) {
     next();
 }
 
-/*
-function removeGameFromGameList(req, res, next) {
-    if (gameList[req.body.gameName] === undefined) {
-        res.status(403).send('user does not exist');
-    } else {
-        delete gameList[req.body.gameName];
-        next();
-    }
-}
-*/
 function removeGame(gameId) {
     let gameFound;
 
@@ -250,10 +234,7 @@ function getGameInfo(gameId) {
         if (!gameInfo.restarting) {
             initGameList.push(gameInfo.name);
         }
-        /*
-                //put Bot player at the end of the piles array ( it was created in the start of the array)
-                gameInfo.GameState.piles.splice(gameInfo.GameState.piles.length, 0, (gameInfo.GameState.piles.splice(0, 1)[0]));
-        */
+
         // switch all players in the game to status "Playing"
         for (let i = 0; i < gameInfo.playersCapacity; i++) {
             gameInfo.GameState.players[i].playerStatus = Enums.PlayerStatusEnum.Playing;
@@ -325,7 +306,6 @@ function createNewGame(newGameInfo) {
 
     if (newGame.isBotEnabled === true) {
         newGamePiles[newGame.playersCapacity + 1].ownerPlayerName = Enums.PlayerEnum.Bot;
-        // TODO : having a problem using PlayerModel constructor here
         newGamePlayers[newGame.playersCapacity - 1] = {
             name: Enums.PlayerEnum.Bot,
             pile: null,

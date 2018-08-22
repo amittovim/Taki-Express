@@ -57,12 +57,9 @@ function getFirstItemByMatchConditions(arr, conditionList) {
 module.exports = {
     getRandomInt,
     shuffleArray,
-    swap,
     insertToEndOfArray,
-    deepCopy,
     pullItemFromArray,
     pullItemFromEndOfArray,
-    findIndexOfItemInArray,
     getKey,
     getFirstItemByMatchConditions,
-}
+};

@@ -2,7 +2,7 @@ const GameStatusEnum = {
     AwaitingPlayers: 'AwaitingPlayers',
     InitializingGame: 'InitializingGame',  //used to be 'GameInit'
     SettingStartingCard: 'SettingStartingCard',
-    Ongoing: 'Ongoing', // TODO: used to be GameStateChanged
+    Ongoing: 'Ongoing',
     Ended: 'Ended',
     RestockingDeckOfCard: 'RestockingDeckOfCard'
 };
@@ -13,7 +13,7 @@ const PileTypeEnum = {
     PlayerPile: 'PlayerPile',  // used to be HumanPile: 'HumanPile', and BotPile: 'BotPile'
 };
 
-const PlayerEnum = { // TODO: const BOT = 'Bot';
+const PlayerEnum = {
     Bot: 'Bot',
     Human: 'Human'
 };
@@ -53,7 +53,7 @@ const CardNumberEnum = {
     Nine: 9
 };
 
-const GameDirectionEnum = { // TODO: const isClockwise = false;
+const GameDirectionEnum = {
     Clockwise: 'Clockwise',
     CounterClockwise: 'CounterClockwise'
 };
