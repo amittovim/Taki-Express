@@ -7,8 +7,8 @@ export default class ChatInput extends Component {
         return (
             <form className="chat-input-component" onSubmit={this.sendText}>
                 <input disabled={this.state.sendInProgress} placeholder="enter text here"
-                       ref={input => this.inputElement = input}/>
-                <input type="submit" className="btn" disabled={this.state.sendInProgress} value="Send"/>
+                       ref={input => this.inputElement = input} />
+                <input type="submit" className="btn" disabled={this.state.sendInProgress} value="Send" />
             </form>
         )
     }
@@ -35,6 +35,7 @@ export default class ChatInput extends Component {
             this.lastConsoleMessage = this.props.consoleMessage;
         }
     }
+
     sendText(e) {
         e.preventDefault();
         this.setState(() => ({sendInProgress: true}));

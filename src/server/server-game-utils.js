@@ -207,6 +207,7 @@ function moveCard(GameState, sourcePileId, destinationPileId) {
     // old console message
     //GameState.consoleMessage = `${GameState.selectedCard.display} was moved from ${sourcePileId} to ${destinationPileId}`;
     GameState.consoleMessage = calculateConsoleMessage(GameState, sourcePileId, destinationPileId);
+    console.log(GameState.consoleMessage);
     return {
         ['piles']: {
             ...GameState.piles

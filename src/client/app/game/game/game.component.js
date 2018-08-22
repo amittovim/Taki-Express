@@ -27,9 +27,9 @@ class Game extends Component {
                 <Navbar currentPlayer={this.state.GameState.currentPlayer}
                         turnNumber={this.state.GameState.turnNumber}
                         isGameOver={this.state.GameState.isGameOver}
-                        abortGameCallback={this.handleOpenModal}
+                        abortGameCallback={this.handleOpenStatsModal}
                         gameHistoryCallback={this.handleGetGameHistory}
-                        openModalCallback={this.handleOpenModal}
+                        openModalCallback={this.handleOpenStatsModal}
                         emitAverageTime={this.updateAverageTime} />
                 <Loader isLoading={this.state.isLoading} />
                 <Overlay isVisible={this.state.isLoading || this.state.modal.isOpen || this.state.isGameOver} />
@@ -37,7 +37,6 @@ class Game extends Component {
                        type={this.state.modal.type}
                        callback={this.state.modal.callback}
                        restartGameCallback={this.startGame}
-                    // data={this.getStats()}
                        data={this.state.modal.data}
                        closeModal={this.handleCloseModal} />
                 <div className="game-body">
@@ -109,7 +108,7 @@ class Game extends Component {
         this.updateSelectedCard = this.updateSelectedCard.bind(this);
         this.requestMoveCard = this.requestMoveCard.bind(this);
         this.handleIllegalMove = this.handleIllegalMove.bind(this);
-        this.handleOpenModal = this.handleOpenModal.bind(this);
+        this.handleOpenStatsModal = this.handleOpenStatsModal.bind(this);
         this.handleCloseModal = this.handleCloseModal.bind(this);
         this.humanMoveCardHandler = this.humanMoveCardHandler.bind(this);
         this.updateAverageTime = this.updateAverageTime.bind(this);
@@ -173,17 +172,18 @@ class Game extends Component {
         this.stateUpdateTimeoutId = setTimeout(() => {
             if (this.state.GameState.id <= this.state.history.length - 1) {
                 const nextStateUpdate = this.state.history[this.state.GameState.id];
+                console.log(`before1 :${this.state.GameState.consoleMessage}`);
                 this.setState(() => ({
                     GameState: nextStateUpdate,
                     isLoading: true,
                     //nextStateId: this.state.nextStateId + 1
-                }));
+                }), console.log(`after1 :${this.state.GameState.consoleMessage}`));
             } else {
                 clearTimeout(this.stateUpdateTimeoutId);
                 this.getCurrentGameState();
 
             }
-        }, 500);
+        }, 200);
     }
 
 
@@ -210,14 +210,14 @@ class Game extends Component {
     getCurrentGameState() {
         this.fetchGameContent()
             .then(game => {
-                game.GameState.consoleMessage = '';
-
+                //game.GameState.consoleMessage = '';
+                console.log(`before2 :${this.state.GameState.consoleMessage}`);
                 this.setState({
                     ...game,
                     GameState: game.GameState,
                     isLoading: false,
                     //isActive: !prevState.GameState.isGameOver
-                });
+                }, console.log(`after2 :${this.state.GameState.consoleMessage}`));
             });
     }
 
@@ -501,15 +501,13 @@ class Game extends Component {
 
 // Stats:
 
-    getStats() {
-        const data = {
-            turnNumber: this.state.turnNumber,
-            averageMinutes: this.state.averageMoveTime.minutes,
-            averageSeconds: this.state.averageMoveTime.seconds,
-            // singleCardCounter: getPlayerPile(this.state.currentPlayer).singleCardCounter // TODO,
-        };
-        return data;
-    }
+    // getStats() {
+    //     this.setState({
+    //         turnNumber: this.state.turnNumber,
+    //         averageMinutes: this.state.averageMoveTime.minutes,
+    //         averageSeconds: this.state.averageMoveTime.seconds,
+    //     });
+    // }
 
     updateAverageTime(averageMoveTime) {
         this.setState({
@@ -552,16 +550,17 @@ class Game extends Component {
 
 // Modal
 
-    handleOpenModal(modalType) {
+    handleOpenStatsModal(modalType) {
         let callback = this.getModalCallback(modalType);
-        this.setState((prevState) => {
-            return {
-                modal: {
-                    isOpen: true,
-                    type: modalType,
-                    callback: callback
-                }
-            };
+        this.setState({
+            modal: {
+                isOpen: true,
+                type: modalType,
+                callback: callback
+            },
+            turnNumber: this.state.turnNumber,
+            averageMinutes: this.state.averageMoveTime.minutes,
+            averageSeconds: this.state.averageMoveTime.seconds,
         });
     }
 
