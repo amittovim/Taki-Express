@@ -18,9 +18,9 @@ class Card extends Component {
                  onClick={this.handleClick}
                  style={
                      {
-                         transform: `translate(${this.state.currentPositionX}px, ${this.state.currentPositionY}px)`,
+                         // transform: `translate(${this.state.currentPositionX}px, ${this.state.currentPositionY}px)`,
                          transition: 'all 0.3s ease-in-out',
-                         left: 0,
+                         // left: 0,
                          opacity: this.state.opacity
                      }
                  }>
@@ -33,8 +33,8 @@ class Card extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            currentPositionX: 0,
-            currentPositionY: 0,
+            // currentPositionX: 0,
+            // currentPositionY: 0,
             opacity: 0
         };
         this.handleClick = this.handleClick.bind(this);
@@ -52,6 +52,21 @@ class Card extends Component {
         }), 1000);
         setTimeout(() => this.setState({
             opacity: 1
+        }), 1000);
+    }
+
+    componentWillUnmount() {
+        setTimeout(() => this.setState({
+            opacity: 1
+        }), 1000);
+        setTimeout(() => this.setState({
+            opacity: 0.75
+        }), 1000);
+        setTimeout(() => this.setState({
+            opacity: 0.5
+        }), 1000);
+        setTimeout(() => this.setState({
+            opacity: 0.25
         }), 1000);
     }
 

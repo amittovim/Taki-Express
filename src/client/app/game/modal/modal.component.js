@@ -5,7 +5,7 @@ import ModalFrame from "../../shared/components/modal/modal.component";
 import AbortGameModal from "./abort-game/abort-game.component";
 import StatisticsModal from "./statistics/statistics.component";
 import GameOverLoserModal from "./game-over-loser-modal/game-over-loser-modal.component";
-import WinnerModal from "./winner-modal/winner-modal.component.css";
+import WinnerModal from "./winner-modal/winner-modal.component";
 
 // isOpen: boolean
 // type: ModalTypeEnum

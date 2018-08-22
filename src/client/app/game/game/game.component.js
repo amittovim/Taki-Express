@@ -166,19 +166,18 @@ class Game extends Component {
             let timerId = setTimeout(this.openGameOverLoserModal, 700, this.state.GameState.loser);
         }
         else if (prevState.winners.length < this.state.winners.length) {
-            debugger;
             const winningPlace = this.state.winners.length;
-            this.openWinnerModal(winningPlace);
+           this.openWinnerModal(winningPlace);
         }
         this.stateUpdateTimeoutId = setTimeout(() => {
             if (this.state.GameState.id <= this.state.history.length - 1) {
                 const nextStateUpdate = this.state.history[this.state.GameState.id];
-                console.log(`before1 :${this.state.GameState.consoleMessage}`);
+                //console.log(`before1 :${this.state.GameState.consoleMessage}`);
                 this.setState(() => ({
                     GameState: nextStateUpdate,
                     isLoading: true,
                     //nextStateId: this.state.nextStateId + 1
-                }), console.log(`after1 :${this.state.GameState.consoleMessage}`));
+                }));
             } else {
                 clearTimeout(this.stateUpdateTimeoutId);
                 this.getCurrentGameState();
@@ -212,13 +211,13 @@ class Game extends Component {
         this.fetchGameContent()
             .then(game => {
                 //game.GameState.consoleMessage = '';
-                console.log(`before2 :${this.state.GameState.consoleMessage}`);
+                //console.log(`before2 :${this.state.GameState.consoleMessage}`);
                 this.setState({
                     ...game,
                     GameState: game.GameState,
                     isLoading: false,
                     //isActive: !prevState.GameState.isGameOver
-                }, console.log(`after2 :${this.state.GameState.consoleMessage}`));
+                });
             });
     }
 
@@ -453,7 +452,7 @@ class Game extends Component {
                     }
                 }
             };
-        }, () => {debugger;});
+        });
     }
 
     closeGameOverLoserModal() {
@@ -484,7 +483,7 @@ class Game extends Component {
                     }
                 }
             };
-        }, () => { debugger;});
+        });
     }
 
     closeWinnerModal() {

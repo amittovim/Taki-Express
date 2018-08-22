@@ -277,7 +277,6 @@ function getAllGames() {
 }
 
 function restartGame(currentGame) {
-    debugger;
     let gameIndex = gameList.findIndex((game) => {
         return game.id === currentGame.id;
     });
