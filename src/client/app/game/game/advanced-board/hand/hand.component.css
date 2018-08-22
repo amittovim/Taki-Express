@@ -11,3 +11,18 @@
     margin-left: 10px;
 }
 
+.cont {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.cont span {
+    color: #ffff00;
+    margin: 10px;
+    font-size: 25px;
+}
+
+.cont .cards {
+    display: flex;
+}

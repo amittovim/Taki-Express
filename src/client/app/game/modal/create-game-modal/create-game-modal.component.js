@@ -32,7 +32,8 @@ export default class CreateGameModal extends Component {
                                 </td>
                             </tr>
                             <tr>
-                                <td><input type="checkbox" name="isBotEnabled" value="Bot Player enabled" />BOT Player
+                                <td colSpan={2}>
+                                    <input type="checkbox" name="isBotEnabled" value="Bot Player enabled" />BOT Player
                                     enabled
                                 </td>
                             </tr>

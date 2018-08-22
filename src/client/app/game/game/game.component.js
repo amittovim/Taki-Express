@@ -14,6 +14,7 @@ import {CardActionEnum} from "../../enums/card-action-enum";
 
 import * as GameService from "./game.service";
 import ChatContainer from "./chat/chat-container.component";
+import * as Enums from "../../../../server/enums-node";
 
 // <PROPS>
 // game: Game object
@@ -21,6 +22,7 @@ import ChatContainer from "./chat/chat-container.component";
 // endGameHandler : Function
 // handleSuccessfulGameLeaving : Function
 class Game extends Component {
+
     render() {
         return (
             <div className="game-component">
@@ -62,6 +64,7 @@ class Game extends Component {
 
     constructor(props) {
         super(props);
+        this.counter = 0;
         this.state = {
             // API data:
             id: null,
@@ -161,12 +164,10 @@ class Game extends Component {
             const winningPlace = this.state.winners.length;
             this.openWinnerModal(winningPlace);
         }
-        // Displaying all player moves since the last history update:
         this.stateUpdateTimeoutId = setTimeout(() => {
             if (this.state.GameState.id <= this.state.history.length - 1) {
                 const nextStateUpdate = this.state.history[this.state.GameState.id];
                 //console.log(`before1 :${this.state.GameState.consoleMessage}`);
-                debugger;
                 this.setState(() => ({
                     GameState: nextStateUpdate,
                     isLoading: true,
@@ -175,10 +176,10 @@ class Game extends Component {
             } else {
                 clearTimeout(this.stateUpdateTimeoutId);
                 this.getCurrentGameState();
+
             }
         }, 200);
     }
-
 
     componentWillUnmount() {
         if (this.timeoutId) {
@@ -220,7 +221,7 @@ class Game extends Component {
                 if (!res.ok) {
                     throw res;
                 }
-                this.timeoutId = setTimeout(this.getGameContent, 1500);
+                this.timeoutId = setTimeout(this.getGameContent, 4000);
                 return res.json();
             });
     }
@@ -231,7 +232,7 @@ class Game extends Component {
                 if (!res.ok) {
                     throw res;
                 }
-                this.timeoutHistoryId = setTimeout(this.getGameHistory, 1500);
+                this.timeoutHistoryId = setTimeout(this.getGameHistory, 4000);
                 return res.json();
             });
     }

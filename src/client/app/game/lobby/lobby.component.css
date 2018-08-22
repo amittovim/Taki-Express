@@ -14,3 +14,7 @@ body {
 .content-card-component {
     position: relative;
 }
+
+.new-game-button {
+    margin-top: 15px;
+}

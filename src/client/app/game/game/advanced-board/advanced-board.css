@@ -46,6 +46,14 @@
     background: green;
 }
 
+.middle-board .left-section .cont, .middle-board .right-section .cont {
+    flex-direction: row;
+}
+
+.middle-board .left-section .cont .cards, .middle-board .right-section .cont .cards {
+    flex-direction: column;
+}
+
 .center-section {
     flex: 3;
     background: var(--board-color);
@@ -59,12 +67,12 @@
 
 .left-section .card-component {
     transform: rotate(90deg);
-    margin-top: -45px;
+    margin-top: -60px;
 }
 
 .right-section .card-component {
     transform: rotate(270deg);
-    margin-top: -45px;
+    margin-top: -60px;
 }
 
 .left-section .hand-component, .right-section .hand-component {
