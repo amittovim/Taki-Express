@@ -149,13 +149,6 @@ class Game extends Component {
     }
 
     componentWillUpdate(prevState) {
-        if (!prevState.game.GameState.isGameOver && this.props.game.GameState.isGameOver) {
-            this.openGameOverLoserModal(this.props.game.GameState.loser);
-        }
-        else if (prevState.game.winners.length < this.props.game.winners.length) {
-            const winningPlace = this.props.game.winners.length;
-            this.openWinnerModal(winningPlace);
-        }
     }
 
     // if (this.state.GameState.isGameOver) {
@@ -168,7 +161,15 @@ class Game extends Component {
     //     this.open2ndPlaceWinnerModal();
     // }
 
-    componentDidUpdate(nextProps, nextState) {
+    componentDidUpdate(prevProps, prevState) {
+        if (!prevState.GameState.isGameOver && this.state.GameState.isGameOver) {
+            let timerId = setTimeout(this.openGameOverLoserModal, 700, this.state.GameState.loser);
+        }
+        else if (prevState.winners.length < this.state.winners.length) {
+            debugger;
+            const winningPlace = this.state.winners.length;
+            this.openWinnerModal(winningPlace);
+        }
         this.stateUpdateTimeoutId = setTimeout(() => {
             if (this.state.GameState.id <= this.state.history.length - 1) {
                 const nextStateUpdate = this.state.history[this.state.GameState.id];
@@ -452,7 +453,7 @@ class Game extends Component {
                     }
                 }
             };
-        });
+        }, () => {debugger;});
     }
 
     closeGameOverLoserModal() {
@@ -483,7 +484,7 @@ class Game extends Component {
                     }
                 }
             };
-        });
+        }, () => { debugger;});
     }
 
     closeWinnerModal() {

@@ -22,6 +22,7 @@ const auth = require('./authentication');
 const serverGameUtils = require("./server-game-utils");
 const _ = require('lodash');
 
+
 function addGameToGameList(req, res, next) {
     let newGameInfo = JSON.parse(req.body);
     newGameInfo.owner = auth.getUserInfo(req.session.id);
@@ -276,6 +277,7 @@ function getAllGames() {
 }
 
 function restartGame(currentGame) {
+    debugger;
     let gameIndex = gameList.findIndex((game) => {
         return game.id === currentGame.id;
     });

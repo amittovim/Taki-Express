@@ -80,6 +80,7 @@ lobbyManagement.delete('/games/delete/:id', auth.userAuthentication, (req, res) 
 
 
 lobbyManagement.get('/games/restartGame/:id', auth.userAuthentication, dbTmp.requestRestartGame,  (req, res) => {
+    debugger;
     res.json(req.xGameContent);
 });
 // define the about route

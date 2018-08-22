@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import './card.component.css'
 import {CardActionEnum} from "../../../enums/card-action-enum";
-
+import * as ReactDom from "react-dom";
 
 // key: number
 // card: card
@@ -15,7 +15,15 @@ class Card extends Component {
         return (
             <div className={`card-component${this.props.hoverEnabled ? ' hover-enabled' : ''}`}
                  id={`card-${this.props.card.id}`}
-                 onClick={this.handleClick}>
+                 onClick={this.handleClick}
+                 style={
+                     {
+                         transform: `translate(${this.state.currentPositionX}px, ${this.state.currentPositionY}px)`,
+                         transition: 'all 0.3s ease-in-out',
+                         left: 0,
+                         opacity: this.state.opacity
+                     }
+                 }>
                 <img src={this.imageSrc}
                      alt={this.display} />
             </div>
@@ -24,8 +32,27 @@ class Card extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {
+            currentPositionX: 0,
+            currentPositionY: 0,
+            opacity: 0
+        };
         this.handleClick = this.handleClick.bind(this);
+    }
+
+    componentDidMount() {
+        setTimeout(() => this.setState({
+            opacity: 0.25
+        }), 1000);
+        setTimeout(() => this.setState({
+            opacity: 0.5
+        }), 1000);
+        setTimeout(() => this.setState({
+            opacity: 0.75
+        }), 1000);
+        setTimeout(() => this.setState({
+            opacity: 1
+        }), 1000);
     }
 
     get display() {

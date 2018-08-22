@@ -164,10 +164,12 @@ export default class Taki extends Component {
         this.setState(() => ({
             activeView: ViewsEnum.Lobby,
         }));
+        debugger;
         this.requestGameRestart(this.state.currentGame.id);
     };
 
     requestGameRestart(gameId) {
+        debugger;
         fetch('/lobby/games/restartGame/' + gameId, {method: 'GET', credentials: 'include'})
             .then(res => {
                 if (!res.ok) {
