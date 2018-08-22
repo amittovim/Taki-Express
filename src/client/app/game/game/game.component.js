@@ -221,7 +221,7 @@ class Game extends Component {
                 if (!res.ok) {
                     throw res;
                 }
-                this.timeoutId = setTimeout(this.getGameContent, 4000);
+                this.timeoutId = setTimeout(this.getGameContent, 1500);
                 return res.json();
             });
     }
@@ -232,7 +232,7 @@ class Game extends Component {
                 if (!res.ok) {
                     throw res;
                 }
-                this.timeoutHistoryId = setTimeout(this.getGameHistory, 4000);
+                this.timeoutHistoryId = setTimeout(this.getGameHistory, 1500);
                 return res.json();
             });
     }

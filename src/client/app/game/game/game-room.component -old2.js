@@ -76,7 +76,7 @@ class GameRoom extends Component {
                 if (!res.ok) {
                     throw res;
                 }
-                this.timeoutId = setTimeout(this.getGameContent, 2000);
+                this.timeoutId = setTimeout(this.getGameContent, 1500);
                 return res.json();
             });
     }
