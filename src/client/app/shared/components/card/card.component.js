@@ -8,7 +8,8 @@ import * as ReactDom from "react-dom";
 // card: card
 // hoverEnabled: boolean
 // Driver: function
-
+// XYCoordinates : Object
+// animateCard : Function
 class Card extends Component {
 
     render() {
@@ -34,8 +35,8 @@ class Card extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            currentPositionX: 0,
-            currentPositionY: 0,
+            x: 0,
+            y: 0,
             opacity: 0
         };
         this.handleClick = this.handleClick.bind(this);
@@ -59,6 +60,17 @@ class Card extends Component {
 
     }
 
+    componentWillReceiveProps(props) {
+ /*       debugger;
+        if (this.props.selectedCard.id === this.props.card.id)
+        {
+            this.props.animateCard;
+        }
+*/
+
+
+
+    }
     get display() {
         return this.props.card.action ? this.props.card.action : this.props.card.number;
     };
@@ -87,8 +99,8 @@ class Card extends Component {
         let newX = cardDestinationDOM.offsetLeft;
         let newY = cardDestinationDOM.offsetTop;
         this.setState({
-            currentPositionX: (this.state.currentPositionX - oldX + newX),
-            currentPositionY: (this.state.currentPositionY - oldY + newY)
+            currentPositionX: ( - oldX + newX),
+            currentPositionY: ( - oldY + newY)
         }, () => {
             debugger;
             callBackFunction(param1);
@@ -97,9 +109,13 @@ class Card extends Component {
     }
 
     handleClick() {
+        debugger;
         const cardSourceDOM = ReactDom.findDOMNode(this);
-        const cardDestinationDOM = ReactDom.findDOMNode(this).parentNode.parentNode.parentNode.childNodes[1].childNodes[1].firstChild.firstChild.lastChild;
-
+        const cardDestinationDOMxxxx = ReactDom.findDOMNode(this).parentNode.parentNode.parentNode.childNodes[1].childNodes[1].firstChild.firstChild.lastChild;
+        var elements = document.getElementsByClassName ("discard-pile-component")
+        const cardDestinationDOM = ReactDom.findDOMNode(elements[0]);
+        const handDOM = ReactDom.findDOMNode(document.getElementsByClassName("bottom-board")[0]);
+        debugger;
         this.animateCard(cardSourceDOM, cardDestinationDOM ,this.props.moveCardDriver2, this.props.card.id);
 
 /*          // version1 ***************************************************
@@ -120,7 +136,7 @@ class Card extends Component {
         });
 *///************************************************************************
 
-        this.props.moveCardDriver2(this.props.card.id);
+        //this.props.moveCardDriver2(this.props.card.id);
     };
 }
 

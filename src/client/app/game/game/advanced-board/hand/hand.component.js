@@ -7,7 +7,8 @@ import {PlayerEnum} from "../../../../enums/player.enum";
 // pile: Pile
 // moveCardDriver1
 // DOMCoordinates
-
+// XYCoordinates : object
+// selectedCard : Card Object
 class Hand extends Component {
 
     render() {
@@ -28,6 +29,11 @@ class Hand extends Component {
                                           hoverEnabled={true}
                                           moveCardDriver2={this.moveCardDriver2}
                                           DOMCoordinates={this.props.DOMCoordinates}
+                                          XYCoordinates={ (card === this.props.selectedCard)
+                                              ? this.props.XYCoordinates
+                                              : {x:5,y:5} }
+                                          animateCard={this.animateCard}
+                                          selectedCard={ this.props.selectedCard}
                                     />)
                             }))
                         : null
@@ -44,6 +50,18 @@ class Hand extends Component {
 
     moveCardDriver2(cardId) {
         this.props.moveCardDriver1(cardId);
+    }
+
+    componentWillReceiveProps(props) {
+        debugger;
+    }
+
+    animateCard(){
+        this.setState({
+            x: 100,
+            y: 100
+        });
+
     }
 }
 

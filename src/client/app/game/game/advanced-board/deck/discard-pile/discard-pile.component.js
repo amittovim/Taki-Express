@@ -16,7 +16,7 @@ class DiscardPile extends Component {
 
     render() {
         return (
-            <div className="discard-pile-component">
+            <div className="discard-pile-component" ref={'discardPile'}>
                 {
                     this.props.discardPile.cards.map(card => {
                         return <Card key={card.id}

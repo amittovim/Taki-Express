@@ -10,7 +10,7 @@ import * as ReactDom from "react-dom";
 // piles: Pile[]
 // userName: string
 // playersCapacity: Number
-
+// selectedCard : Card Object
 class AdvancedBoard extends Component {
     constructor(props) {
         super(props);
@@ -19,6 +19,8 @@ class AdvancedBoard extends Component {
             secondAreaPileId: null,
             thirdAreaPileId: null,
             forthAreaPileId: null,
+
+
         };
         this.DOMCoordinates = null;
 
@@ -41,6 +43,7 @@ class AdvancedBoard extends Component {
                           pile={this.props.piles[this.state.secondAreaPileId]}
                           moveCardDriver1={this.moveCardDriver_1}
                           DOMCoordinates={this.DOMCoordinates}
+                          selectedCard={ this.props.selectedCard}
                     />
                     <div className='empty-space'></div>
                 </div>
@@ -52,6 +55,7 @@ class AdvancedBoard extends Component {
                                      pile={this.props.piles[this.state.thirdAreaPileId]}
                                      moveCardDriver1={this.moveCardDriver_1}
                                      DOMCoordinates={this.DOMCoordinates}
+                                     selectedCard={ this.props.selectedCard}
                             />)}
                         {/*
                         <Hand owner={this.props.piles[this.state.thirdAreaPileId].ownerPlayerName}
@@ -75,14 +79,18 @@ class AdvancedBoard extends Component {
                                      pile={this.props.piles[this.state.forthAreaPileId]}
                                      moveCardDriver1={this.moveCardDriver_1}
                                      DOMCoordinates={this.DOMCoordinates}
+                                     selectedCard={ this.props.selectedCard}
                             />)}
                     </div>
                 </div>
                 <div className={`bottom-board ${this.props.currentPlayerName === this.player ? 'players-turn' : ''}`}>
-                    <Hand owner={this.props.piles[this.state.mainAreaPileId].ownerPlayerName}
+                    <Hand className={`bottom-board-hand`}
+                          owner={this.props.piles[this.state.mainAreaPileId].ownerPlayerName}
                           pile={this.props.piles[this.state.mainAreaPileId]}
                           moveCardDriver1={this.moveCardDriver_1}
                           DOMCoordinates={this.DOMCoordinates}
+                          XYCoordinates={ {x:100,y:100}}
+                          selectedCard={ this.props.selectedCard}
                     />
                 </div>
             </div>
@@ -95,6 +103,10 @@ class AdvancedBoard extends Component {
 
     componentWillUpdate() {
 
+    }
+
+    componentWillReceiveProps(props) {
+        debugger;
     }
 
     get player() {
