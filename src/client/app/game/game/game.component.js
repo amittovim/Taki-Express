@@ -11,11 +11,10 @@ import * as GameApiService from "./game-api.service";
 import {ModalTypeEnum} from "../modal/modal-type.enum";
 import {PileIdEnum} from "../../enums/pile-id.enum";
 import {CardActionEnum} from "../../enums/card-action-enum";
-
 import * as GameService from "./game.service";
 import ChatContainer from "./chat/chat-container.component";
 import * as Enums from "../../../../server/enums-node";
-
+import * as ReactDom from "react-dom";
 // <PROPS>
 // game: Game object
 // userName: string
@@ -32,32 +31,32 @@ class Game extends Component {
                         abortGameCallback={this.handleOpenStatsModal}
                         gameHistoryCallback={this.handleGetGameHistory}
                         openModalCallback={this.handleOpenStatsModal}
-                        emitAverageTime={this.updateAverageTime} />
-                <Loader isLoading={this.state.isLoading} />
-                <Overlay isVisible={this.state.isLoading || this.state.modal.isOpen || this.state.isGameOver} />
+                        emitAverageTime={this.updateAverageTime}/>
+                <Loader isLoading={this.state.isLoading}/>
+                <Overlay isVisible={this.state.isLoading || this.state.modal.isOpen || this.state.isGameOver}/>
                 <Modal isOpen={this.state.modal.isOpen}
                        type={this.state.modal.type}
                        callback={this.state.modal.callback}
                        restartGameCallback={this.startGame}
                        data={this.state.modal.data}
-                       closeModal={this.handleCloseModal} />
+                       closeModal={this.handleCloseModal}/>
                 <div className="game-body">
                     {this.state.playersCapacity > this.state.playersEnrolled
                         ? (<WaitingMessageComponent game={this.props.game}
                                                     handleSuccessfulGameLeaving={this.props.handleSuccessfulGameLeaving}
-                                                    numOfNeededPlayers={(this.state.playersCapacity - this.state.playersEnrolled)} />)
+                                                    numOfNeededPlayers={(this.state.playersCapacity - this.state.playersEnrolled)}/>)
                         : ((<AdvancedBoard userName={this.props.userId}
                                            currentPlayerName={this.state.GameState.currentPlayer.name}
                                            piles={this.state.GameState.piles}
                                            playersCapacity={this.state.playersCapacity}
-                                           moveCardDriver={this.handlePlayMove} />))
+                                           moveCardDriver={this.handlePlayMove}/>))
                         /*moveCardDriver={this.requestPlayerMove}/>))*/
 
                     }
                 </div>
                 {/*<Console message={this.state.consoleMessage}/>*/}
                 <ChatContainer gameId={this.state.id}
-                               consoleMessage={this.state.GameState.consoleMessage} />
+                               consoleMessage={this.state.GameState.consoleMessage}/>
             </div>
         );
     }
@@ -167,6 +166,7 @@ class Game extends Component {
         this.stateUpdateTimeoutId = setTimeout(() => {
             if (this.state.GameState.id <= this.state.history.length - 1) {
                 const nextStateUpdate = this.state.history[this.state.GameState.id];
+                this.animatingCard(this.state.GameState, nextStateUpdate);
                 this.setState(() => ({
                     GameState: nextStateUpdate,
                     isLoading: true,
@@ -178,6 +178,34 @@ class Game extends Component {
 
             }
         }, 200);
+    }
+
+    animatingCard(futureState, currentState) {
+        let movingInfo;
+        movingInfo.cardToMove = futureState.selectedCard;
+        movingInfo.sourcePileId = this.getCardById(futureState.selectedCard.id).parentPileId;
+        switch (movingInfo.sourcePileId) {
+            case 0: {
+                movingInfo.destinationPileId = futureState.currentPlayer.pile.id;
+                return;
+            }
+            case 1: {
+                movingInfo.destinationPileId = Enums.PileIdEnum.DrawPile;
+                return;
+            }
+            case 2:
+            case 3:
+            case 4:
+            case 5: {
+                movingInfo.destinationPileId = Enums.PileIdEnum.DiscardPile;
+                return;
+            }
+            default: {
+            }
+        }
+        movingInfo.destinationPileDOM = ReactDom.findDOMNode().getBoundingClientRect(); ;
+
+
     }
 
     componentWillUnmount() {

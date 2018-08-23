@@ -16,7 +16,7 @@ interface Card {
 }
 
 interface Pile {
-    type: PileIdEnum;
+    id: PileIdEnum;
     cards: Card[];
     isHand: boolean;
     ownerPlayerName: User.name; // refers to the player user info
