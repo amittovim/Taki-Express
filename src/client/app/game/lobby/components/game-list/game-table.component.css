@@ -1,0 +1,29 @@
+.games-table-component {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.games-table-component td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+.games-table-component tr:nth-child(even) {
+    background-color: #dddddd;
+}
+
+/*TODO: check if this is needed:*/
+
+.game-list-item {
+    cursor: pointer;
+}
+
+.game-list-item:hover {
+    background: #eee;
+}
+
+.game-list-item Botton {
+    z-index: 5;
+}

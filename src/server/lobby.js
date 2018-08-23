@@ -52,6 +52,7 @@ lobbyManagement.route('/games')
             currentGame.GameState.gameStatus = Enums.GameStatusEnum.InitializingGame;
         }
 
+
         // check if game is ready to start if so,
         // change game status to init and init game
         res.status(req.xStatus).send({
@@ -60,6 +61,13 @@ lobbyManagement.route('/games')
         });
     });
 
+lobbyManagement.put('/games/leaving', auth.userAuthentication, dbTmp.removeUserFromGame,  (req, res) => {
+    const currentGame = req.xGame;
+    res.status(req.xStatus).send({
+        currentGame: currentGame,     // we might not need to send this here
+        sendMessage: req.xSendMessage
+    });
+});
 
 lobbyManagement.delete('/games/delete/:id', auth.userAuthentication, (req, res) => {
     const gameDeleted = dbTmp.removeGame(Number(req.params.id));
@@ -70,6 +78,10 @@ lobbyManagement.delete('/games/delete/:id', auth.userAuthentication, (req, res) 
     }
 });
 
+
+lobbyManagement.get('/games/restartGame/:id', auth.userAuthentication, dbTmp.requestRestartGame,  (req, res) => {
+    res.json(req.xGameContent);
+});
 // define the about route
 lobbyManagement.get('/about', function (req, res) {
     res.send('About Lobby');

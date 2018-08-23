@@ -1,29 +1,27 @@
 import React, {Component} from 'react';
-import './abort-game.component.css';
+import './winner-modal.component.css';
 import Button from "../../../shared/components/button/button.component";
 
 // onSubmit: Function
 // onCancel: Function
+// data: any
 
-class AbortGameModal extends Component {
+class WinnerModal extends Component {
     constructor(props) {
         super(props);
     }
 
     render() {
         return (
-            <div className="abort-game-modal-component">
-                <h1>Abort Game</h1>
-                <h2>What do you wanna do?</h2>
+            <div className="winner-modal-component">
+                <h1>Congratulations! {this.props.playerName} has won {this.props.winningPlace} place</h1>
                 <div className='buttons-area'>
-                    <Button label="Exit to Lobby"
+                    <Button label="Ok"
                             onClick={this.props.onSubmit} />
-                    <Button label="Cancel"
-                            onClick={this.props.onCancel} />
                 </div>
             </div>
         );
     }
 }
 
-export default AbortGameModal;
+export default WinnerModal;

@@ -1,3 +1,7 @@
 .create-game-modal-component {
     
 }
+
+.create-game-modal-component .game-name-input {
+    width: 150px;
+}

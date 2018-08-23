@@ -7,6 +7,8 @@ import DrawPile from "./draw-pile/draw-pile.component";
 // DrawPile
 // DiscardPile
 // moveCardDriver0
+// currentPlayerName: string
+// myPlayerName: string
 
 class Deck extends Component {
     constructor(props) {
@@ -23,6 +25,8 @@ class Deck extends Component {
                 />
                 <DrawPile name="drawPile"
                           drawPile={this.props.drawPile}
+                          currentPlayerName={this.props.currentPlayerName}
+                          myPlayerName={this.props.myPlayerName}
                           moveCardDriver1={this.moveCardDriver1}
                 />
             </div>

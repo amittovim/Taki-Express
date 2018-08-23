@@ -1,0 +1,4 @@
+.game-over-loser-modal-component .buttons-area {
+    display: flex;
+    justify-content: center;
+}

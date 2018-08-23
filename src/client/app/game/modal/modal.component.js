@@ -4,9 +4,12 @@ import {ModalTypeEnum} from "./modal-type.enum";
 import ModalFrame from "../../shared/components/modal/modal.component";
 import AbortGameModal from "./abort-game/abort-game.component";
 import StatisticsModal from "./statistics/statistics.component";
+import GameOverLoserModal from "./game-over-loser-modal/game-over-loser-modal.component";
+import WinnerModal from "./winner-modal/winner-modal.component";
 
 // isOpen: boolean
 // type: ModalTypeEnum
+// data: any
 // callback: Function
 // closeModal: Function
 // restart: Function
@@ -20,7 +23,6 @@ class Modal extends Component {
         };
         this.renderSwitch = this.renderSwitch.bind(this);
         this.handleClick = this.handleClick.bind(this);
-
     }
 
     render() {
@@ -63,12 +65,20 @@ class Modal extends Component {
             }
             case ModalTypeEnum.AbortGame: {
                 return (<AbortGameModal onSubmit={this.props.callback}
-                                        onRestart={this.props.restartGameCallback}
                                         onCancel={this.props.closeModal} />);
             }
             case ModalTypeEnum.Statistics: {
                 return (<StatisticsModal {...this.props.data}
                                          onCancel={this.props.closeModal} />);
+            }
+            case ModalTypeEnum.GameOverLoser: {
+                return (<GameOverLoserModal playerName={this.props.data.playerName}
+                                            onSubmit={this.props.callback} />);
+            }
+            case ModalTypeEnum.Winner: {
+                return (<WinnerModal playerName={this.props.data.playerName}
+                                     winningPlace={this.props.data.winningPlace}
+                                     onSubmit={this.props.callback} />);
             }
             case ModalTypeEnum.default: {
                 break;

@@ -15,8 +15,6 @@ body {
     position: relative;
 }
 
-.new-game-button button {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
+.new-game-button {
+    margin-top: 15px;
 }

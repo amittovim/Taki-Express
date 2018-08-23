@@ -1,13 +1,13 @@
 import React, {Component} from 'react';
 import './card.component.css'
-import backImage from '../../../../assets/images/card-backside.jpeg';
 import {CardActionEnum} from "../../../enums/card-action-enum";
-
+import * as ReactDom from "react-dom";
 
 // key: number
 // card: card
 // hoverEnabled: boolean
 // Driver: function
+// isHidden: boolean
 
 class Card extends Component {
 
@@ -15,9 +15,16 @@ class Card extends Component {
         return (
             <div className={`card-component${this.props.hoverEnabled ? ' hover-enabled' : ''}`}
                  id={`card-${this.props.card.id}`}
-                 onClick={this.handleClick}>
-                <img className={`${this.props.card.isHidden ? 'back-card-img' : 'front-card-img'}`}
-                     src={this.imageSrc}
+                 onClick={this.handleClick}
+                 style={
+                     {
+                         // transform: `translate(${this.state.currentPositionX}px, ${this.state.currentPositionY}px)`,
+                         // TODO: transition: 'all 0.3s ease-in-out',
+                         // left: 0,
+                         // TODO: opacity: this.state.opacity
+                     }
+                 }>
+                <img src={this.imageSrc}
                      alt={this.display} />
             </div>
         );
@@ -25,9 +32,42 @@ class Card extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {
+            // currentPositionX: 0,
+            // currentPositionY: 0,
+            opacity: 0
+        };
         this.handleClick = this.handleClick.bind(this);
+    }
 
+    componentDidMount() {
+        setTimeout(() => this.setState({
+            opacity: 0.25
+        }), 1000);
+        setTimeout(() => this.setState({
+            opacity: 0.5
+        }), 1000);
+        setTimeout(() => this.setState({
+            opacity: 0.75
+        }), 1000);
+        setTimeout(() => this.setState({
+            opacity: 1
+        }), 1000);
+    }
+
+    componentWillUnmount() {
+        setTimeout(() => this.setState({
+            opacity: 1
+        }), 1000);
+        setTimeout(() => this.setState({
+            opacity: 0.75
+        }), 1000);
+        setTimeout(() => this.setState({
+            opacity: 0.5
+        }), 1000);
+        setTimeout(() => this.setState({
+            opacity: 0.25
+        }), 1000);
     }
 
     get display() {
@@ -35,7 +75,9 @@ class Card extends Component {
     };
 
     get imageSrc() {
-        return this.props.card.isHidden ? backImage : require(`../../../../assets/images/${this.fileName}`);
+        return this.props.isHidden
+            ? require('../../../../assets/images/card-backside.jpeg')
+            : require(`../../../../assets/images/${this.fileName}`);
     }
 
     get fileName() {

@@ -3,7 +3,8 @@ import './hand.component.css';
 import Card from "../../../../shared/components/card/card.component";
 import {PlayerEnum} from "../../../../enums/player.enum";
 
-// owner: PlayerEnum
+// currentPlayer: string
+// owner: string
 // pile: Pile
 // moveCardDriver1
 
@@ -14,20 +15,24 @@ class Hand extends Component {
             <div className="hand-component">
                 {
                     this.props.pile
-                        ? (<h1>{this.props.pile.ownerPlayerName}</h1>)
-                        : null
-                }
-                {
-                    this.props.pile
                         ? (
-                            this.props.pile.cards.map((card) => {
-                                return (
-                                    <Card key={card.id}
-                                          card={card}
-                                          hoverEnabled={true}
-                                          moveCardDriver2={this.moveCardDriver2}
-                                    />)
-                            }))
+                            <div className={'cont'}>
+                                <span>{this.props.pile.ownerPlayerName}</span>
+                                <div className={'cards'}>
+                                    {
+                                        this.props.pile.cards.map((card) => {
+                                            return (
+                                                <Card isHidden={!this.props.openHand}
+                                                      key={card.id}
+                                                      card={card}
+                                                      hoverEnabled={true}
+                                                      moveCardDriver2={this.moveCardDriver2}
+                                                />)
+                                        })
+                                    }
+                                </div>
+                            </div>
+                        )
                         : null
                 }
             </div>
@@ -36,7 +41,7 @@ class Hand extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {}
+        this.state = {};
         this.moveCardDriver2 = this.moveCardDriver2.bind(this);
     }
 
