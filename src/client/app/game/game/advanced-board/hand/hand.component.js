@@ -7,7 +7,7 @@ import {PlayerEnum} from "../../../../enums/player.enum";
 // owner: string
 // pile: Pile
 // moveCardDriver1
-
+// animateCardInfo : Object
 class Hand extends Component {
 
     render() {
@@ -27,6 +27,11 @@ class Hand extends Component {
                                                       card={card}
                                                       hoverEnabled={true}
                                                       moveCardDriver2={this.moveCardDriver2}
+                                                      animateCardInfo={
+                                                          (this.props.animateCardInfo)
+                                                              ? this.props.animateCardInfo
+                                                              : null
+                                                      }
                                                 />)
                                         })
                                     }
@@ -43,6 +48,11 @@ class Hand extends Component {
         super(props);
         this.state = {};
         this.moveCardDriver2 = this.moveCardDriver2.bind(this);
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (this.props.animateCardInfo) {
+        }
     }
 
     moveCardDriver2(cardId) {

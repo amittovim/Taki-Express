@@ -8,7 +8,7 @@ import * as ReactDom from "react-dom";
 // hoverEnabled: boolean
 // Driver: function
 // isHidden: boolean
-
+// animateCardInfo: Object
 class Card extends Component {
 
     render() {
@@ -18,7 +18,9 @@ class Card extends Component {
                  onClick={this.handleClick}
                  style={
                      {
+                         transform: `translate(${this.state.currentPositionX}px, ${this.state.currentPositionY}px)`,
                          transition: 'all 0.3s ease-in-out',
+                         left: 0,
                          opacity: this.state.opacity
                      }
                  }>
@@ -31,6 +33,8 @@ class Card extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            currentPositionX:0,
+            currentPositionY:0,
             opacity: 0
         };
         this.handleClick = this.handleClick.bind(this);
@@ -49,6 +53,17 @@ class Card extends Component {
         setTimeout(() => this.setState({
             opacity: 1
         }), 1000);
+    }
+
+    componentDidUpdate(prevProps, prevState){
+    }
+
+    componentWillReceiveProps(props) {
+
+        if (this.props.animateCardInfo && this.props.animateCardInfo.testing === 'testing') {
+            debugger;
+            this.animateCard(this.props.animateCardInfo.sourceDOM,this.props.animateCardInfo.destinationDOM);
+        }
     }
 
     componentWillUnmount() {
@@ -89,7 +104,39 @@ class Card extends Component {
         }
     }
 
+    animateCard(cardSourceDOM, cardDestinationDOM) {
+        debugger;
+        let oldX = cardSourceDOM.offsetLeft;
+        let oldY = cardSourceDOM.offsetTop;
+        let newX = cardDestinationDOM.offsetLeft;
+        let newY = cardDestinationDOM.offsetTop;
+        this.setState({
+            currentPositionX: (-oldX + newX),
+            currentPositionY: (-oldY + newY)
+        }, () => {
+            debugger;
+        });
+    }
+
+    animateCard2(cardSourceDOM, cardDestinationDOM) {
+        debugger;
+        let oldX = cardSourceDOM.offsetLeft;
+        let oldY = cardSourceDOM.offsetTop;
+        let newX = cardDestinationDOM.offsetLeft;
+        let newY = cardDestinationDOM.offsetTop;
+        this.setState({
+            currentPositionX: (-oldX + newX),
+            currentPositionY: (-oldY + newY)
+        }, () => {
+            debugger;
+        });
+    }
+
     handleClick() {
+        const cardSourceDOM = ReactDom.findDOMNode(this);
+        var elements = document.getElementsByClassName ("discard-pile-component")
+        const cardDestinationDOM = ReactDom.findDOMNode(elements[0]);
+        this.animateCard2(cardSourceDOM, cardDestinationDOM);
         this.props.moveCardDriver2(this.props.card.id);
     };
 }

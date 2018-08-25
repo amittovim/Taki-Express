@@ -68,6 +68,16 @@ interface Game {
 
 }
 
+interface animateCardInfo {
+    cardToMove: Card;
+    sourcePileId: PileIdEnum;
+    destinationPileId: PileIdEnum;
+    sourcePileDOM: DOMObject;
+    destinationPileDOM: DOMObject;
+
+}
+
+
 enum CardColorEnum {
     Green = 'green',
     Red = 'red',
@@ -104,6 +114,16 @@ enum PileTypeEnum {
     Player3Pile = 'Player3Pile',
     Player4Pile = 'Player4Pile',
 }
+
+enum PileIdEnum {
+    DrawPile= 0,
+    DiscardPile= 1,
+    Two= 2,
+    Three= 3,
+    Four= 4,
+    Five= 5
+}
+
 
 enum PlayerEnum {
     Bot = 'Bot',

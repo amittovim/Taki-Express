@@ -5,13 +5,14 @@ import {PlayerEnum} from "../../../enums/player.enum";
 import Deck from "../advanced-board/deck/deck.component";
 import {PileIdEnum} from "../../../enums/pile-id.enum";
 import {DEBBUG_MODE} from "../../../../../server/logic/consts";
+import * as ReactDom from "react-dom";
 
 // <PROPS>
 // piles: Pile[]
 // userName: string
 // playersCapacity: Number
 // currentPlayerName: string
-
+// animateCardInfo : Object
 class AdvancedBoard extends Component {
     constructor(props) {
         super(props);
@@ -21,7 +22,7 @@ class AdvancedBoard extends Component {
             thirdAreaPileId: null,
             forthAreaPileId: null,
         };
-
+        this.animateCardInfo = {};
         // this.getCurrentUserPile = this.getCurrentUserPile.bind(this);
         this.moveCardDriver_1 = this.moveCardDriver_1.bind(this);
         this.checkUserOverFlow = this.checkUserOverFlow.bind(this);
@@ -37,6 +38,13 @@ class AdvancedBoard extends Component {
                           owner={this.props.piles[this.state.secondAreaPileId].ownerPlayerName}
                           pile={this.props.piles[this.state.secondAreaPileId]}
                           moveCardDriver1={this.moveCardDriver_1}
+                          animateCardInfo={
+                              (this.props.animateCardInfo)
+                                  ? (this.props.animateCardInfo.sourcePileId === this.state.secondAreaPileId)
+                                  || (this.props.animateCardInfo.destinationPileId === this.state.secondAreaPileId)
+                                  ?  (this.animateCardInfo)
+                                  : null
+                                  : null}
                     />
                     <div className='empty-space'></div>
                 </div>
@@ -49,6 +57,13 @@ class AdvancedBoard extends Component {
                                      owner={this.props.piles[this.state.thirdAreaPileId].ownerPlayerName}
                                      pile={this.props.piles[this.state.thirdAreaPileId]}
                                      moveCardDriver1={this.moveCardDriver_1}
+                                     animateCardInfo={
+                                         (this.props.animateCardInfo)
+                                             ? (this.props.animateCardInfo.sourcePileId === this.state.thirdAreaPileId)
+                                             || (this.props.animateCardInfo.destinationPileId === this.state.thirdAreaPileId)
+                                             ?  (this.animateCardInfo)
+                                             : null
+                                             : null}
                             />)}
                     </div>
                     <div className='center-section'>
@@ -57,6 +72,7 @@ class AdvancedBoard extends Component {
                               drawPile={this.props.piles[PileIdEnum.DrawPile]}
                               discardPile={this.props.piles[PileIdEnum.DiscardPile]}
                               moveCardDriver0={this.moveCardDriver_1}
+
 
                         />
                     </div>
@@ -68,6 +84,14 @@ class AdvancedBoard extends Component {
                                      owner={this.props.piles[this.state.forthAreaPileId].ownerPlayerName}
                                      pile={this.props.piles[this.state.forthAreaPileId]}
                                      moveCardDriver1={this.moveCardDriver_1}
+                                     animateCardInfo={
+                                         (this.props.animateCardInfo)
+                                             ? (this.props.animateCardInfo.sourcePileId === this.state.forthAreaPileId)
+                                             || (this.props.animateCardInfo.destinationPileId === this.state.forthAreaPileId)
+                                             ?  (this.animateCardInfo)
+                                             : null
+                                             : null}
+
                             />)}
                     </div>
                 </div>
@@ -77,6 +101,14 @@ class AdvancedBoard extends Component {
                           owner={this.props.piles[this.state.mainAreaPileId].ownerPlayerName}
                           pile={this.props.piles[this.state.mainAreaPileId]}
                           moveCardDriver1={this.moveCardDriver_1}
+                          animateCardInfo={
+                              (this.props.animateCardInfo)
+                                  ? (this.props.animateCardInfo.sourcePileId === this.state.mainAreaPileId)
+                                  || (this.props.animateCardInfo.destinationPileId === this.state.mainAreaPileId)
+                                    ?  (this.animateCardInfo)
+                                    : null
+                                  : null}
+
                     />
                 </div>
             </div>
@@ -87,10 +119,44 @@ class AdvancedBoard extends Component {
         this.realignCardHands();
     }
 
+    componentDidUpdate(prevProps, prevState){
+        if (this.props.animateCardInfo) {
+            let animateCardInfo = this.props.animateCardInfo;
+            animateCardInfo.destinationDOMClassName = this.findDesignatedAreaClassNameForPileId(animateCardInfo.destinationPileId);
+            animateCardInfo.destinationDOM =
+                ReactDom.findDOMNode(document.getElementsByClassName(animateCardInfo.destinationDOMClassName)[0].getElementsByClassName('hand-component')[0].firstChild.childNodes[1].lastChild);
+            animateCardInfo.sourceDOM =
+                ReactDom.findDOMNode(document.getElementById('card-' + animateCardInfo.cardToMove.id));
+            this.animateCardInfo = animateCardInfo;
+        }
+        //animateCardInfo.sourceDOMClassName = this.findDesignatedAreaClassNameForPileId(animateCardInfo.sourcePileId);
+        // .getBoundingClientRect();
+
+    }
+
     get player() {
         return this.props.piles[this.state.mainAreaPileId].ownerPlayerName;
     }
 
+    findDesignatedAreaClassNameForPileId(pileID ) {
+        switch (pileID) {
+            case this.state.mainAreaPileId: {
+                return 'bottom-board';
+            }
+            case this.state.secondAreaPileId: {
+                return 'top-board';
+            }
+            case this.state.thirdAreaPileId: {
+                return 'left-section';
+            }
+            case this.state.forthAreaPileId: {
+                return 'right-section';
+            }
+            default: {
+                return '';
+            }
+        }
+    }
     realignCardHands() {
         let mainArea, secondArea, thirdArea, forthArea;
         let idCounter = this.props.piles.find((pile) => {
