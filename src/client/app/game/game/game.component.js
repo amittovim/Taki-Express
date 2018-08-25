@@ -104,7 +104,7 @@ class Game extends Component {
             isLoading: false,
             isGameOver: false
         };
-
+        this.flag = false;
         this.card = null;
 
 
@@ -121,6 +121,7 @@ class Game extends Component {
         this.handleChangeColor = this.handleChangeColor.bind(this);
         this.getCardById = this.getCardById.bind(this);
         this.getGameHistory = this.getGameHistory.bind(this);
+        this.getCurrentGameContent= this.getCurrentGameContent.bind(this);
 
         // Modals:
         this.openGameOverLoserModal = this.openGameOverLoserModal.bind(this);
@@ -128,8 +129,8 @@ class Game extends Component {
         this.openWinnerModal = this.openWinnerModal.bind(this);
         this.closeWinnerModal = this.closeWinnerModal.bind(this);
 
-        this.getGameHistory();
-        // this.getGameContent();
+        //this.getGameHistory();
+
     }
 
 
@@ -137,24 +138,11 @@ class Game extends Component {
     }
 
     componentDidMount() {
-
+        this.getCurrentGameContent();
     }
 
     componentWillReceiveProps() {
     }
-
-    componentWillUpdate(prevState) {
-    }
-
-    // if (this.state.GameState.isGameOver) {
-    //     this.openGameOverLoserModal();
-    // }
-    // else if (this.state.winners.length === 1 && this.state.winners[0].name === this.state.GameState.currentPlayer.name) {
-    //     this.openWinnerModal();
-    // }
-    // else if (this.state.winners.length === 2 && this.state.winners[1].name === this.state.GameState.currentPlayer.name) {
-    //     this.open2ndPlaceWinnerModal();
-    // }
 
     componentDidUpdate(prevProps, prevState) {
         if (!prevState.GameState.isGameOver && this.state.GameState.isGameOver) {
@@ -164,21 +152,35 @@ class Game extends Component {
             const winningPlace = this.state.winners.length;
             this.openWinnerModal(winningPlace);
         }
-        this.stateUpdateTimeoutId = setTimeout(() => {
-            if (this.state.GameState.id <= this.state.history.length - 1) {
-                const nextStateUpdate = this.state.history[this.state.GameState.id];
-                //console.log(`before1 :${this.state.GameState.consoleMessage}`);
-                this.setState(() => ({
-                    GameState: nextStateUpdate,
-                    isLoading: true,
-                    //nextStateId: this.state.nextStateId + 1
-                }));
-            } else {
-                clearTimeout(this.stateUpdateTimeoutId);
-                this.getCurrentGameState();
 
+        if ( (this.flag === false) && (prevState.GameState.id <= this.state.history.length - 1) ){
+            this.flag = true;
+            let stateStepsCounter = (this.state.history.length - 1) - prevState.GameState.id;
+            if (stateStepsCounter !== 0) {
+                let startingStateId = prevState.GameState.id;
+                for (let i = 0; i <= stateStepsCounter; i++) {
+                    let idName = 'stateTimeoutIdNo' + i;
+                    this[idName] = setTimeout(() => {
+                        this.setState(() => ({
+                            GameState: this.state.history[( (startingStateId)+(i) )],
+                            isLoading: true,
+                        }), () => {
+                            if ( i===stateStepsCounter) {
+                                this.flag = false;
+                            }
+                        });
+                    }, i * 500);
+                }
             }
-        }, 200);
+        } else if ( this.flag === false &&  this.state.futureState.id > this.state.GameState.id) {
+            debugger;
+            this.setState(() => ({
+                GameState: this.state.futureState,
+                isLoading: true,
+            }), () => {
+                debugger;
+            });
+        }
     }
 
     componentWillUnmount() {
@@ -201,17 +203,25 @@ class Game extends Component {
             });
     }
 
-    getCurrentGameState() {
+    getCurrentGameContent() {
         this.fetchGameContent()
             .then(game => {
                 //game.GameState.consoleMessage = '';
                 //console.log(`before2 :${this.state.GameState.consoleMessage}`);
-                this.setState({
-                    ...game,
-                    GameState: game.GameState,
-                    isLoading: false,
-                    //isActive: !prevState.GameState.isGameOver
-                });
+                if (this.flag === false ) {
+                    this.setState(prev => {
+                        if (game.GameState.id > prev.GameState.id+1) {
+                            game.GameState.piles = prev.GameState.piles;
+                        }
+                        return ({
+                            ...game,
+                            isLoading: false,
+                        })
+                        //isActive: !prevState.GameState.isGameOver
+                    });
+                } else {
+
+                }
             });
     }
 
@@ -221,7 +231,7 @@ class Game extends Component {
                 if (!res.ok) {
                     throw res;
                 }
-                this.timeoutId = setTimeout(this.getGameContent, 1500);
+                this.timeoutId = setTimeout(this.getCurrentGameContent, 1500);
                 return res.json();
             });
     }

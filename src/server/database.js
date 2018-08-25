@@ -268,6 +268,11 @@ function getGameInfo(gameId) {
 
 
     }
+
+    // a test im trying... to fix console
+    gameInfo.GameState.consoleMessage = '';
+    gameInfo.futureState = gameInfo.GameState;
+
     return gameInfo;
 }
 

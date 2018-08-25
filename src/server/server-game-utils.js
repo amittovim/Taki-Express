@@ -748,7 +748,6 @@ function handleShouldSwitchPlayers(currentGame) {
     const GameState = currentGame.GameState;
     let shouldSwitchPlayers = true;
     let currentPlayerPile = GameState.currentPlayer.pile;
-
     // if current player status different than "playing" we should switch players (like maybe he just won)
     if (GameState.currentPlayer.playerStatus !== Enums.PlayerStatusEnum.Playing)
         return true;
