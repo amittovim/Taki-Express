@@ -125,12 +125,12 @@ class AdvancedBoard extends Component {
             debugger;
             let animateCardInfo = this.props.animateCardInfo;
             animateCardInfo.destinationDOMClassName = this.findDesignatedAreaClassNameForPileId(animateCardInfo.destinationPileId);
-            let element = document.getElementsByClassName(animateCardInfo.destinationDOMClassName)[0];
-            let element2 = element.getElementsByClassName('hand-component')[0];
-            animateCardInfo.destinationDOM =
-                ReactDom.findDOMNode(element2).firstChild.childNodes[1].lastChild;
-            animateCardInfo.sourceDOM =
-                ReactDom.findDOMNode(document.getElementById('card-' + animateCardInfo.cardToMove.id));
+            // let element = document.getElementsByClassName(animateCardInfo.destinationDOMClassName)[0];
+            // let element2 = element.getElementsByClassName('hand-component')[0];
+            // animateCardInfo.destinationDOM =
+            //     ReactDom.findDOMNode(element2).firstChild.childNodes[1].lastChild;
+            // animateCardInfo.sourceDOM =
+            //     ReactDom.findDOMNode(document.getElementById('card-' + animateCardInfo.cardToMove.id));
             this.animateCardInfo = animateCardInfo;
         }
         //animateCardInfo.sourceDOMClassName = this.findDesignatedAreaClassNameForPileId(animateCardInfo.sourcePileId);

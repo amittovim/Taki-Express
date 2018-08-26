@@ -25,7 +25,7 @@ class Card extends Component {
                      }
                  }>
                 <img src={this.imageSrc}
-                     alt={this.display} />
+                     alt={this.display}/>
             </div>
         );
     }
@@ -33,8 +33,8 @@ class Card extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            currentPositionX:0,
-            currentPositionY:0,
+            currentPositionX: 0,
+            currentPositionY: 0,
             opacity: 0
         };
         this.handleClick = this.handleClick.bind(this);
@@ -55,13 +55,22 @@ class Card extends Component {
         }), 1000);
     }
 
-    componentDidUpdate(prevProps, prevState){
-        if ( this.props.animateCardInfo && this.props.animateCardInfo.testing === 'testing' &&
-            prevProps.animateCardInfo !== this.props.animateCardInfo ) {
+    componentDidUpdate(prevProps, prevState) {
+        if (this.props.animateCardInfo && this.props.animateCardInfo.testing === 'testing' &&
+            prevProps.animateCardInfo !== this.props.animateCardInfo) {
             debugger;
-            if (this.props.animateCardInfo.sourceDOM && this.props.animateCardInfo.destinationDOM) {
-                this.animateCard(this.props.animateCardInfo.sourceDOM, this.props.animateCardInfo.destinationDOM);
-            }
+            //if (this.props.animateCardInfo.sourceDOM && this.props.animateCardInfo.destinationDOM) {
+
+            let animateCardInfo = this.props.animateCardInfo;
+            let element = document.getElementsByClassName(animateCardInfo.destinationDOMClassName)[0];
+            let element2 = element.getElementsByClassName('hand-component')[0];
+            animateCardInfo.destinationDOM =
+                ReactDom.findDOMNode(element2).firstChild.childNodes[1].lastChild;
+            animateCardInfo.sourceDOM =
+                ReactDom.findDOMNode(document.getElementById('card-' + animateCardInfo.cardToMove.id));
+
+            this.animateCard(animateCardInfo.sourceDOM, animateCardInfo.destinationDOM);
+            //}
         }
 
     }
@@ -115,8 +124,8 @@ class Card extends Component {
         let newX = cardDestinationDOM.offsetLeft;
         let newY = cardDestinationDOM.offsetTop;
         this.setState({
-            currentPositionX: (-oldX ),
-            currentPositionY: (-oldY )
+            currentPositionX: (-oldX),
+            currentPositionY: (-oldY)
         }, () => {
             debugger;
         });
@@ -138,7 +147,7 @@ class Card extends Component {
 
     handleClick() {
         const cardSourceDOM = ReactDom.findDOMNode(this);
-        var elements = document.getElementsByClassName ("discard-pile-component")
+        var elements = document.getElementsByClassName("discard-pile-component")
         const cardDestinationDOM = ReactDom.findDOMNode(elements[0]).lastChild;
         this.animateCard2(cardSourceDOM, cardDestinationDOM);
         this.props.moveCardDriver2(this.props.card.id);
