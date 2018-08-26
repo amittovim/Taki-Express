@@ -11,11 +11,11 @@ function userAuthentication(req, res, next) {
 function addUserToAuthList(req, res, next) {
     let user, userExist;
     for (user in usersList) {
-        if ( usersList[user].name === req.body) {
-            userExist=true;
+        if (usersList[user].name === req.body) {
+            userExist = true;
         }
     }
-    if ( userExist) {
+    if (userExist) {
         res.status(403).send('user already exist');
     } else {
         usersList[req.session.id] = {

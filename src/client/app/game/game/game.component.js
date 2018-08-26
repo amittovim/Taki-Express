@@ -11,11 +11,9 @@ import * as GameApiService from "./game-api.service";
 import {ModalTypeEnum} from "../modal/modal-type.enum";
 import {PileIdEnum} from "../../enums/pile-id.enum";
 import {CardActionEnum} from "../../enums/card-action-enum";
-
 import * as GameService from "./game.service";
 import ChatContainer from "./chat/chat-container.component";
 import * as Enums from "../../../../server/enums-node";
-
 // <PROPS>
 // game: Game object
 // userName: string
@@ -50,7 +48,12 @@ class Game extends Component {
                                            currentPlayerName={this.state.GameState.currentPlayer.name}
                                            piles={this.state.GameState.piles}
                                            playersCapacity={this.state.playersCapacity}
-                                           moveCardDriver={this.handlePlayMove} />))
+                                           moveCardDriver={this.handlePlayMove}
+                                           animateCardInfo={
+                                               (this.state.GameState.animateCardInfo)
+                                                   ? this.state.GameState.animateCardInfo
+                                                   : null}
+                        />))
                         /*moveCardDriver={this.requestPlayerMove}/>))*/
 
                     }
@@ -85,6 +88,7 @@ class Game extends Component {
                 twoPlusCounter: 0,
                 consoleMessage: '',
                 gameStatus: '',
+                animateCardInfo: null,
             },
             history: [],
             isActive: false,
@@ -161,8 +165,11 @@ class Game extends Component {
                 for (let i = 0; i <= stateStepsCounter; i++) {
                     let idName = 'stateTimeoutIdNo' + i;
                     this[idName] = setTimeout(() => {
+                        const nextStateUpdate = this.state.history[this.state.GameState.id+i];
+                        let animateCardInfo = this.gettingReadyForAnimatingCard(nextStateUpdate);
                         this.setState(() => ({
                             GameState: this.state.history[( (startingStateId)+(i) )],
+                            animateCardInfo: animateCardInfo,
                             isLoading: true,
                         }), () => {
                             if ( i===stateStepsCounter) {
@@ -174,13 +181,51 @@ class Game extends Component {
             }
         } else if ( this.flag === false &&  this.state.futureState.id > this.state.GameState.id) {
             debugger;
+            const nextStateUpdate = this.state.futureState;
+            let animateCardInfo = this.gettingReadyForAnimatingCard(nextStateUpdate);
             this.setState(() => ({
                 GameState: this.state.futureState,
+                animateCardInfo: animateCardInfo,
                 isLoading: true,
             }), () => {
                 debugger;
             });
         }
+    }
+
+    gettingReadyForAnimatingCard(futureState) {
+        let animateCardInfo = {};
+        animateCardInfo.cardToMove = futureState.selectedCard;
+        if (this.getCardById(futureState.selectedCard.id)) {
+            animateCardInfo.sourcePileId = this.getCardById(futureState.selectedCard.id);
+            animateCardInfo.sourcePileId = animateCardInfo.sourcePileId.parentPileId;
+            switch (animateCardInfo.sourcePileId) {
+                case 0: {
+                    animateCardInfo.destinationPileId = futureState.currentPlayer.pile.id;
+                    break;
+                }
+                case 1: {
+                    animateCardInfo.destinationPileId = Enums.PileIdEnum.DrawPile;
+                    break;
+                }
+                case 2:
+                case 3:
+                case 4:
+                case 5: {
+                    animateCardInfo.destinationPileId = Enums.PileIdEnum.DiscardPile;
+                    break;
+                }
+                default: {
+                    break;
+                }
+            }
+            animateCardInfo.testing = 'testing';
+            animateCardInfo.sourcePileDOM = 'toBeDiscovered';
+            animateCardInfo.destinationPileDOM = 'toBeDiscovered';
+            //ReactDom.findDOMNode().getBoundingClientRect(); ;
+            return animateCardInfo;
+        }
+        return undefined;
     }
 
     componentWillUnmount() {

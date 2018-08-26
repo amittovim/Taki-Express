@@ -52,7 +52,6 @@ lobbyManagement.route('/games')
             currentGame.GameState.gameStatus = Enums.GameStatusEnum.InitializingGame;
         }
 
-
         // check if game is ready to start if so,
         // change game status to init and init game
         res.status(req.xStatus).send({

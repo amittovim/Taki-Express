@@ -21,12 +21,6 @@ userManagement.get('/', auth.userAuthentication, (req, res) => {
 userManagement.get('/allUsers', auth.userAuthentication, (req, res) => {
     const onlineUsersList = auth.getAllOnlineUserNames();
     res.json(onlineUsersList);
-    /*
-        // TODO: somewhere show the list of users currently online like this :
-        _.map(auth.usersList, user => {
-            return (<li>{user.name}</li>);
-        });
-    */
 });
 
 userManagement.post('/addUser', auth.addUserToAuthList, (req, res) => {

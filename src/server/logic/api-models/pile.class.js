@@ -1,6 +1,6 @@
 class PileModel {
-    constructor( id, type, isHand = false, ownerPlayerName = null) {
-        this.id= id;
+    constructor(id, type, isHand = false, ownerPlayerName = null) {
+        this.id = id;
         this.type = type;
         this.cards = [];
         this.isHand = isHand;

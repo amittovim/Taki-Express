@@ -12,32 +12,11 @@ let cardId = 0;
 module.exports = {
     createCardsInDrawPile,
     dealCards,
-    handleCardMove,
-    moveCard,
-    getDestinationPileId,
-    saveGameState,
-    processGameStep,
     playGameMove,
     pickNextBotMove,
-    getCardById,
     changeCardColor,
     isPlayerMoveLegal,
-    isPutCardMoveLegal,
-    isGetCardMoveLegal,
-    availableMoveExist,
-    pullTopOfPile,
-    pickRandomColor,
-    getCardInHand,
-    handleActivatingActionState,
-    handleDisablingActionInvoked,
-    handleGameStatistics,
-    incrementSingleCardCounter,
-    incrementGameMovesCounter,
-    handleAllActionInvokedCases,
-    handleExistingTwoPlusState,
-    doesPileHaveSameColorCards,
-    incrementGameTurnNumber,
-}
+};
 
 function createCardsInDrawPile(gameId) {
     let currentGame = dbTmp.getGameInfo(gameId);
@@ -138,7 +117,7 @@ function handleCardMove(currentGame) {
             GameState.selectedCard = GameState.piles[Enums.PileIdEnum.DrawPile].getTop();
         }
         GameState.selectedCard = null;
-        return updatedPiles;       // TODO : currently no one is receiving this return object. could cancel the return here
+        return updatedPiles;
     }
 
     // all other cases
@@ -146,7 +125,7 @@ function handleCardMove(currentGame) {
     const destinationPileId = getDestinationPileId(GameState, sourcePileId);
     GameState.selectedCard.parentPileId = destinationPileId;
     updateLeadingCard(GameState, destinationPileId);
-    return moveCard(GameState, sourcePileId, destinationPileId); // TODO : currently no one is receiving this return object. could cancel the return here
+    return moveCard(GameState, sourcePileId, destinationPileId);
 }
 
 function saveGameState(gameId) {
@@ -155,7 +134,6 @@ function saveGameState(gameId) {
     currentGame.history.push(_.cloneDeep(currentGame.GameState));
 }
 
-// TODO: need to test this function . not sure we'll need it at all
 // can identify players' names or NONPlayers types such as drawPile and discardPile
 function getPileId(GameStatus, name) {
     switch (name) {
@@ -176,7 +154,7 @@ function getPileId(GameStatus, name) {
 
 function calculateConsoleMessage(GameState, sourcePileId, destinationPileId) {
     let playerName;
-    let message = `#${GameState.consoleCounter} | Turn ${GameState.turnNumber}:`;   //TODO: add here <Game-Time> : <Game-TurnNo> : <GameMoveNo> to the beginning of console message
+    let message = `#${GameState.consoleCounter} | Turn ${GameState.turnNumber}:`;
     GameState.consoleCounter++;
     if (GameState.gameStatus === Enums.GameStatusEnum.InitializingGame ||
         GameState.gameStatus === Enums.GameStatusEnum.SettingStartingCard) {
@@ -243,7 +221,6 @@ function getDestinationPileId(GameState, sourcePileId) {
     }
 }
 
-// TODO: not sure i need this function.  not sure its working either!
 function getDestinationPileOwner(GameState, sourcePileOwner) {
     switch (sourcePileType) {
         case Enums.PileTypeEnum.DrawPile: {
@@ -308,7 +285,6 @@ function processGameStep(currentGame) {
 
     // Checking if current player won
     if (hasPlayerWon(currentGame)) {
-        //todo : make a nice modal for players that this player won
         GameState.currentPlayer.playerStatus = Enums.PlayerStatusEnum.FinishedPlaying;
         currentGame.winners.push(GameState.currentPlayer);
 
@@ -319,7 +295,6 @@ function processGameStep(currentGame) {
         currentGame.loser = GameState.players.find((player) => {
             return player.playerStatus === Enums.PlayerStatusEnum.Playing
         })
-        //todo : make a nice modal for players that this player LOST
         GameState.isGameOver = true;
 
     }
@@ -337,11 +312,8 @@ function processGameStep(currentGame) {
     //
     handleDisablingActionInvoked(currentGame);
 
-    //+++++++++++++++   Important : This is the point where one game move has ended +++++++++++++++++++++++++++
     //in charge of switching turns
     handleSwitchPlayer(currentGame, shouldSwitchPlayer);
-    //+++++++++++++++   Important : here we are either in a new game turn or in a new game move +++++++++++++++++++++++++++
-
 }
 
 function hasPlayerWon(currentGame) {
@@ -368,14 +340,6 @@ function playGameMove(currentGame, cardId) {
             processGameStep(currentGame);
         }
 
-        /*
-                    // if game is active continue. if game isn't active anymore, restart the game
-                    if (currentGame.isActive) {
-                        return true;
-                    } else {
-                        //dbTmp.restartGame(currentGame);
-                    }
-        */
         return true;
     }
 }

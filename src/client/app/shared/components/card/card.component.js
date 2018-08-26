@@ -8,7 +8,7 @@ import * as ReactDom from "react-dom";
 // hoverEnabled: boolean
 // Driver: function
 // isHidden: boolean
-
+// animateCardInfo: Object
 class Card extends Component {
 
     render() {
@@ -18,14 +18,14 @@ class Card extends Component {
                  onClick={this.handleClick}
                  style={
                      {
-                         // transform: `translate(${this.state.currentPositionX}px, ${this.state.currentPositionY}px)`,
-                         // TODO: transition: 'all 0.3s ease-in-out',
-                         // left: 0,
-                         // TODO: opacity: this.state.opacity
+                         transform: `translate(${this.state.currentPositionX}px, ${this.state.currentPositionY}px)`,
+                         transition: 'all 0.3s ease-in-out',
+                         left: 0,
+                         opacity: this.state.opacity
                      }
                  }>
                 <img src={this.imageSrc}
-                     alt={this.display} />
+                     alt={this.display}/>
             </div>
         );
     }
@@ -33,8 +33,8 @@ class Card extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            // currentPositionX: 0,
-            // currentPositionY: 0,
+            currentPositionX: 0,
+            currentPositionY: 0,
             opacity: 0
         };
         this.handleClick = this.handleClick.bind(this);
@@ -53,6 +53,30 @@ class Card extends Component {
         setTimeout(() => this.setState({
             opacity: 1
         }), 1000);
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (this.props.animateCardInfo && this.props.animateCardInfo.testing === 'testing' &&
+            prevProps.animateCardInfo !== this.props.animateCardInfo) {
+            debugger;
+            //if (this.props.animateCardInfo.sourceDOM && this.props.animateCardInfo.destinationDOM) {
+
+            let animateCardInfo = this.props.animateCardInfo;
+            let element = document.getElementsByClassName(animateCardInfo.destinationDOMClassName)[0];
+            let element2 = element.getElementsByClassName('hand-component')[0];
+            animateCardInfo.destinationDOM =
+                ReactDom.findDOMNode(element2).firstChild.childNodes[1].lastChild;
+            animateCardInfo.sourceDOM =
+                ReactDom.findDOMNode(document.getElementById('card-' + animateCardInfo.cardToMove.id));
+
+            this.animateCard(animateCardInfo.sourceDOM, animateCardInfo.destinationDOM);
+            //}
+        }
+
+    }
+
+    componentWillReceiveProps(props) {
+
     }
 
     componentWillUnmount() {
@@ -93,7 +117,39 @@ class Card extends Component {
         }
     }
 
+    animateCard(cardSourceDOM, cardDestinationDOM) {
+        debugger;
+        let oldX = cardSourceDOM.offsetLeft;
+        let oldY = cardSourceDOM.offsetTop;
+        let newX = cardDestinationDOM.offsetLeft;
+        let newY = cardDestinationDOM.offsetTop;
+        this.setState({
+            currentPositionX: (-oldX),
+            currentPositionY: (-oldY)
+        }, () => {
+            debugger;
+        });
+    }
+
+    animateCard2(cardSourceDOM, cardDestinationDOM) {
+        debugger;
+        let oldX = cardSourceDOM.offsetLeft;
+        let oldY = cardSourceDOM.offsetTop;
+        let newX = cardDestinationDOM.offsetLeft;
+        let newY = cardDestinationDOM.offsetTop;
+        this.setState({
+            currentPositionX: (-oldX + newX),
+            currentPositionY: (-oldY + newY)
+        }, () => {
+            debugger;
+        });
+    }
+
     handleClick() {
+        const cardSourceDOM = ReactDom.findDOMNode(this);
+        var elements = document.getElementsByClassName("discard-pile-component")
+        const cardDestinationDOM = ReactDom.findDOMNode(elements[0]).lastChild;
+        this.animateCard2(cardSourceDOM, cardDestinationDOM);
         this.props.moveCardDriver2(this.props.card.id);
     };
 }

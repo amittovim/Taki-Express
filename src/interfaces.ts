@@ -16,10 +16,10 @@ interface Card {
 }
 
 interface Pile {
-    type: PileIdEnum; // TODO: is this in user?
+    id: PileIdEnum;
     cards: Card[];
     isHand: boolean;
-    ownerPlayerName: User.name; // refers to the player user info // TODO: string or ref?
+    ownerPlayerName: User.name; // refers to the player user info
     singleCardCounter: number;
 }
 
@@ -68,6 +68,16 @@ interface Game {
 
 }
 
+interface animateCardInfo {
+    cardToMove: Card;
+    sourcePileId: PileIdEnum;
+    destinationPileId: PileIdEnum;
+    sourcePileDOM: DOMObject;
+    destinationPileDOM: DOMObject;
+
+}
+
+
 enum CardColorEnum {
     Green = 'green',
     Red = 'red',
@@ -105,6 +115,16 @@ enum PileTypeEnum {
     Player4Pile = 'Player4Pile',
 }
 
+enum PileIdEnum {
+    DrawPile= 0,
+    DiscardPile= 1,
+    Two= 2,
+    Three= 3,
+    Four= 4,
+    Five= 5
+}
+
+
 enum PlayerEnum {
     Bot = 'Bot',
     Human = 'Human'
@@ -113,10 +133,8 @@ enum PlayerEnum {
 enum GameStatusEnum {
     AwaitingPlayers = 'AwaitingPlayers',
     InitializingGame = 'InitializingGame',
-    Ongoing = 'Ongoing', // TODO: used to be Ongoing
+    Ongoing = 'Ongoing',
     Ended = 'Ended',
-    // TODO: when we get there
-    // RestockingDeckOfCard = 'RestockingDeckOfCard',
 }
 
 enum GameDirectionEnum {
