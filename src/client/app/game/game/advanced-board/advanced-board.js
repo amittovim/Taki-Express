@@ -6,6 +6,7 @@ import Deck from "../advanced-board/deck/deck.component";
 import {PileIdEnum} from "../../../enums/pile-id.enum";
 import {DEBBUG_MODE} from "../../../../../server/logic/consts";
 import * as ReactDom from "react-dom";
+import * as Enums from "../../../../../server/enums-node";
 
 // <PROPS>
 // piles: Pile[]
@@ -120,11 +121,14 @@ class AdvancedBoard extends Component {
     }
 
     componentDidUpdate(prevProps, prevState){
-        if (this.props.animateCardInfo) {
+        if (this.props.animateCardInfo && prevProps.animateCardInfo !==this.props.animateCardInfo) {
+            debugger;
             let animateCardInfo = this.props.animateCardInfo;
             animateCardInfo.destinationDOMClassName = this.findDesignatedAreaClassNameForPileId(animateCardInfo.destinationPileId);
+            let element = document.getElementsByClassName(animateCardInfo.destinationDOMClassName)[0];
+            let element2 = element.getElementsByClassName('hand-component')[0];
             animateCardInfo.destinationDOM =
-                ReactDom.findDOMNode(document.getElementsByClassName(animateCardInfo.destinationDOMClassName)[0].getElementsByClassName('hand-component')[0].firstChild.childNodes[1].lastChild);
+                ReactDom.findDOMNode(element2).firstChild.childNodes[1].lastChild;
             animateCardInfo.sourceDOM =
                 ReactDom.findDOMNode(document.getElementById('card-' + animateCardInfo.cardToMove.id));
             this.animateCardInfo = animateCardInfo;
@@ -139,7 +143,14 @@ class AdvancedBoard extends Component {
     }
 
     findDesignatedAreaClassNameForPileId(pileID ) {
+
         switch (pileID) {
+            case Enums.PileIdEnum.DrawPile: {
+                return 'draw-pile';
+            }
+            case Enums.PileIdEnum.DiscardPile: {
+                return 'discard-pile';
+            }
             case this.state.mainAreaPileId: {
                 return 'bottom-board';
             }

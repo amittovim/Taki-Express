@@ -56,14 +56,18 @@ class Card extends Component {
     }
 
     componentDidUpdate(prevProps, prevState){
+        if ( this.props.animateCardInfo && this.props.animateCardInfo.testing === 'testing' &&
+            prevProps.animateCardInfo !== this.props.animateCardInfo ) {
+            debugger;
+            if (this.props.animateCardInfo.sourceDOM && this.props.animateCardInfo.destinationDOM) {
+                this.animateCard(this.props.animateCardInfo.sourceDOM, this.props.animateCardInfo.destinationDOM);
+            }
+        }
+
     }
 
     componentWillReceiveProps(props) {
 
-        if (this.props.animateCardInfo && this.props.animateCardInfo.testing === 'testing') {
-            debugger;
-            this.animateCard(this.props.animateCardInfo.sourceDOM,this.props.animateCardInfo.destinationDOM);
-        }
     }
 
     componentWillUnmount() {
@@ -111,8 +115,8 @@ class Card extends Component {
         let newX = cardDestinationDOM.offsetLeft;
         let newY = cardDestinationDOM.offsetTop;
         this.setState({
-            currentPositionX: (-oldX + newX),
-            currentPositionY: (-oldY + newY)
+            currentPositionX: (-oldX ),
+            currentPositionY: (-oldY )
         }, () => {
             debugger;
         });
@@ -135,7 +139,7 @@ class Card extends Component {
     handleClick() {
         const cardSourceDOM = ReactDom.findDOMNode(this);
         var elements = document.getElementsByClassName ("discard-pile-component")
-        const cardDestinationDOM = ReactDom.findDOMNode(elements[0]);
+        const cardDestinationDOM = ReactDom.findDOMNode(elements[0]).lastChild;
         this.animateCard2(cardSourceDOM, cardDestinationDOM);
         this.props.moveCardDriver2(this.props.card.id);
     };

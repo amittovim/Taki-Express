@@ -52,7 +52,7 @@ class Game extends Component {
                                            animateCardInfo={
                                                (this.state.GameState.animateCardInfo)
                                                    ? this.state.GameState.animateCardInfo
-                                                   : null }
+                                                   : null}
                         />))
                         /*moveCardDriver={this.requestPlayerMove}/>))*/
 
@@ -172,23 +172,37 @@ class Game extends Component {
                 this.setState((prev) => ({
                     GameState: {
                         ...(prev.GameState),
-                        ...nextStateUpdate,
-                        animateCardInfo: animateCardInfo },
+                        animateCardInfo: animateCardInfo
+                    },
                     isLoading: true
                     //nextStateId: this.state.nextStateId + 1
-                }));
-            } else {
-                clearTimeout(this.stateUpdateTimeoutId);
-                this.getCurrentGameState();
-
+                }), () => {
+                    debugger;
+                    this.setState((prev) => ({
+                        GameState: {
+                            ...nextStateUpdate,
+                            animateCardInfo: animateCardInfo
+                        },
+                        isLoading: true
+                    }));
+                });
             }
-        }, 1000);
+            else
+                {
+                    clearTimeout(this.stateUpdateTimeoutId);
+                    this.getCurrentGameState();
+
+                }
+            }
+        ,
+            1000
+        );
     }
 
     gettingReadyForAnimatingCard(futureState) {
-        let animateCardInfo={};
+        let animateCardInfo = {};
         animateCardInfo.cardToMove = futureState.selectedCard;
-        if ( this.getCardById(futureState.selectedCard.id) ) {
+        if (this.getCardById(futureState.selectedCard.id)) {
             animateCardInfo.sourcePileId = this.getCardById(futureState.selectedCard.id);
             animateCardInfo.sourcePileId = animateCardInfo.sourcePileId.parentPileId;
             switch (animateCardInfo.sourcePileId) {
@@ -211,7 +225,7 @@ class Game extends Component {
                     break;
                 }
             }
-            animateCardInfo.testing= 'testing';
+            animateCardInfo.testing = 'testing';
             animateCardInfo.sourcePileDOM = 'toBeDiscovered';
             animateCardInfo.destinationPileDOM = 'toBeDiscovered';
             //ReactDom.findDOMNode().getBoundingClientRect(); ;
