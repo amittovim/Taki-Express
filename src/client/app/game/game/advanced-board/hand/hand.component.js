@@ -27,11 +27,7 @@ class Hand extends Component {
                                                       card={card}
                                                       hoverEnabled={true}
                                                       moveCardDriver2={this.moveCardDriver2}
-                                                      animateCardInfo={
-                                                          (this.props.animateCardInfo)
-                                                              ? this.props.animateCardInfo
-                                                              : null
-                                                      }
+                                                      animateCardInfo={this.animateCardInfo}
                                                 />)
                                         })
                                     }
@@ -48,10 +44,16 @@ class Hand extends Component {
         super(props);
         this.state = {};
         this.moveCardDriver2 = this.moveCardDriver2.bind(this);
+
+        this.animateCardInfo = this.props.animateCardInfo;
     }
 
     componentDidUpdate(prevProps, prevState) {
         if (this.props.animateCardInfo) {
+            debugger;
+            this.animateCardInfo = this.props.animateCardInfo;
+        } else {
+            this.animateCardInfo = null;
         }
     }
 

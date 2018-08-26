@@ -30,28 +30,28 @@ class Game extends Component {
                         abortGameCallback={this.handleOpenStatsModal}
                         gameHistoryCallback={this.handleGetGameHistory}
                         openModalCallback={this.handleOpenStatsModal}
-                        emitAverageTime={this.updateAverageTime} />
-                <Loader isLoading={this.state.isLoading} />
-                <Overlay isVisible={this.state.isLoading || this.state.modal.isOpen || this.state.isGameOver} />
+                        emitAverageTime={this.updateAverageTime}/>
+                <Loader isLoading={this.state.isLoading}/>
+                <Overlay isVisible={this.state.isLoading || this.state.modal.isOpen || this.state.isGameOver}/>
                 <Modal isOpen={this.state.modal.isOpen}
                        type={this.state.modal.type}
                        callback={this.state.modal.callback}
                        restartGameCallback={this.startGame}
                        data={this.state.modal.data}
-                       closeModal={this.handleCloseModal} />
+                       closeModal={this.handleCloseModal}/>
                 <div className="game-body">
                     {this.state.playersCapacity > this.state.playersEnrolled
                         ? (<WaitingMessageComponent game={this.props.game}
                                                     handleSuccessfulGameLeaving={this.props.handleSuccessfulGameLeaving}
-                                                    numOfNeededPlayers={(this.state.playersCapacity - this.state.playersEnrolled)} />)
+                                                    numOfNeededPlayers={(this.state.playersCapacity - this.state.playersEnrolled)}/>)
                         : ((<AdvancedBoard userName={this.props.userId}
                                            currentPlayerName={this.state.GameState.currentPlayer.name}
                                            piles={this.state.GameState.piles}
                                            playersCapacity={this.state.playersCapacity}
                                            moveCardDriver={this.handlePlayMove}
                                            animateCardInfo={
-                                               (this.state.GameState.animateCardInfo)
-                                                   ? this.state.GameState.animateCardInfo
+                                               (this.state.animateCardInfo)
+                                                   ? this.state.animateCardInfo
                                                    : null}
                         />))
                         /*moveCardDriver={this.requestPlayerMove}/>))*/
@@ -60,7 +60,7 @@ class Game extends Component {
                 </div>
                 {/*<Console message={this.state.consoleMessage}/>*/}
                 <ChatContainer gameId={this.state.id}
-                               consoleMessage={this.state.GameState.consoleMessage} />
+                               consoleMessage={this.state.GameState.consoleMessage}/>
             </div>
         );
     }
@@ -88,8 +88,9 @@ class Game extends Component {
                 twoPlusCounter: 0,
                 consoleMessage: '',
                 gameStatus: '',
-                animateCardInfo: null,
+
             },
+            animateCardInfo: null,
             history: [],
             isActive: false,
             winners: [],
@@ -125,7 +126,7 @@ class Game extends Component {
         this.handleChangeColor = this.handleChangeColor.bind(this);
         this.getCardById = this.getCardById.bind(this);
         this.getGameHistory = this.getGameHistory.bind(this);
-        this.getCurrentGameContent= this.getCurrentGameContent.bind(this);
+        this.getCurrentGameContent = this.getCurrentGameContent.bind(this);
 
         // Modals:
         this.openGameOverLoserModal = this.openGameOverLoserModal.bind(this);
@@ -156,8 +157,7 @@ class Game extends Component {
             const winningPlace = this.state.winners.length;
             this.openWinnerModal(winningPlace);
         }
-
-        if ( (this.flag === false) && (prevState.GameState.id <= this.state.history.length - 1) ){
+        if ((this.flag === false) && (prevState.GameState.id <= this.state.history.length - 1)) {
             this.flag = true;
             let stateStepsCounter = (this.state.history.length - 1) - prevState.GameState.id;
             if (stateStepsCounter !== 0) {
@@ -165,38 +165,42 @@ class Game extends Component {
                 for (let i = 0; i <= stateStepsCounter; i++) {
                     let idName = 'stateTimeoutIdNo' + i;
                     this[idName] = setTimeout(() => {
-                        const nextStateUpdate = this.state.history[this.state.GameState.id+i];
+                        const nextStateUpdate = this.state.history[prevState.GameState.id + i];
                         let animateCardInfo = this.gettingReadyForAnimatingCard(nextStateUpdate);
+
                         this.setState(() => ({
-                            GameState: this.state.history[( (startingStateId)+(i) )],
-                            animateCardInfo: animateCardInfo,
-                            isLoading: true,
-                        }), () => {
-                            if ( i===stateStepsCounter) {
-                                this.flag = false;
-                            }
-                        });
+                                GameState: this.state.history[((startingStateId) + (i))],
+                                animateCardInfo: animateCardInfo,
+                                isLoading: true,
+                            }), () => {
+                                debugger;
+                                if (i === stateStepsCounter) {
+                                    this.flag = false;
+                                }
+                            });
                     }, i * 500);
                 }
+            } else if (this.state.futureState.id > this.state.GameState.id) {
+
+                const nextStateUpdate = this.state.futureState;
+                let animateCardInfo = this.gettingReadyForAnimatingCard(nextStateUpdate);
+                this.setState(() => ({
+                    GameState: this.state.futureState,
+                    animateCardInfo: animateCardInfo,
+                    isLoading: false,
+                }), () => {
+                    debugger;
+                    this.flag =false;
+                });
             }
-        } else if ( this.flag === false &&  this.state.futureState.id > this.state.GameState.id) {
-            debugger;
-            const nextStateUpdate = this.state.futureState;
-            let animateCardInfo = this.gettingReadyForAnimatingCard(nextStateUpdate);
-            this.setState(() => ({
-                GameState: this.state.futureState,
-                animateCardInfo: animateCardInfo,
-                isLoading: true,
-            }), () => {
-                debugger;
-            });
         }
     }
 
     gettingReadyForAnimatingCard(futureState) {
         let animateCardInfo = {};
         animateCardInfo.cardToMove = futureState.selectedCard;
-        if (this.getCardById(futureState.selectedCard.id)) {
+        let a = this.getCardById(futureState.selectedCard.id)
+        if (a) {
             animateCardInfo.sourcePileId = this.getCardById(futureState.selectedCard.id);
             animateCardInfo.sourcePileId = animateCardInfo.sourcePileId.parentPileId;
             switch (animateCardInfo.sourcePileId) {
@@ -220,8 +224,8 @@ class Game extends Component {
                 }
             }
             animateCardInfo.testing = 'testing';
-            animateCardInfo.sourcePileDOM = 'toBeDiscovered';
-            animateCardInfo.destinationPileDOM = 'toBeDiscovered';
+            // animateCardInfo.sourcePileDOM = 'toBeDiscovered';
+            // animateCardInfo.destinationPileDOM = 'toBeDiscovered';
             //ReactDom.findDOMNode().getBoundingClientRect(); ;
             return animateCardInfo;
         }
@@ -253,13 +257,18 @@ class Game extends Component {
             .then(game => {
                 //game.GameState.consoleMessage = '';
                 //console.log(`before2 :${this.state.GameState.consoleMessage}`);
-                if (this.flag === false ) {
+                if (game.history.length > this.state.GameState.history) {
+                    this.flag = false;
+                }
+                if (this.flag === false) {
                     this.setState(prev => {
-                        if (game.GameState.id > prev.GameState.id+1) {
-                            game.GameState.piles = prev.GameState.piles;
+                        if (game.GameState.id > prev.GameState.id ) {
+                            game.GameState = {...prev.GameState};
                         }
+                        debugger;
                         return ({
                             ...game,
+
                             isLoading: false,
                         })
                         //isActive: !prevState.GameState.isGameOver
@@ -276,7 +285,7 @@ class Game extends Component {
                 if (!res.ok) {
                     throw res;
                 }
-                this.timeoutId = setTimeout(this.getCurrentGameContent, 1500);
+                this.timeoutId = setTimeout(this.getCurrentGameContent, 750);
                 return res.json();
             });
     }

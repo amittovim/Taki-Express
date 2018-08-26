@@ -57,22 +57,30 @@ class Card extends Component {
 
     componentDidUpdate(prevProps, prevState) {
         if (this.props.animateCardInfo && this.props.animateCardInfo.testing === 'testing' &&
-            prevProps.animateCardInfo !== this.props.animateCardInfo) {
+            this.props.animateCardInfo !== prevProps.animateCardInfo &&
+            this.props.animateCardInfo.cardToMove.id === this.props.card.id) {
             debugger;
-            //if (this.props.animateCardInfo.sourceDOM && this.props.animateCardInfo.destinationDOM) {
 
-            let animateCardInfo = this.props.animateCardInfo;
-            let element = document.getElementsByClassName(animateCardInfo.destinationDOMClassName)[0];
-            let element2 = element.getElementsByClassName('hand-component')[0];
-            animateCardInfo.destinationDOM =
-                ReactDom.findDOMNode(element2).firstChild.childNodes[1].lastChild;
-            animateCardInfo.sourceDOM =
-                ReactDom.findDOMNode(document.getElementById('card-' + animateCardInfo.cardToMove.id));
+            let elements, element, element2;
+            let cardDestinationDOM;
+            let cardSourceDOM = ReactDom.findDOMNode(this).parentNode.parentNode.parentNode;
 
-            this.animateCard(animateCardInfo.sourceDOM, animateCardInfo.destinationDOM);
-            //}
+            if (cardSourceDOM.classList.contains("hand-component")) {
+                elements = document.getElementsByClassName("discard-pile-component")
+                cardDestinationDOM = ReactDom.findDOMNode(elements[0]);
+                //cardDestinationDOM = cardDestinationDOM1;//.lastChild;
+            }
+            else if (cardSourceDOM.parentNode.classList.contains("draw-pile-component")) {
+                element = document.getElementsByClassName('bottom-board')[0];
+                element2 = element.getElementsByClassName('hand-component')[0];
+                cardDestinationDOM = ReactDom.findDOMNode(element2.firstChild.childNodes[1].lastChild);
+            }
+            cardSourceDOM = ReactDom.findDOMNode(this);
+            debugger;
+            if (cardDestinationDOM !==null && cardSourceDOM !==null) {
+                this.animateCard2(cardSourceDOM, cardDestinationDOM);
+            }
         }
-
     }
 
     componentWillReceiveProps(props) {
@@ -117,22 +125,7 @@ class Card extends Component {
         }
     }
 
-    animateCard(cardSourceDOM, cardDestinationDOM) {
-        debugger;
-        let oldX = cardSourceDOM.offsetLeft;
-        let oldY = cardSourceDOM.offsetTop;
-        let newX = cardDestinationDOM.offsetLeft;
-        let newY = cardDestinationDOM.offsetTop;
-        this.setState({
-            currentPositionX: (-oldX),
-            currentPositionY: (-oldY)
-        }, () => {
-            debugger;
-        });
-    }
-
     animateCard2(cardSourceDOM, cardDestinationDOM) {
-        debugger;
         let oldX = cardSourceDOM.offsetLeft;
         let oldY = cardSourceDOM.offsetTop;
         let newX = cardDestinationDOM.offsetLeft;
@@ -141,15 +134,29 @@ class Card extends Component {
             currentPositionX: (-oldX + newX),
             currentPositionY: (-oldY + newY)
         }, () => {
-            debugger;
         });
     }
 
     handleClick() {
-        const cardSourceDOM = ReactDom.findDOMNode(this);
-        var elements = document.getElementsByClassName("discard-pile-component")
-        const cardDestinationDOM = ReactDom.findDOMNode(elements[0]).lastChild;
+/*
+        var elements, element, element2;
+        let cardDestinationDOM;
+        let cardSourceDOM = ReactDom.findDOMNode(this).parentNode.parentNode.parentNode;
+
+        if ( cardSourceDOM.classList.contains("hand-component")) {
+            elements = document.getElementsByClassName("discard-pile-component")
+            cardDestinationDOM = ReactDom.findDOMNode(elements[0].lastChild);
+        }
+        else if ( cardSourceDOM.parentNode.classList.contains("draw-pile-component")) {
+            element = document.getElementsByClassName('bottom-board')[0];
+            element2 = element.getElementsByClassName('hand-component')[0];
+            cardDestinationDOM = ReactDom.findDOMNode(element2.firstChild.childNodes[1].lastChild);
+        }
+
+        cardSourceDOM = ReactDom.findDOMNode(this);
+
         this.animateCard2(cardSourceDOM, cardDestinationDOM);
+*/
         this.props.moveCardDriver2(this.props.card.id);
     };
 }

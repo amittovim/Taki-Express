@@ -23,6 +23,15 @@ interface Pile {
     singleCardCounter: number;
 }
 
+interface animateCardInfo {
+    cardToMove: Card;
+    sourcePileId : PileIdEnum;
+    destinationPileId : PileIdEnum;
+    testing : String ;
+    destinationDOMClassName : String;
+
+
+}
 enum PlayerStatusEnum {
     Idle = 'idle', // מחכה לשחקנים שיתחברו
     Playing = 'playing',
